@@ -15,11 +15,16 @@ RC_outputs = {
 "nuked":"^2Nuke lanciata su ^4%s",
 "ora":"^2Sono le ^4%s",
 "pwdset":"^2Password inserita. ^3Sara' attiva dal prossimo map load",
-"saluti1": "^2Benvenuto ^4%s1",
-"saluti2": "^2Benvenuto ^4%s1 ^2alias ^3%s2",
-"saluti3": "^2Benvenuto ^4%s1 ^2alias ^3%s2 ^2Skill: ^3%s3 ^2Affidabilita: ^3%s4",
 "stillban": "^1%s, sei ancora bannato fino al ^6%s",
 "voteON":"^2Il voto e' ora attivo per ^4%s ^2secondi",
 "warning":"^2%s ^1kikkato per somma di warning",
 "wrongcmd":"^3Comando non riconosciuto",
+}
+
+RC_saluti = {
+1: "^2Benvenuto ^4%s",
+2: " ^2alias ^3%s",
+4: " 2 ^2Skill: ^3%s",
+8: " ^2Affidabilita: ^3%s",
+16:" ^2Ultima visita: ^3%s",
 }
