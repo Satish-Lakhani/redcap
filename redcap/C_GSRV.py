@@ -63,7 +63,7 @@ class Server:
         self.TeamSkill[0] = tot_red_skill / self.TeamMembers[1]
         self.TeamSkill[0] = tot_blue_skill / self.TeamMembers[2]
 
-    def userinfochanged(self, info):                            #info (0=id, 1=nick, 2=team)
+    def player_USERINFOCHANGED(self, info):                            #info (0=id, 1=nick, 2=team)
         if self.PT[info[0]].team <> info[2]:                       #vedo se ha cambiato TEAM
             self.TeamMembers[self.PT[info[0]].team] -= 1  #lo tolgo dal vecchio team
             self.TeamMembers[int( info[2])] += 1              #lo metto nel nuovo team
