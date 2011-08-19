@@ -22,6 +22,7 @@ ServerPars = {
 "Passport" : False,                #True=passport attivo gia' all'avvio, False=passport inattivo all'avvio.
 "UrtPath" : "../../../q3ut4",      #path relativo della cartella q3ut4 di urt
 }
+
 #NOTA LOGS: i log sono reperibili nella cartella logs e sono i seguenti
 crashlog = "crash.log"       #eventi di crash del server
 socketlog = "socket.log"  #comandi non inviati
@@ -100,12 +101,8 @@ Notoriety = {
 }
 
 ##SALUTI
-#Modalita di saluto player all'entrata in game:
-#0 = nessun saluto
-#1 = solo nome attuale
-#2 = nome di registrazione in DB
-#3 = nome di registrazione in DB, skill, round
-saluti = 1
+#Opzioni di saluto player all'entrata in game (da sommare): 0 = nessun saluto 1 = nome attuale 2 = nome di registrazione in DB 4 = skill 8 = affidabilità 16 = ultima visita
+saluti = 31
 
 #PLAYER
 

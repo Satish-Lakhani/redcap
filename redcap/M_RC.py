@@ -13,6 +13,7 @@ import M_SAYS         #dati ausiliari per gestire i say ed i comandi
 exec("import M_%s" %M_CONF.RC_lang)            #importo modulo localizzazione linguaggio
 
 Lang = eval( "M_%s.RC_outputs" %M_CONF.RC_lang)
+Saluti = eval( "M_%s.RC_saluti" %M_CONF.RC_lang)
 
 SCK = C_SOCKET.Sock(M_CONF.SocketPars)        #Istanzio il socket
 GSRV = C_GSRV.Server(M_CONF.ServerPars)       #Istanzio il gameserver
@@ -39,6 +40,7 @@ def clientconnect(id):
         pass        #il player già esiste ed e' semplicemente un initgame #TODO vedere se serve
 
 def clientdisconnect(id):
+    """Operazioni da fare alla disconnessione"""
     #TODO fare altre cose prima di cancellarlo, tipo salvare skill e altro (scaricare tutti i parametri player in DB)
 
     GSRV.player_DEL(id)
@@ -58,7 +60,7 @@ def clientuserinfochanged(info):                    #info (0=id, 1=nick, 2=team)
     if GSRV.PT[info[0]].invalid_nick(GSRV.Nick_is_length, GSRV.Nick_is_good, info[1]):    #CONTROLLO VALIDITA NICK (non ancora assegnato al player!)
         kick("Redcap", info[0], Lang["invalidnick"]%info[1])
         return   #inutile andare avanti
-    res = GSRV.userinfochanged(info)                                                            #Aggiorno NICK e TEAM
+    res = GSRV.player_USERINFOCHANGED(info)                                        #Aggiorno NICK e TEAM (se res True, il player ha cambiato nick (o è nuovo)
     if GSRV.PT[info[0]].new:                                                                         #PLAYER APPENA CONNESSO
         res = False                                                                                            #non ha cambiato nick, inutile controllare gli alias.
         db_datacontrol(GSRV.PT[info[0]].guid, info[0])                                     #controllo se il player esiste nel DB e ne recupero i dati (tb DATA) se no lo registro
@@ -71,16 +73,16 @@ def clientuserinfochanged(info):                    #info (0=id, 1=nick, 2=team)
         if GSRV.PT[info[0]].notoriety < GSRV.MinNotoriety:
             kick("Redcap", info[0], Lang["lownotoriety"]%(info[1],GSRV.PT[info[0]].notoriety,GSRV.MinNotoriety))
             return
-            GSRV.PT[info[0]].new = False                                                            #non e piu nuovo
-            saluta(M_CONF.saluti)                                                                      #chiamo la funzione che si occupa eventualmente di salutare il player
+        GSRV.PT[info[0]].new = False                                                         #non e piu nuovo
+        saluta(M_CONF.saluti, info[0])                                                       #chiamo la funzione che si occupa eventualmente di salutare il player
     if res:                                                                                                     #CONTROLLO ALIAS (solo per player non nuovi)
         esiste = False
-        for alias in GSRV.PT[id].alias:
-            if nome in alias:
+        for alias in GSRV.PT[info[0]].alias:
+            if info[1] in alias:
                 esiste = True
                 alias[0] = str(time.time())                                                             #se esiste aggiorno la data di ultimo utilizzo
         if not esiste:
-            GSRV.PT[id].alias.append([str(time.time()), nome])                         #se non esiste lo aggiungo
+            GSRV.PT[info[0]].alias.append([str(time.time()), info[1]])                         #se non esiste lo aggiungo
 
        # db_loccontrol(GSRV.PT[info[0]].guid)        #controllo il player nel DB (tb LOC)
 
@@ -94,7 +96,8 @@ def comandi (frase):                                 # frase [id, testo] (es: "2
             if GSRV.PT[frase[0]].level < comando[2]:
                 tell(frase[0], Lang["nolevel"] %(str(comando[2]), GSRV.PT[frase[0]].level))        #player non autorizzato
             else:
-                risp = eval("%s(frase[0],res)" %comando[0]) #eseguo il comando e gli passo richiedente e parametri
+                #TODO inserire il controllo di bot in pausa
+                eval("%s(frase[0],res)" %comando[0]) #eseguo il comando e gli passo richiedente e parametri
             break
         else:
              tell(frase[0], Lang["wrongcmd"] )  #comando non riconosciuto
@@ -130,7 +133,7 @@ def cr_warning():
     """verifica se qualche player ha troppi warning"""
     for PL in GSRV.PT:
         if GSRV.PT[PL].warning >= M_CONF.max_warns:
-            #TODO gli abbasso la notoriety
+            #TODO gli abbasso la notoriety?
             kick("Redcap", GSRV.PT[PL].slot_id, Lang["warning"]%GSRV.PT[PL].nick)
 
 def db_datacontrol(guid,id):
@@ -138,23 +141,12 @@ def db_datacontrol(guid,id):
     DB.connetti()
     res = DB.esegui(DB.query["cercadati"], (guid,)).fetchone()
     if res:                                                                     # ESISTE IN DB (guid, DBnick, skill, rounds, lastconn, level, tempban, notoriety, firstconn, streak, alias)
-        GSRV.PT[id].DBnick = res[1]
-        GSRV.PT[id].skill = res[2]
-        GSRV.PT[id].rounds = res[3]
-        GSRV.PT[id].lastconnect = res[4]                                   #data dell'ultima connessione
-        GSRV.PT[id].level = res[5]
-        GSRV.PT[id].tempban = res[6]
-        GSRV.PT[id].guidage = (time.time() - res[8])/87400      #eta' della guid in giorni
-        GSRV.PT[id].notoriety = res[3] / M_CONF.Notoriety["roundXpoint"] + GSRV.PT[id].guidage / M_CONF.Notoriety["dayXpoint"] + res[7]    #calcolo della notoriety (basata su round, guid age, e bonus/malus)
-        GSRV.PT[id].ksmax = res[9]
-        aliases = res[10].split(u'\xa7')                                            #formatto gli alias in maniera leggibile
-        for al in aliases:
-            al=al.split("#")
-            if time.time() - float(al[0])/87400 < GSRV.AliasDuration:       #l'alias e' ancora valido
-                GSRV.PT[id].alias.append(al)
+        GSRV.PT[id].dati_load(res, M_CONF.Notoriety["roundXpoint"], M_CONF.Notoriety["dayXpoint"], time.time())
+        #TODO caricare i dati anche dalle altre tables?
     else:                                                                       #NON ESISTE IN DB: gli assegno i valori non ancora assegnati e lo registro inserendo guid e nick #TODO vedere per aggiunta IP
-        alias = str(time.time())+"#"+GSRV.PT[id].nick               #gli assegno il suo primo alias
-        GSRV.PT[id].alias = alias.split("#")
+        alias = str(time.time()) + u"\x08" + GSRV.PT[id].nick               #gli assegno il suo primo alias
+        print alias
+        GSRV.PT[id].alias = alias.split(u'\x08')
         DB.esegui(DB.query["newdati"], (GSRV.PT[id].guid, GSRV.PT[id].nick, 0, 0, GSRV.PT[id].lastconnect, 0, 0.0, 0, time.time(), 0, alias))
         DB.esegui(DB.query["newdeath"], (GSRV.PT[id].guid,))
         DB.esegui(DB.query["newhit"], (GSRV.PT[id].guid,))
@@ -164,7 +156,7 @@ def db_datacontrol(guid,id):
     #TODO recuperare anche gli altri dati dalle altre tabelle?
     DB.disconnetti()
 
-def db_loccontrol(guid):
+def db_loccontrol(guid):    #TODO unused
     DB.connetti()
     res = DB.esegui(DB.query["cercaloc"], (guid,)).fetchone()
     if res:                                                             # esiste in db (guid, IP, provider, location, old_guids)
@@ -190,22 +182,52 @@ def initGame(frase):    # frase (0=matchmode, 1=gametype, 2=maxclients,3=mapname
 
 def initRound(frase):
     GSRV.teamskill_eval()                                # aggiorno le teamskill
+
+    testo = " ^7U " + str(M_RC.GSRV.TeamMembers[0]) + "^1R " + str(M_RC.GSRV.TeamMembers[1]) + "^4B " + str(M_RC.GSRV.TeamMembers[2]) + "^2S " + str(M_RC.GSRV.TeamMembers[3]) #DEBUG
+    print testo #DEBUG
+    say(testo, 1) #DEBUG
     pass        #TODO
 
 def kills(frase):
     pass        #TODO
 
-def saluta(modo):
-    """si occupa di salutare il player al suo ingresso in game"""
-    if modo == 0:
-        return
-    elif modo == 1:          #se saluti <> 0 allora saluto.
-        say(Lang["saluti1"]%info[1])
-    elif modo == 2:
-        say(Lang["saluti2"]%(info[1], GSRV.PT[info[0]].nick))
-    elif modo == 3:
-        say(Lang["saluti3"]%(info[1], GSRV.PT[info[0]].nick, GSRV.PT[info[0]].skill, GSRV.PT[info[0]].notoriety))
+def option_checker(v):
+    """serve per estrarre le opzioni in base 2 da un numero"""
+    option = []
+    n = 0
+    go = False
+    if v > 0:
+        go = True
+    while go:
+        while v > 0:
+            if v >= 2**n:
+                n +=1
+            else:
+                option.append(2**(n-1))
+                v -= 2**(n-1)
+                n = 0
+                if v == 0:
+                    go = False
+    return option
 
+def saluta(modo, id):
+    """si occupa di salutare il player al suo ingresso in game"""
+    X = {
+    1: GSRV.PT[id].nick,
+    2: GSRV.PT[id].DBnick,
+    4: GSRV.PT[id].skill,
+    8: GSRV.PT[id].notoriety,
+    16: time.strftime("%d %b", time.localtime(GSRV.PT[id].lastconnect)),
+    }
+    opzioni = option_checker(modo)
+    saluto = ""
+    while opzioni:
+        opz = opzioni.pop()
+        saluto += Saluti[opz]%X[opz]
+    if saluto <> "":
+        say(saluto, 0)
+    print saluto
+   
 def says(frase):                                                       #frase (0=id, 1=testo)
     if frase[0]not in GSRV.PT:   #potrebbero partire dei say prima del ClientBegin, dando errore "KeyError: '0'
         return

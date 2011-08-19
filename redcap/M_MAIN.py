@@ -5,6 +5,7 @@
 #TODO fare l'automute che muta il player non appena entra (serve campo nel DB)
 #TODO comando !bonus n per gestire la notoriety
 #TODO aggiungere gestione del ritorno dei comandi (chi, riusciti, non riusciti)
+#TODO inserire controllo eliminazione vecchi alias
 
 
 import C_PARSER       #Classe che rappresenta il parser
@@ -27,12 +28,8 @@ def redcap_main():
             for frase in PARSER.outputs:                          #frase[0]=contenuto, frase[1]=tipo di frase (assigned from PARSER)
                 if frase[1] == "InitGame":
                     M_RC.initGame(frase[0])                        #aggiorno le cvars del server CVARS = [matchmode, gametype,maxclients,mapname]
-                    testo = " ^7U " + str(M_RC.GSRV.TeamMembers[0]) + "^1R " + str(M_RC.GSRV.TeamMembers[1]) + "^4B " + str(M_RC.GSRV.TeamMembers[2]) + "^2S " + str(M_RC.GSRV.TeamMembers[3]) #DEBUG
-                    print testo #DEBUG
-                    M_RC.say(testo, 1) #DEBUG
-                    pass    #TODO (altre cose da fare a initgame)
                     continue
-                elif frase[1].find("Client") !=  -1:            #gestisco le frasi Client indirizzando alla funzione appropriata
+                elif frase[1].find("Client") !=  -1:            #gestisco le frasi Client indirizzando alla funzione appropriata (i comandi li parso anche in fase di startup)
                     exec("M_RC.%s(frase[0])"%frase[1].lower())
                     continue
                 if M_RC.GSRV.Startup_end:                           #ALTRI EVENTI da processare solo a startup finito
@@ -57,7 +54,6 @@ def redcap_main():
                     elif frase[1] == "EndMap":                    
                         pass    #TODO
                         continue
-        print "FINITO!" #DEBUG
         if CRON1.is_time():                         #eseguo operazioni a cron1
             M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato
             M_RC.cr_full()                             #controllo se il server è pieno
