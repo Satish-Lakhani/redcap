@@ -55,23 +55,21 @@ class Player:
         else:
             return True
 
-    def data_load(self,dati):
+    def dati_load(self,dati,N1,N2,time):
         """Aggiorna il player con i dati presi dal database tabella DATI"""                                                               
-        self.DBnick = res[1]                                         #dati = (guid, DBnick, skill, rounds, lastconn, level, tempban, notoriety, firstconn, streak, alias)
-        self.skill = res[2]
-        self.rounds = res[3]
-        self.lastconnect = res[4]                                   #data dell'ultima connessione
-        self.level = res[5]
-        self.tempban = res[6]
-        self.guidage = (time.time() - res[8])/87400      #eta' della guid in giorni
-        self.notoriety = res[3] / M_CONF.Notoriety["roundXpoint"] + self.guidage / M_CONF.Notoriety["dayXpoint"] + res[7]    #calcolo della notoriety (basata su round, guid age, e bonus/malus)
-        self.ksmax = res[9]
-        aliases = res[10].split(u'\xa7')                                            #formatto gli alias in maniera leggibile
+        self.DBnick = dati[1]                                         #dati = (guid, DBnick, skill, rounds, lastconn, level, tempban, notoriety, firstconn, streak, alias)
+        self.skill = dati[2]
+        self.rounds = dati[3]
+        self.lastconnect = dati[4]                                   #data dell'ultima connessione
+        self.level = dati[5]
+        self.tempban = dati[6]
+        self.guidage = (time - dati[8])/87400      #eta' della guid in giorni
+        self.notoriety = round(dati[3] / N1 + self.guidage / N2 + dati[7], 1)    #calcolo della notoriety (basata su round, guid age, e bonus/malus) - arrotondo a 1
+        self.ksmax = dati[9]
+        aliases = dati[10].split(u'\xa7')                                            #formatto gli alias in maniera leggibile
         for al in aliases:
-            al=al.split("#")
-            if time.time() - float(al[0])/87400 < GSRV.AliasDuration:       #l'alias e' ancora valido
-                self.alias.append(al)
-  jh kj jk:
+            al=al.split(u'\x08')
+            self.alias.append(al)
 
 '''
     def pick_all_data(self, DB):
