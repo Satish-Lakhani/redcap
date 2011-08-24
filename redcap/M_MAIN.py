@@ -6,17 +6,31 @@
 #TODO comando !bonus n per gestire la notoriety
 #TODO aggiungere gestione del ritorno dei comandi (chi, riusciti, non riusciti)
 #TODO inserire controllo eliminazione vecchi alias
+#TODO fare anche ban per nick
+#TODO e' effettivamente necessario recuperare gli alias alla connection o si fa su richiesta?
 
-
+import sys
 import C_PARSER       #Classe che rappresenta il parser
 import M_AUX             #Modulo funzioni ausiliarie
 import M_CONF          #Modulo configurazioni programma
 import M_RC               #Modulo che gestisce le azioni del Redcap
 
-#res = M_AUX.avvio()                                                             #attività di avvio del gameserver
-sys.excepthook = M_AUX.crashlog                                       #abilito il log dei crash
-#TODO gserver_is_active() #Controllo che il gameserver sia attivo, se no IL REDCAP SI FERMA QUI IN LOOP finche' il server non torna attivo.
+#res = M_AUX.avvio()                                               #attivita di avvio del gameserver
 
+def crashlog(t, v, tra):
+    """gestisce i crash del programma, scrivendo l'errore nel file di log"""
+    import traceback
+    evento = "\r\n REDCAP CRASH:: "
+    for stringa in traceback.format_tb(tra):
+        evento = evento + str(stringa)
+    for stringa in traceback.format_exception_only(sys.last_type, sys.last_value):
+        evento = evento + str(stringa)
+    M_RC.scriviLog(evento, M_CONF.ServerPars["Logfolder"] + "/" + M_CONF.crashlog)
+    sys.exit()
+
+sys.excepthook = crashlog                                       #abilito il log dei crash
+
+#TODO gserver_is_active() #Controllo che il gameserver sia attivo, se no IL REDCAP SI FERMA QUI IN LOOP finche' il server non torna attivo.
 
 PARSER = C_PARSER.Parser(M_CONF.NomeFileLog)          #Istanzio il Parser
 CRON1 = M_AUX.Cronometro(M_CONF.CRON1)                    #Istanzio il cron1
@@ -39,8 +53,8 @@ def redcap_main():
                     elif frase[1] == "Says":                         #SAY frase[0] (0,0=id, 0,1=testo)
                         M_RC.says(frase[0])
                         continue
-                    elif frase[1] == "Kills":
-                        pass    #TODO
+                    elif frase[1] == "Kills":           #del tipo (['0', '0', '10'], 'Kills')
+                        M_RC.kills(frase[0])
                         continue
                     elif frase[1] == "Comandi":                   #COMANDI frase[0] (0,0=id, 0,1=comando)
                         M_RC.comandi(frase[0])                    #passo richiedente e parametri alla funzione comandi del modulo M_RC
@@ -56,9 +70,9 @@ def redcap_main():
                         continue
         if CRON1.is_time():                         #eseguo operazioni a cron1
             M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato
-            M_RC.cr_full()                             #controllo se il server è pieno
+            M_RC.cr_full()                             #controllo se il server ï¿½ pieno
             M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotation
-            M_RC.cr_unvote()                       #controllo se c'è un voto speciale attivo
+            M_RC.cr_unvote()                       #controllo se c'ï¿½ un voto speciale attivo
             M_RC.cr_warning()                     #controllo se qualcuno ha troppi warning
 
 #AVVIO LA PROCEDURA PRINCIPALE

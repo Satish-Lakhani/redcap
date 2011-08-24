@@ -26,8 +26,10 @@ censura=["n[o0]+b",
 "(k(u|o)|qu?)rw(a|o|y)?",
 "s?pierd(ala(j|j?my)|ol(a|ic|ec)?)",
 "f[i1]gl[i1][o0] d[1i]",
-"[a@]ff[a@]n[ck]u"
+"[a@]ff[a@]n[ck]u",
+"c[a@]mp[3e]r$"
 ]
+
 
 
 #TODO aggiungere riconoscimento di frasi standard

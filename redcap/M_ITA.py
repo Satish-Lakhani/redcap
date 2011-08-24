@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 RC_outputs = {
+"antirecon":"^2%s ^1kikkato per doppia connessione in meno di ^4%s",
 "flood":"^2%s ^1kikkato per flooding",
 "guidchange":"^2%s ^1kikkato per cambio GUID durante il gioco",
 "insults":"^2Gli insulti non sono permessi. ^1Ancora %s volte e verrai kikkato",
@@ -27,4 +28,8 @@ RC_saluti = {
 4: " 2 ^2Skill: ^3%s",
 8: " ^2Affidabilita: ^3%s",
 16:" ^2Ultima visita: ^3%s",
+}
+
+RC_logoutputs = {
+"command": "%s alias %s (lev:%s) ha usato: %s (lev:%s)",
 }

@@ -66,8 +66,9 @@ class Parser:
             elif x.find("ClientDisconnect:") !=  -1:                                                    #trovo tutti i CLIENTDISCONNECT
                 res = re.search(r"ClientDisconnect: (?P<id>\d+)", x)
                 self.outputs.append((res.group("id"), "ClientDisconnect"))
-            elif x.find("Kill:")!= -1:                                          #trovo tutti i KILL
-                self.outputs.append((x, "Kills"))
+            elif x.find("Kill: ")!= -1:                                          #trovo tutti i KILL
+                print x #DEBUG
+                self.outputs.append((re.search(r'Kill: (?P<kill>\d+ \d+ \d+):', x).group('kill').split(), "Kills"))
             elif x.find("InitRound:")!= -1:                               #trovo gli INITROUND
                 self.outputs.append((x, "InitRound"))
             elif x.find("SurvivorWinner:")!= -1:                    #trovo gli ENDROUND
@@ -78,3 +79,4 @@ class Parser:
                 self.outputs.append((frase, "InitGame"))
             elif x.find("Exit:")!= -1:                                      #trovo gli ENDMAP
                 self.outputs.append((x, "EndMap"))
+

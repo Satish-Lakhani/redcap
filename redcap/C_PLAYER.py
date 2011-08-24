@@ -9,7 +9,7 @@ class Player:
         self.alias = [] #tutti gli ultimi nick usati dal player
         self.camp = 0 #hit/tempo di vita
         self.DBnick = "" #(string) nick di registrazione in DB
-        self.deaths = {"6":0,"7":0,"9":0,"23":0,"24":0,"31":0,"34":0,"arma":0,"total":0} #morti subite dal player (non incluso il changeteam)
+        self.deaths = {"6":0,"7":0,"9":0,"23":0,"24":0,"31":0,"34":0,"arma":0,"total":0} #morti subite dal player (non incluso il changeteam) #TODO non molto interessante. vedere se tenere
         self.flood = 0 #numero di say in TempoControllo1
         self.gained_skill = 0 #skill guadagnata nell'ultima connessione
         self.guid = None  #(string) GUID
@@ -24,10 +24,12 @@ class Player:
         self.lastconnect = 0 #data dell'ultimo connect
         #self.lastdisconnect = None #data dell'ultimo disconnect
         self.level = 0 #livello di autorizzazione all'uso del RedCap
-        self.new = True #e' appena entrato
+        self.justconnected = True #e' appena entrato
         self.nick = "" #nick (stringa)
         self.nickchanges = 0 #cambi nick in TempoControllo1
-        self.notoriety = 0 #livello di reputazione (sale con anzianita guid, rounds, bonus admin, scende con warning, tempban, tk, malus admin)
+        self.notoriety = 0 #livello di reputazione (sale con anzianita guid, rounds, bonus admin, scende con warning, tempban, tk, malus admin). Calcolata alla connessione
+        self.oldIP =[]      #IP usati precedentemente
+        self.reputation = 0 #reputazione assegnata dagli altri players (salvata in DB)
         self.rounds = 0 #round giocati
         #self.rusher =0 #tempo totale di vita sul gameserver / tempo totale (da un'idea della bravura e camperosita)
         self.skill = 0 #skill
@@ -35,7 +37,7 @@ class Player:
         self.team = 0 #(string) 0=Sconosciuto 1=red, 2=blue, 3=spect
         self.tempban = 0 #data dell'ultimo tempban
         #self.totalplayedtime = 0 #tempo totale di gioco
-        self.vivo = 0   #0=Sconosciuto 1=vivo, 2=morto
+        self.vivo = 0   #0=Sconosciuto 1=vivo, 2=morto #TODO mi interessa saperlo?
         self.warning = 0    #warning assegnati al player
 
     def invalid_guid(self):
@@ -64,35 +66,11 @@ class Player:
         self.level = dati[5]
         self.tempban = dati[6]
         self.guidage = (time - dati[8])/87400      #eta' della guid in giorni
+        self.reputation = dati[7]
         self.notoriety = round(dati[3] / N1 + self.guidage / N2 + dati[7], 1)    #calcolo della notoriety (basata su round, guid age, e bonus/malus) - arrotondo a 1
         self.ksmax = dati[9]
-        aliases = dati[10].split(u'\xa7')                                            #formatto gli alias in maniera leggibile
+        aliases = dati[10].split("  ")                                            #formatto gli alias in maniera leggibile
         for al in aliases:
-            al=al.split(u'\x08')
+            al=al.split(" ")
             self.alias.append(al)
 
-'''
-    def pick_all_data(self, DB):
-        """recupera i tutti dati del player da DB e li assegna al player stesso"""
-        res = DB.esegui(DB.DBcmd["alldata"], (self.guid,)) #Recupera: NICK, ROUND, SKILL, STREAK, BANNED, LASTSEEN, LEVEL, TMPBAN
-        record = res.fetchone()
-        if record:
-            self.isInDB = True
-            self.DBnick = record[0]
-            self.rounds = record[1]
-            self.skill = record[2]
-            self.ksmax = record[3]
-            self.notoriety = record[4]
-            self.lastconnect = record[5]
-            self.level = record[6]
-            self.tempban = record[7]
-            return True
-        else:
-            return False
-
-    def reg_in_DB(self, DB):
-        """registra un nuovo player in DB"""
-        #inserisco i dati conosciuti del nuovo player in DB
-        DB.esegui(DB.DBcmd["addplayer"], (self.guid, self.nick, 0, self.lastconnect, 0, 0))
-        self.isInDB = True
-'''

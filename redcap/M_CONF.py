@@ -8,16 +8,15 @@ versione = "1.00 Alpha"         #RedCap Version. !!! PLEASE ADD "-MOD by YOURNAM
 ##SERVER
 ServerPars = {
 "AliasDuration": 90,                #tempo di memorizzazione in giorni di un vecchio alias prima che sia cancellato per inutilizzo
-"AntiRecon" : True,                #Antireconnect attivo se True, disattivato se False
-"AntiReconInterval" : 200,         #Tempo di antireconnect in sec
+"AntiReconInterval" : 200,         #Tempo di antireconnect in sec (se 0  = Disattivato)
 "AutoBalance" : 2,                 #0=disattivato 1=attivato 2=automatico
-"Baseconf" : "server.cfg",         #nome della configurazione standard del gameserver
+"Baseconf" : "server.cfg",        #nome della configurazione standard del gameserver
 "FloodControl" : True,             #Flood control abilitato = True, disabilitato = false (TODO comando per abilitare disabilitare da chat?)
 "goodNick":r"[a-zA-Z]",          #Regex minima che il nick deve soddisfare.
 "Logfolder": "logs",                #cartella di registrazione dei log
 "MaxFlood" : 6,                     #massimo numero di say in un tempo fissato (CRON1)
 "MaxNickChanges" : 3,              #massimi change nick in un tempo fissato (CRON1)
-"MinNotoriety": -999,            #valore notoriety per giocare nel server. La notoriety di un nuovo player è 0
+"MinNotoriety": -999,            #valore notoriety per giocare nel server. La notoriety di un nuovo player ï¿½ 0
 "minNick":3,                            #Lunghezza minima nick
 "Passport" : False,                #True=passport attivo gia' all'avvio, False=passport inattivo all'avvio.
 "UrtPath" : "../../../q3ut4",      #path relativo della cartella q3ut4 di urt
@@ -26,6 +25,8 @@ ServerPars = {
 #NOTA LOGS: i log sono reperibili nella cartella logs e sono i seguenti
 crashlog = "crash.log"       #eventi di crash del server
 socketlog = "socket.log"  #comandi non inviati
+commandlog = "command.log"  #comandi bot inviati dai giocatori
+commandlogMinLevel = 0      #livello minimo del comando affinche sia registrato nel log (settare piu alto del più alto dei livelli di comando se non si vuole registrare nulla)
 
 #REDCAP
 botname = "^8RC| "                 #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
@@ -43,7 +44,7 @@ SocketPars = {
 "ServerLog":  ServerPars["Logfolder"] + "/" + socketlog   #nome del log dove il socket registra i suoi errori.
 }
 ## PARSER
-NomeFileLog = "AUXILIARY/2011_May_27_log.log" #prova.log" # DEBUG"../games.log"    #(OBBLIGATORIO!) Percorso relativo del file di log da controllare
+NomeFileLog = "AUXILIARY/prova.log" #prova.log" # DEBUG"../games.log"    #(OBBLIGATORIO!) Percorso relativo del file di log da controllare
 
 ##TEMPI
 TempoCiclo = 0.5                #Frequenza in sec del controllo del log
@@ -92,17 +93,22 @@ lev_callvote = 0                    #chiama voto
 #lev_war = 1                     #configurazione per war
 
 ##NOTORIETY
-# valore di notoriety aggiunto a quella del player in caso di alcuni avvenimenti. Quando la notoriety scende al di sotto di ServerPars["MinNotoriety"] il player non può piu accedere al server.
+# valore di notoriety aggiunto a quella del player in caso di alcuni avvenimenti. Quando la notoriety scende al di sotto di ServerPars["MinNotoriety"] il player non puï¿½ piu accedere al server.
 Notoriety = {
 "guidchange" : -5,          #penalizzazione punti per cambio guid al volo (probabile cheat)
 "badguid" : -20,            #penalizzazione punti per guid non corretta (probabile cheat)
 "roundXpoint": 100,       #num. di round da giocare per guadagnare un punto notoriety
-"dayXpoint": 5               #giorni di anzianità della guid per guadagnare un punto notoriety
+"dayXpoint": 5               #giorni di anzianitï¿½ della guid per guadagnare un punto notoriety
 }
 
 ##SALUTI
-#Opzioni di saluto player all'entrata in game (da sommare): 0 = nessun saluto 1 = nome attuale 2 = nome di registrazione in DB 4 = skill 8 = affidabilità 16 = ultima visita
+#Opzioni di saluto player all'entrata in game (da sommare): 0 = nessun saluto 1 = nome attuale 2 = nome di registrazione in DB 4 = skill 8 = affidabilitï¿½ 16 = ultima visita
 saluti = 31
+
+
+
+
+
 
 #PLAYER
 
@@ -164,8 +170,6 @@ KS23 = '^2 23 kill? ^4ok guys, John Rambo is here'
 KS24 = '^2 24 corpses... ^4bigger massacre than waco!'
 KS25 = '^2Kill counter is OVER! ^3U^4N^6B^1E^7L^8I^9E^0V^1A^3B^5L^2E^6!'
 
-## VARIE
-saluta = True                   #saluti ai nuovi players (True=abilitati False=disabilitati)
 
 ##MESSAGGI
 #messaggi
@@ -190,6 +194,7 @@ SP18 = " ^2To be registered as trusted player ^1put your clan tag"
 
 '''########## NON CAMBIARE I PARAMETRI QUI SOTTO ###########'''
 """Do NOT MODIFY below this line or RedCap could hung up."""
+
 
 
 

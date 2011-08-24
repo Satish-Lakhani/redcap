@@ -11,14 +11,15 @@ class Database:
         self.conn = None
         self.cur = None
         self.query = {
-        "cercadati":"""SELECT * FROM DATI WHERE GUID = ?""",           #cerca nella tab DATI in base alla GUID
-        "cercaloc":"""SELECT * FROM LOC WHERE GUID = ?""",           #cerca nella tab LOC in base alla GUID
-        #inserisce un player  (guid, DBnick, skill, rounds, lastconnect, level, tempban, notoriety, firstconn, streak,alias,)
-        "newdati" : """INSERT INTO DATI VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+        "cercadati":"""SELECT * FROM DATI WHERE GUID = ?""",                    #cerca nella tab DATI in base alla GUID
+        "cercaloc":"""SELECT * FROM LOC WHERE GUID = ?""",                      #cerca nella tab LOC in base alla GUID
+        "newdati" : """INSERT INTO DATI VALUES (?,?,?,?,?,?,?,?,?,?,?)""",       #inserisce un player  (guid, DBnick, skill, rounds, lastconnect, level, tempban, notoriety, firstconn, streak,alias,)
         "newdeath": """INSERT INTO DEATH (GUID) VALUES (?)""",
         "newhit": """INSERT INTO HIT (GUID) VALUES (?)""",
         "newkill": """INSERT INTO KILL (GUID) VALUES (?)""",
-        "newloc": """INSERT INTO LOC (GUID) VALUES (?)""",
+        "newloc": """INSERT INTO LOC (GUID, IP) VALUES (?, ?)""",
+        "salvadati":"""UPDATE DATI SET NICK=?, SKILL=?, ROUND=?, LASTCONN=?, LEVEL=?, TEMPBAN=?, REPUTATION=?, STREAK=?, ALIAS=? WHERE GUID=?""",
+
         }
 
     def connetti (self): 
@@ -68,4 +69,5 @@ class Database:
     "trovazeroround":"""SELECT TBgiocatori.GUID FROM TBskill, TBgiocatori WHERE TBskill.GUID=TBgiocatori.GUID AND TBskill.ROUND < 2 AND TBgiocatori.BANNED < 5""" #trova i player che non hanno giocato nemmeno due round completi.
     }
     '''
+
 

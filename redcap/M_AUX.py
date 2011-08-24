@@ -11,23 +11,7 @@ import M_CONF
         f = open("logs/crash.log", "a")
     except:'''
 
-def crashlog(t, v, tra):
-    """gestisce i crash del programma, scrivendo l'errore nel file di log"""
-    import traceback
-    evento = "\r\n REDCAP CRASH:: "
-    for stringa in traceback.format_tb(tra):
-        evento = evento + str(stringa)
-    for stringa in traceback.format_exception_only(sys.last_type, sys.last_value):
-        evento = evento + str(stringa)
-    scriviLog(evento, M_CONF.ServerPars["Logfolder"] + "/" + M_CONF.crashlog)
-    sys.exit()
 
-def scrivilog(evento, nomelog):          #TODO separare i log per argomenti e fare log di debug
-    """scrive il messaggio "evento" nel file di log di RedCap"""
-    evento = (time.strftime("%d.%b %H.%M.%S", time.localtime()) + ": " + evento + "\r\n")
-    f = open(nomelog, "a")
-    f.write(evento)
-    f.close()
 
 def sleep(tempo):
     time.sleep(tempo)
