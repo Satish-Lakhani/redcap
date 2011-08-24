@@ -105,6 +105,11 @@ Notoriety = {
 #Opzioni di saluto player all'entrata in game (da sommare): 0 = nessun saluto 1 = nome attuale 2 = nome di registrazione in DB 4 = skill 8 = affidabilitï¿½ 16 = ultima visita
 saluti = 31
 
+#SKILL (parametri per la formula skill)
+Kpp = 50          #numero di kill (a delta skill 0) necessarie per guadagnare un punto skill. 
+range = 900     #piu grande è il valore, più alti sono i valori di skill che si possono raggiungere.
+                        # Numero di player a skill 0 che un giocatore a skill 1000 deve uccidere per compensare una sola uccisione da parte di un player a skill 0:
+                        #range=300: kill 785; range=500: kill 55;  range=600: kill 28; range=700: kill 17; range=800: kill 12; range=900: kill 9; range=1000: kill 7; range=3000: kill 2;
 
 
 
