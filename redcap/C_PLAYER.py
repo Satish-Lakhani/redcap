@@ -32,7 +32,7 @@ class Player:
         self.reputation = 0 #reputazione assegnata dagli altri players (salvata in DB)
         self.rounds = 0 #round giocati
         #self.rusher =0 #tempo totale di vita sul gameserver / tempo totale (da un'idea della bravura e camperosita)
-        self.skill = 0 #skill
+        self.skill = 0.0 #skill
         self.slot_id = None #(string) slot id
         self.team = 0 #(string) 0=Sconosciuto 1=red, 2=blue, 3=spect
         self.tempban = 0 #data dell'ultimo tempban

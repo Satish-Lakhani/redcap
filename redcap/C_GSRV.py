@@ -12,6 +12,7 @@ class Server:
         self.FloodControl = parametri["FloodControl"]                   #Flood control abilitato
         self.Full = False                                                               #Server pieno TODO da usare per kikkare gli spect o cose simili
         self.Gametype = ""                                                      #gametype
+        self.Kpp = 50                                                                #numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
         self.MapName = ""                                                       #nome mappa corrente
         self.MatchMode = ""                                                   #stato matchmode
         self.MaxClients = ""                                                      #Numero massimo player
@@ -25,7 +26,9 @@ class Server:
         self.Logfolder = parametri["Logfolder"]
         self.Passport = parametri["Passport"]                           #1=passport attivo 0=passport inattivo.
         self.PT = {}                                                    #PlayerTable: dizionario che rappresenta i players presenti sul server e le loro caratteristiche
+        self.Range = 900                                              #piu grande è il valore, più alti sono i valori di skill che si possono raggiungere.
         self.RedCapStatus = 0                                           #stato RedCap (1=paused 0=attivo)
+        self.Sbil = 1                                                           #coefficiente di sbilanciamento tra i teams
         self.Specialconf = False                                        #specifica se il server sta usando una config diversa da quella base
         self.Startup_end = False                                             #Se False il server e' in fase di avvio.
         self.TopScores = [0,0,0,0]                                      #Top scores del server
@@ -52,9 +55,10 @@ class Server:
         self.TeamMembers[0] += 1                #assegno un player al team sconosciuti
         self.PT[id].lastconnect = conntime
 
-    def teamskill_coeff(self):              #TODO calcolare il coefficiente di bilanciamento skill
-        pass
-
+    def teamskill_sbil(self):
+        """Calcola il coefficiente di sbilanciamento dei teams"""
+        self.Sbil = (float(self.TeamMembers[1]) / float(self.TeamMembers[2]))          #coefficiente di sbilanciamento teams
+    
     def teamskill_eval(self):
         """Calcola le teamskill dei red e dei blue"""
         tot_red_skill = 0
@@ -65,7 +69,7 @@ class Server:
             elif pl.team == "2":
                 tot_blue_skill += pl.skill
         self.TeamSkill[0] = tot_red_skill / self.TeamMembers[1]
-        self.TeamSkill[0] = tot_blue_skill / self.TeamMembers[2]
+        self.TeamSkill[1] = tot_blue_skill / self.TeamMembers[2]
 
     def player_USERINFOCHANGED(self, info):                            #info (0=id, 1=nick, 2=team)
         if self.PT[info[0]].team <> info[2]:                       #vedo se ha cambiato TEAM

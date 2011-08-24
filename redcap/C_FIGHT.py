@@ -11,10 +11,14 @@ class Kills:
         pass
 
     def kill(self, frase, GSRV):                          #del tipo ['0', '0', '10'] (K,V,M)
-        """analizza una singola kill (il changeteam ed il kick sono gia' esclusi)"""
+        """analizza una singola kill (il changeteam e' gia' escluso)"""
+        K = frase[0]
+        V = frase[1]
+        M = frase[2]
         if frase[2] in ['12', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '25', '28', '30', '35', '38', '40' ]:      #KILL NORMALI 
-            #TODO: verifica tkill
-            #TODO: calcolo variazione skill
+            if self.is_tkill(GSRV.PT[K], GSRV.PT[V]):                      #TEAMKILL
+                return
+            Dsk = GSRV.deltaskill(K,V)        #TODO: calcolo variazione skill
             #TODO: calcolo variazione kstreak (eventuale spam)
             #TODO: verifica eventuali record (eventuale spam)
             #TODO: chiamo la funzione death per gestire il morto
@@ -29,7 +33,7 @@ class Kills:
             pass
 
     def is_tkill(self, K, V):
-        """verifica se è stato fatto un tkill"""
+        """verifica se è stato fatto un tkill e procede di conseguenza"""
         if K.team == V.team:
             pass    #TODO decidere cosa fare in caso di TK
 

@@ -23,6 +23,10 @@ DB = C_DB.Database(M_CONF.NomeDB)               #Istanzio il DB
 KILLS = C_FIGHT.Kills()                                        #Istanzio l'analizzatore kills
 HITS = C_FIGHT.Hits()                                        #Istanzio l'analizzatore hit
 
+##Parametri aggiuntivi
+GSRV.Kpp = M_CONF.Kpp                                      #Sensibilita' skill
+GSRV.Range = M_CONF.range                               #ampiezza curva skill
+
 ##FUNZIONI INTERNE DEL REDCAP##
 def balance():
     """Esegue il bilanciamento dei teams"""
@@ -200,16 +204,17 @@ def initGame(frase):    # frase (0=matchmode, 1=gametype, 2=maxclients,3=mapname
     GSRV.Startup_end = True            #Finisce la fase di startup (se non era gia finita)
 
 def initRound(frase):
-    GSRV.teamskill_eval()                                # aggiorno le teamskill
-    GSRV.teamskill_coeff()                              #aggiorno il coefficiente di bilanciamento skill
+    if GRSV.self.Startup_end:
+        GSRV.teamskill_eval()                                # aggiorno le teamskill
+        GSRV.teamskill_sbil()                              #aggiorno il coefficiente di sbilanciamento skill
     testo = " ^7U " + str(M_RC.GSRV.TeamMembers[0]) + "^1R " + str(M_RC.GSRV.TeamMembers[1]) + "^4B " + str(M_RC.GSRV.TeamMembers[2]) + "^2S " + str(M_RC.GSRV.TeamMembers[3]) #DEBUG
     say(testo, 1) #DEBUG
     pass        #TODO
 
-def kills(frase):           #del tipo ['0', '0', '10'] (K,V,M)
-    GSRV.PT[frase[1]].vivo = 2      #in ogni caso setto la vittima a "morto"
-    if frase[2] == '10':
-        return        #TODO gestire il changeteam  se necessario
+def kills(frase):                                              #del tipo ['0', '0', '10'] (K,V,M)
+    GSRV.PT[frase[1]].vivo = 2                          #in ogni caso setto la vittima a "morto"
+    if frase[2] == '10':                                        #CHANGETEAM  #TODO gestire il changeteam  se necessario
+        return       
     res = KILLS.Kill(frase)
 
     
