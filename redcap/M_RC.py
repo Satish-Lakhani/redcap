@@ -24,8 +24,9 @@ KILLS = C_FIGHT.Kills()                                        #Istanzio l'anali
 HITS = C_FIGHT.Hits()                                        #Istanzio l'analizzatore hit
 
 ##Parametri aggiuntivi
-GSRV.Kpp = M_CONF.Kpp                                      #Sensibilita' skill
-GSRV.Range = M_CONF.range                               #ampiezza curva skill
+GSRV.Sk_Kpp = float(M_CONF.Sk_Kpp)                                      #Sensibilita' skill
+GSRV.Sk_range = float(M_CONF.Sk_range)                               #ampiezza curva skill
+Sk_team_impact = float(M_CONF.Sk_team_impact)                   #percentuale della skil calcolata sul team avversario
 
 ##FUNZIONI INTERNE DEL REDCAP##
 def balance():
@@ -207,6 +208,7 @@ def initRound(frase):
     if GRSV.self.Startup_end:
         GSRV.teamskill_eval()                                # aggiorno le teamskill
         GSRV.teamskill_sbil()                              #aggiorno il coefficiente di sbilanciamento skill
+    #TODO settare i player non spect a vivo
     testo = " ^7U " + str(M_RC.GSRV.TeamMembers[0]) + "^1R " + str(M_RC.GSRV.TeamMembers[1]) + "^4B " + str(M_RC.GSRV.TeamMembers[2]) + "^2S " + str(M_RC.GSRV.TeamMembers[3]) #DEBUG
     say(testo, 1) #DEBUG
     pass        #TODO

@@ -1,17 +1,13 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-import sys                      #Necessaria per intercettare l'output di crash
 import time                     #Funzioni tempo
-import M_CONF
 
 '''def avvio():
     #controllo esistenza log
     try:
         f = open("logs/crash.log", "a")
     except:'''
-
-
 
 def sleep(tempo):
     time.sleep(tempo)

@@ -26,7 +26,7 @@ ServerPars = {
 crashlog = "crash.log"       #eventi di crash del server
 socketlog = "socket.log"  #comandi non inviati
 commandlog = "command.log"  #comandi bot inviati dai giocatori
-commandlogMinLevel = 0      #livello minimo del comando affinche sia registrato nel log (settare piu alto del più alto dei livelli di comando se non si vuole registrare nulla)
+commandlogMinLevel = 0      #livello minimo del comando affinche sia registrato nel log (settare piu alto del piï¿½ alto dei livelli di comando se non si vuole registrare nulla)
 
 #REDCAP
 botname = "^8RC| "                 #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
@@ -106,10 +106,11 @@ Notoriety = {
 saluti = 31
 
 #SKILL (parametri per la formula skill)
-Kpp = 50          #numero di kill (a delta skill 0) necessarie per guadagnare un punto skill. 
-range = 900     #piu grande è il valore, più alti sono i valori di skill che si possono raggiungere.
-                        # Numero di player a skill 0 che un giocatore a skill 1000 deve uccidere per compensare una sola uccisione da parte di un player a skill 0:
-                        #range=300: kill 785; range=500: kill 55;  range=600: kill 28; range=700: kill 17; range=800: kill 12; range=900: kill 9; range=1000: kill 7; range=3000: kill 2;
+Sk_team_impact = 0.3    #percentuale della skill calcolata in base alla teamskill avversaria (il resto e' calcolato in base alla skill dell'avversario diretto)
+Sk_Kpp = 50          #numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
+Sk_range = 800     #piu grande e il valore, piu alti sono i valori di skill che si possono raggiungere.
+                        #Numero di player a skill 0 che un giocatore a skill 1000 deve uccidere per compensare una sola uccisione da parte di un player a skill 0:
+                        #ES. range=300: kill 785; range=500: kill 55;  range=600: kill 28; range=700: kill 17; range=800: kill 12; range=900: kill 9; range=1000: kill 7; range=3000: kill 2;
 
 
 

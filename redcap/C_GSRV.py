@@ -12,7 +12,6 @@ class Server:
         self.FloodControl = parametri["FloodControl"]                   #Flood control abilitato
         self.Full = False                                                               #Server pieno TODO da usare per kikkare gli spect o cose simili
         self.Gametype = ""                                                      #gametype
-        self.Kpp = 50                                                                #numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
         self.MapName = ""                                                       #nome mappa corrente
         self.MatchMode = ""                                                   #stato matchmode
         self.MaxClients = ""                                                      #Numero massimo player
@@ -26,9 +25,9 @@ class Server:
         self.Logfolder = parametri["Logfolder"]
         self.Passport = parametri["Passport"]                           #1=passport attivo 0=passport inattivo.
         self.PT = {}                                                    #PlayerTable: dizionario che rappresenta i players presenti sul server e le loro caratteristiche
-        self.Range = 900                                              #piu grande è il valore, più alti sono i valori di skill che si possono raggiungere.
         self.RedCapStatus = 0                                           #stato RedCap (1=paused 0=attivo)
-        self.Sbil = 1                                                           #coefficiente di sbilanciamento tra i teams
+        self.Sk_Kpp = 50.0                                                                #numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
+        self.Sk_range = 800.0                                              #piu grande ï¿½ il valore, piï¿½ alti sono i valori di skill che si possono raggiungere.
         self.Specialconf = False                                        #specifica se il server sta usando una config diversa da quella base
         self.Startup_end = False                                             #Se False il server e' in fase di avvio.
         self.TopScores = [0,0,0,0]                                      #Top scores del server
@@ -55,10 +54,6 @@ class Server:
         self.TeamMembers[0] += 1                #assegno un player al team sconosciuti
         self.PT[id].lastconnect = conntime
 
-    def teamskill_sbil(self):
-        """Calcola il coefficiente di sbilanciamento dei teams"""
-        self.Sbil = (float(self.TeamMembers[1]) / float(self.TeamMembers[2]))          #coefficiente di sbilanciamento teams
-    
     def teamskill_eval(self):
         """Calcola le teamskill dei red e dei blue"""
         tot_red_skill = 0
@@ -80,6 +75,30 @@ class Server:
             self.PT[info[0]].nick =  info[1]
             self.PT[info[0]].nickchanges += 1                   #il controllo per i troppi nickchanges si fa da un'altra parte
             return True                                                     #il player ha cambiato nick
+
+    def skill_variation(self, K, V):
+        """calcola la variazione di skill dei players K e V in seguito alla kill"""
+        D = self.PT[K].skill - self.PT[V].skill                                         #Delta skill tra i due player
+        Dk = self.PT[K].skill - self.TeamSkill[self.PT[V]]                         #Delta skill Killer rispetto al team avversario
+        Dv =  self.TeamSkill[self.PT[K]] -self.PT[V].skill                          #Delta skill Killer rispetto al team avversario
+        Sbil = (float(self.TeamMembers[self.PT[V]]) / float(self.TeamMembers[self.PT[K]]))          #coefficiente di sbilanciamento teams
+        K_opponent_variation = (1- math.tanh(D/self.Sk_range))/self.Sk_Kpp         #Variazione skill del Killer in base a skill vittima
+        V_opponent_variation = -(2/self.Sk_Kpp - K_opponent_variation)                #Variazione skill della Vittima in base a skill killer
+        KT_variation =  (1- math.tanh(Dk/self.Sk_range))/self.Sk_Kpp              #Variazione skill del Killer in base a skill team vittima
+        VT_variation =  -(1- math.tanh(Dv/self.Sk_range))/self.Sk_Kpp              #Variazione skill della Vittima in base a skill team killer
+        self.PT[K].skill += Sbil * (self.Sk_team_impact * KT_variation + (1-self.Sk_team_impact) * K_opponent_variation) #(variazione pesata skill)
+        self.PT[V].skill += Sbil * (self.Sk_team_impact * VT_variation + (1-self.Sk_team_impact) * V_opponent_variation) #(variazione pesata skill)
+        return
+        
+
+
+
+
+
+
+
+
+
 
 
 
