@@ -9,7 +9,6 @@ import C_PLAYER       #Classe per creare players
 import C_SOCKET    #Classe socket per comunicazione con UrT
 import M_CMD        #Lista comandi
 import M_CONF      #Carico le configurazioni programma
-import M_FIGHT      #Modulo ausiliario per kills e hits
 import M_SAYS         #dati ausiliari per gestire i say ed i comandi
 exec("import M_%s" %M_CONF.RC_lang)            #importo modulo localizzazione linguaggio
 
@@ -17,15 +16,16 @@ Lang = eval( "M_%s.RC_outputs" %M_CONF.RC_lang)
 Saluti = eval( "M_%s.RC_saluti" %M_CONF.RC_lang)
 Logs = eval("M_%s.RC_logoutputs" %M_CONF.RC_lang)
 
-SCK = C_SOCKET.Sock(M_CONF.SocketPars)        #Istanzio il socket
-GSRV = C_GSRV.Server(M_CONF.ServerPars)       #Istanzio il gameserver
-DB = C_DB.Database(M_CONF.NomeDB)               #Istanzio il DB
+SCK = C_SOCKET.Sock(M_CONF.SocketPars)                          #Istanzio il socket
+GSRV = C_GSRV.Server(M_CONF.ServerPars, M_CONF.sv_SkillPars, M_CONF.sv_WarnPars)       #Istanzio il gameserver
+DB = C_DB.Database(M_CONF.NomeDB)                               #Istanzio il DB
 
-##Parametri aggiuntivi
-GSRV.Sk_Kpp = float(M_CONF.Skill["Sk_Kpp"])                                    #Sensibilita' skill
-GSRV.Sk_range = float(M_CONF.Skill["Sk_range"])                              #ampiezza curva skill
-GSRV.Sk_team_impact = float(M_CONF.Skill["Sk_team_impact"])      #frazione della skill calcolata sul team avversario, rispetto a quella calcolata sulla vittima
-GSRV.Sk_team_impact = float(M_CONF.Skill["Sk_penalty"])               #penalita' per teamkill (espressa come n° di kill da fare per bilanciare una penalty)
+##Parametri per le kill
+normalKills = ['12', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '25', '28', '30', '35', '38', '40' ]
+accident = ['6', '9', '31']
+suicide = '7'
+kick = '24'
+nuked = '34'
 
 ##FUNZIONI INTERNE DEL REDCAP##
 def balance():
@@ -214,15 +214,31 @@ def initRound(frase):
     say(testo, 1) #DEBUG
     pass        #TODO
 
-def kills(frase):                                              #del tipo ['0', '0', '10'] (K,V,M)
+def kills(frase):                                       #frase del tipo ['0', '0', '10'] (K,V,M)
     GSRV.PT[frase[1]].vivo = 2                          #in ogni caso setto la vittima a "morto"
-    if frase[2] == '10':                                        #CHANGETEAM  #TODO gestire il changeteam  se necessario
+    if frase[2] == '10':                                #CHANGETEAM  #TODO gestire il changeteam  se necessario
         return
-    res = M_FIGHT.kill(frase,GSRV)
-    if res == "tk":           #Caso TEAMKILL
-        tell(GSRV.PT[frase[0].slot_id], Lang["tkill"] %str(GSRV.PT[frase[0]].warning))
+    if frase[2] in normalKills :                                                #KILL DA ARMA
+        if GSRV.is_tkill(frase[0], frase[1]):
+            tell(GSRV.PT[frase[0].slot_id], Lang["tkill"] %str(GSRV.PT[frase[0]].warning))  #TEAMKILL          
+            return
+        GSRV.skill_variation(frase[0],frase[1])                                 #funzione che calcola ed assegna la variazione skill ai due players
+        #TODO: calcolo variazione kstreak (eventuale spam)
+        #TODO: verifica eventuali record (eventuale spam)
+        pass
+    elif frase[2] in accident :                                                 #INCIDENTE
+        pass
+    elif frase[2] == suicide:                                                   #SUICIDIO
+        pass
+    elif frase[2] == kick:                                                      #KICKED
+        pass
+    elif frase[2] == nuked:                                                     #NUKED
+        pass
+
+
+
+        
         #TODO interrompere streak se in corso
-    elif res ==
 
 
 def option_checker(v):

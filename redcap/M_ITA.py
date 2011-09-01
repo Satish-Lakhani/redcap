@@ -17,7 +17,7 @@ RC_outputs = {
 "ora":"^2Sono le ^4%s",
 "pwdset":"^2Password inserita. ^3Sara' attiva dal prossimo map load",
 "stillban": "^1%s, sei ancora bannato fino al ^6%s",
-"tkill": "^1Non uccidere i tuoi compagni o sarai kikkato. ^2Livello warning: ^4%s",
+"tkill": "^1NO TEAMKILL! ^2Applicata penalita skill. ^4Livello warning: ^1%s ",
 "voteON":"^2Il voto e' ora attivo per ^4%s ^2secondi",
 "warning":"^2%s ^1kikkato per somma di warning",
 "wrongcmd":"^3Comando non riconosciuto dal bot ^4RedCap",

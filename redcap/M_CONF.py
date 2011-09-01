@@ -8,36 +8,51 @@ versione = "1.00 Alpha"         #RedCap Version. !!! PLEASE ADD "-MOD by YOURNAM
 ##SERVER
 ServerPars = {
 "AliasDuration": 90,                #tempo di memorizzazione in giorni di un vecchio alias prima che sia cancellato per inutilizzo
-"AntiReconInterval" : 0,         #Tempo di antireconnect in sec (se 0  = Disattivato)
-"AutoBalance" : 2,                 #0=disattivato 1=attivato 2=automatico
-"Baseconf" : "server.cfg",        #nome della configurazione standard del gameserver
-"FloodControl" : True,             #Flood control abilitato = True, disabilitato = false (TODO comando per abilitare disabilitare da chat?)
-"goodNick":r"[a-zA-Z]",          #Regex minima che il nick deve soddisfare.
+"AntiReconInterval" : 0,            #Tempo di antireconnect in sec (se 0  = Disattivato)
+"AutoBalance" : 2,                  #0=disattivato 1=attivato 2=automatico
+"Baseconf" : "server.cfg",          #nome della configurazione standard del gameserver
+"FloodControl" : True,              #Flood control abilitato = True, disabilitato = false (TODO comando per abilitare disabilitare da chat?)
+"goodNick":r"[a-zA-Z]",             #Regex minima che il nick deve soddisfare.
 "Logfolder": "logs",                #cartella di registrazione dei log
 "MaxFlood" : 6,                     #massimo numero di say in un tempo fissato (CRON1)
-"MaxNickChanges" : 3,              #massimi change nick in un tempo fissato (CRON1)
-"MinNotoriety": -999,            #valore notoriety per giocare nel server. La notoriety di un nuovo player ï¿½ 0
-"minNick":3,                            #Lunghezza minima nick
-"Passport" : False,                #True=passport attivo gia' all'avvio, False=passport inattivo all'avvio.
-"UrtPath" : "../../../q3ut4",      #path relativo della cartella q3ut4 di urt
+"MaxNickChanges" : 3,               #massimi change nick in un tempo fissato (CRON1)
+"MinNotoriety": -999,               #valore notoriety per giocare nel server. La notoriety di un nuovo player ï¿½ 0
+"minNick":3,                        #Lunghezza minima nick
+"Passport" : False,                 #True=passport attivo gia' all'avvio, False=passport inattivo all'avvio.
+"UrtPath" : "../../../q3ut4",       #path relativo della cartella q3ut4 di urt
+}
+
+##WARNING
+sv_WarnPars = {
+"max_warns" : 5.0,                   #valore di warning dopo di che vieni kikkato  (si azzerano al reconnect). Uno slap dati da Redcap o un tk o un hit comportano automaticamente un warning.
+"adm_warn" : 1.0,                    #valore di uno warn dato da un admin
+"tk_warn" : 1.0,                     #valore di uno warn causato da un tk (in realta' un tk vale circa tk_warn + 3 hit_warn
+"hit_warn" : 0.3,                    #valore di uno warn dato da un team hit
+}
+##SKILL (parametri per la formula skill)
+#NOTA:Numero di player a skill 0 che un giocatore a skill 1000 deve uccidere per compensare una sola uccisione da parte di un player a skill 0:
+#ES. range=300: kill 785; range=500: kill 55;  range=600: kill 28; range=700: kill 17; range=800: kill 12; range=900: kill 9; range=1000: kill 7; range=3000: kill 2;
+
+sv_SkillPars = {
+"Sk_team_impact" : 0.3,              #percentuale della skill calcolata in base alla teamskill avversaria (il resto e' calcolato in base alla skill dell'avversario diretto)
+"Sk_Kpp" : 50,                       #numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
+"Sk_range" : 800,                    #piu grande e il valore, piu alti sono i valori di skill che si possono raggiungere.
+"Sk_penalty" : 4,                    #penalita' per teamkill (espressa come nï¿½ di kill da fare per bilanciare una penalty)
+"Ks_min" : 5,                        #minima streak affinche' il bot segnali la killstreak
+"Ks_not" : 0,                        #minima notoriety per segnalazione killstreak
 }
 
 #NOTA LOGS: i log sono reperibili nella cartella logs e sono i seguenti
-crashlog = "crash.log"       #eventi di crash del server
-socketlog = "socket.log"  #comandi non inviati
-commandlog = "command.log"  #comandi bot inviati dai giocatori
-commandlogMinLevel = 0      #livello minimo del comando affinche sia registrato nel log (settare piu alto del piï¿½ alto dei livelli di comando se non si vuole registrare nulla)
+crashlog = "crash.log"              #eventi di crash del server
+socketlog = "socket.log"            #comandi non inviati
+commandlog = "command.log"          #comandi bot inviati dai giocatori
+commandlogMinLevel = 0              #livello minimo del comando affinche sia registrato nel log (settare piu alto del piï¿½ alto dei livelli di comando se non si vuole registrare nulla)
 
 #REDCAP
 botname = "^8RC| "             #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
 RC_lang = "ITA"                    #Localizzazione linguaggio ITA #TODO (ENG FRA e altre, da fare)
 maxSlap = 10                        #massimo numero di slap che posso dare ad un player
-Warning = {
-"max_warns" : 5.0,                   #valore di warning dopo di che vieni kikkato  (si azzerano al reconnect). Uno slap dati da Redcap o un tk o un hit comportano automaticamente un warning.
-"adm_warn" : 1.0,                    #valore di uno warn dato da un admin
-"tk_warn" : 1.0,                         #valore di uno warn causato da un tk (in realta' un tk vale circa tk_warn + 3 hit_warn
-"hit_warn" : 0.3,                   #valore di uno warn dato da un team hit
-}
+
 ## SOCKET
 SocketPars = {
 "ServerRcon" : "xxxxxx",          #(OBBLIGATORIO!) rconpassword (inserire la password di rcon fra le virgolette)
@@ -109,15 +124,6 @@ Notoriety = {
 #Opzioni di saluto player all'entrata in game (da sommare): 0 = nessun saluto 1 = nome attuale 2 = nome di registrazione in DB 4 = skill 8 = affidabilitï¿½ 16 = ultima visita
 saluti = 31
 
-#SKILL (parametri per la formula skill)
-#NOTA:Numero di player a skill 0 che un giocatore a skill 1000 deve uccidere per compensare una sola uccisione da parte di un player a skill 0:
-#ES. range=300: kill 785; range=500: kill 55;  range=600: kill 28; range=700: kill 17; range=800: kill 12; range=900: kill 9; range=1000: kill 7; range=3000: kill 2;
-Skill = {
-"Sk_team_impact" : 0.3,    #percentuale della skill calcolata in base alla teamskill avversaria (il resto e' calcolato in base alla skill dell'avversario diretto)
-"Sk_Kpp" : 50,          #numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
-"Sk_range" : 800,     #piu grande e il valore, piu alti sono i valori di skill che si possono raggiungere.
-"Sk_penalty" : 4,       #penalita' per teamkill (espressa come n° di kill da fare per bilanciare una penalty)
-}
 
 
 
