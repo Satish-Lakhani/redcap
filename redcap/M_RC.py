@@ -4,12 +4,12 @@
 import time
 import re
 import C_DB         #Classe che rappresenta il DB
-import C_FIGHT      #Classe ausiliaria per kills e hits
 import C_GSRV       #Classe che rappresenta il gameserver
 import C_PLAYER       #Classe per creare players
 import C_SOCKET    #Classe socket per comunicazione con UrT
 import M_CMD        #Lista comandi
 import M_CONF      #Carico le configurazioni programma
+import M_FIGHT      #Modulo ausiliario per kills e hits
 import M_SAYS         #dati ausiliari per gestire i say ed i comandi
 exec("import M_%s" %M_CONF.RC_lang)            #importo modulo localizzazione linguaggio
 
@@ -20,13 +20,12 @@ Logs = eval("M_%s.RC_logoutputs" %M_CONF.RC_lang)
 SCK = C_SOCKET.Sock(M_CONF.SocketPars)        #Istanzio il socket
 GSRV = C_GSRV.Server(M_CONF.ServerPars)       #Istanzio il gameserver
 DB = C_DB.Database(M_CONF.NomeDB)               #Istanzio il DB
-KILLS = C_FIGHT.Kills()                                        #Istanzio l'analizzatore kills
-HITS = C_FIGHT.Hits()                                        #Istanzio l'analizzatore hit
 
 ##Parametri aggiuntivi
-GSRV.Sk_Kpp = float(M_CONF.Sk_Kpp)                                      #Sensibilita' skill
-GSRV.Sk_range = float(M_CONF.Sk_range)                               #ampiezza curva skill
-Sk_team_impact = float(M_CONF.Sk_team_impact)                   #percentuale della skil calcolata sul team avversario
+GSRV.Sk_Kpp = float(M_CONF.Skill["Sk_Kpp"])                                    #Sensibilita' skill
+GSRV.Sk_range = float(M_CONF.Skill["Sk_range"])                              #ampiezza curva skill
+GSRV.Sk_team_impact = float(M_CONF.Skill["Sk_team_impact"])      #frazione della skill calcolata sul team avversario, rispetto a quella calcolata sulla vittima
+GSRV.Sk_team_impact = float(M_CONF.Skill["Sk_penalty"])               #penalita' per teamkill (espressa come n° di kill da fare per bilanciare una penalty)
 
 ##FUNZIONI INTERNE DEL REDCAP##
 def balance():
@@ -46,7 +45,7 @@ def clientconnect(id):
         newplayer = C_PLAYER.Player()             #lo creo
         GSRV.player_NEW(newplayer, id, time.time())          #lo aggiungo alla PlayerTable ed ai TeamMember
     else:
-        pass        #il player giï¿½ esiste ed e' semplicemente un initgame #TODO vedere se serve
+        pass        #il player gia' esiste ed e' semplicemente un initgame #TODO vedere se serve
 
 def clientdisconnect(id):
     """Operazioni da fare alla disconnessione"""
@@ -83,7 +82,7 @@ def clientuserinfochanged(info):                    #info (0=id, 1=nick, 2=team)
         return   #inutile andare avanti
     res = GSRV.player_USERINFOCHANGED(info)                                        #Aggiorno NICK e TEAM (se res True, il player ha cambiato nick (o e' nuovo)
     if GSRV.PT[info[0]].justconnected:                                                        #PLAYER APPENA CONNESSO
-        res = False                                                                                        #non ha cambiato nick, inutile controllare gli alias.
+        res = False                                                                                        #non ha cambiato nick, inutile controllare gli alias. TODO da togliere se justconnect sparisce alla disconnessione
         db_datacontrol(GSRV.PT[info[0]].guid, info[0])                                     #controllo se il player esiste nel DB e ne recupero i dati (tb DATA) se no lo registro
         if GSRV.PT[info[0]].tempban > time.time():                                                  #CONTROLLO BAN
             ban = time.strftime("%d.%b.%Y %H.%M", time.localtime(GSRV.PT[info[0]].tempban))
@@ -137,7 +136,7 @@ def cr_floodcontrol():
             GSRV.PT[PL].flood = 0        #Se non e kikkato lo rimetto a zero
 
 def cr_full():
-    """verifica se il server ï¿½ pieno"""
+    """verifica se il server e' pieno"""
     pass #TODO fare
 
 def cr_nickrotation():
@@ -157,7 +156,7 @@ def cr_unvote():
 def cr_warning():
     """verifica se qualche player ha troppi warning"""
     for PL in GSRV.PT:
-        if GSRV.PT[PL].warning >= M_CONF.max_warns:
+        if GSRV.PT[PL].warning >= M_CONF.Warning["max_warns"]:
             #TODO gli abbasso la notoriety?
             kick("Redcap", GSRV.PT[PL].slot_id, Lang["warning"]%GSRV.PT[PL].nick)
 
@@ -166,12 +165,14 @@ def db_datacontrol(guid,id):
     DB.connetti()
     dati = DB.esegui(DB.query["cercadati"], (guid,)).fetchone()    # PROVO A CARICARE da TABELLA DATI
     if dati:                                                                                #se ESISTE IN DB recupero i dati (guid, DBnick, skill, rounds, lastconn, level, tempban, notoriety, firstconn, streak, alias)
+        GSRV.PT[id].isinDB = True                                               #esiste gia nel DB
         GSRV.PT[id].dati_load(dati, M_CONF.Notoriety["roundXpoint"], M_CONF.Notoriety["dayXpoint"], time.time())
         #TODO caricare i dati anche dalle altre tables?
     else:                                                                                  #se NON ESISTE IN DB: gli assegno i valori non ancora assegnati e lo registro inserendo guid e nick
         GSRV.PT[id].DBnick = GSRV.PT[id].nick                           #gli assegno il DBnick (potra' essere cambiato in seguito con il comando !nick)
         GSRV.PT[id].alias = [[str(time.time()), GSRV.PT[id].nick]]    #gli assegno il suo primo alias
-        DB.esegui(DB.query["newdati"], (GSRV.PT[id].guid, GSRV.PT[id].nick, 0, 0, GSRV.PT[id].lastconnect, 0, 0.0, 0, time.time(), 0, ""))
+        alias = str(time.time()) + " " + GSRV.PT[id].nick               #alias scritto nella forma per database
+        DB.esegui(DB.query["newdati"], (GSRV.PT[id].guid, GSRV.PT[id].nick, 0, 0, GSRV.PT[id].lastconnect, 0, 0.0, 0, time.time(), 0, alias))
         DB.esegui(DB.query["newdeath"], (GSRV.PT[id].guid,))
         DB.esegui(DB.query["newhit"], (GSRV.PT[id].guid,))
         DB.esegui(DB.query["newkill"], (GSRV.PT[id].guid,))
@@ -216,10 +217,14 @@ def initRound(frase):
 def kills(frase):                                              #del tipo ['0', '0', '10'] (K,V,M)
     GSRV.PT[frase[1]].vivo = 2                          #in ogni caso setto la vittima a "morto"
     if frase[2] == '10':                                        #CHANGETEAM  #TODO gestire il changeteam  se necessario
-        return       
-    res = KILLS.Kill(frase)
+        return
+    res = M_FIGHT.kill(frase,GSRV)
+    if res == "tk":           #Caso TEAMKILL
+        tell(GSRV.PT[frase[0].slot_id], Lang["tkill"] %str(GSRV.PT[frase[0]].warning))
+        #TODO interrompere streak se in corso
+    elif res ==
 
-    
+
 def option_checker(v):
     """serve per estrarre le opzioni in base 2 da un numero"""
     option = []
@@ -255,7 +260,7 @@ def saluta(modo, id):
         saluto += Saluti[opz]%X[opz]
     if saluto <> "":
         say(saluto, 0)
-    print saluto
+    print saluto #DEBUG
    
 def says(frase):                                                       #frase (0=id, 1=testo)
     if frase[0]not in GSRV.PT:   #potrebbero partire dei say prima del ClientBegin, dando errore "KeyError: '0'
@@ -263,13 +268,13 @@ def says(frase):                                                       #frase (0
     GSRV.PT[frase[0]].flood += 1
     if censura(frase[1]):                              #ho trovato un insulto
         GSRV.PT[frase[0]].warning += 1      #lo warno
-        grace = M_CONF.max_warns - GSRV.PT[frase[0]].warning #warning rimasti
+        grace = M_CONF.Warning["max_warns"] - GSRV.PT[frase[0]].warning #warning rimasti
         slap("Redcap", (1, frase[0]), Lang["insults"]%grace)   #lo slappo
 
 def scrivilog(evento, nomelog):          #TODO separare i log per argomenti e fare log di debug
     """scrive il messaggio "evento" nel file di log di RedCap"""
     evento = (time.strftime("%d.%b %H.%M.%S", time.localtime()) + ": " + evento + "\r\n")
-    f = open(GSRV.Logfolder + "\\" + nomelog, "a")
+    f = open(GSRV.Logfolder + "/" + nomelog, "a")
     f.write(evento)
     f.close()
             

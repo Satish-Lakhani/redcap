@@ -35,6 +35,7 @@ sys.excepthook = crashlog                                       #abilito il log 
 PARSER = C_PARSER.Parser(M_CONF.NomeFileLog)          #Istanzio il Parser
 CRON1 = M_AUX.Cronometro(M_CONF.CRON1)                    #Istanzio il cron1
 
+
 def redcap_main():
     while 1:
         M_AUX.sleep(M_CONF.TempoCiclo)             #wait for a cycletime

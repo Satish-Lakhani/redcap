@@ -17,7 +17,7 @@ class Player:
         self.hits = {"0":0,"1":0,"3":0,"4":0,"5":0,"6":0,"9":0,"total":0} #hit fatte dal player
         #self.isk = float(0.0) #Skill istantanea
         self.ip = "" #(string) IP
-        #self.isInDB = False #Player esistente in DB.
+        self.isinDB = False #Player esistente in DB.
         self.kills = {"12":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"24":0,"25":0,"28":0,"30":0,"34":0,"35":0,"38":0,"40":0,"total":0} #kill fatte dal player
         self.ks = 0 #killstreak
         self.ksmax = 0 #max killstreak
@@ -33,12 +33,13 @@ class Player:
         self.rounds = 0 #round giocati
         #self.rusher =0 #tempo totale di vita sul gameserver / tempo totale (da un'idea della bravura e camperosita)
         self.skill = 0.0 #skill
+        self.skill_var = 0.0 #variazione skill durante il periodo di connessione
         self.slot_id = None #(string) slot id
         self.team = 0 #(string) 0=Sconosciuto 1=red, 2=blue, 3=spect
         self.tempban = 0 #data dell'ultimo tempban
         #self.totalplayedtime = 0 #tempo totale di gioco
         self.vivo = 0   #0=Sconosciuto 1=vivo, 2=morto #TODO mi interessa saperlo?
-        self.warning = 0    #warning assegnati al player
+        self.warning = 0.0    #warning assegnati al player da admin o per TK o thit
 
     def invalid_guid(self):
         """verifica se la guid del player NON e' corretta"""
