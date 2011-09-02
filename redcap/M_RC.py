@@ -226,32 +226,32 @@ def kills(frase):                                       #frase del tipo ['0', '0
         GSRV.skill_variation(frase[0],frase[1])         #funzione che calcola ed assegna la variazione skill ai due players
         res0 = GSRV.is_kstreak(frase[0],frase[1])       #calcolo variazioni kstreak (eventuale spam)
         res = option_checker(res0)                      #Separo le opzioni di ritorno
-        kz = GSRV.PT[frase[0].ks]                       #n. della frase di kstreak da spammare
+        kz = GSRV.PT[frase[0]].ks                       #n. della frase di kstreak da spammare
         if kz > len(Killz)-1:
             kz = len(Killz)-1                           
         if 1 in res:                                    #spammo ks in bigtext
-            say(Killz[kz]%GSRV.PT[frase[0].nick], 2)
+            say(Killz[kz]%GSRV.PT[frase[0]].nick, 2)
         elif 2 in res:                                  #spammo ks in console
-            say(Killz[kz]%GSRV.PT[frase[0].nick], 0)
-        if 4 in res:                                    #spammo personal record in console
-            say(Lang["record_personal"]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[0].ks]), 0)
+            say(Killz[kz]%GSRV.PT[frase[0]].nick, 0)
+        if 4 in res:                                    
+            say(Lang["record_personal"]%(GSRV.PT[frase[0]].nick, str(GSRV.PT[frase[0]].ks)), 0)  #spammo personal record in console
         if 8 in res:
-            say(Lang["record_alltime"]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[0].ks]), 2)   #spammo alltime record
+            say(Lang["record_alltime"]%(GSRV.PT[frase[0]].nick, str(GSRV.PT[frase[0]].ks)), 2)   #spammo alltime record
         elif 16 in res:
-            say(Lang["record_monthly"]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[0].ks]), 2)   #spammo monthly record
+            say(Lang["record_monthly"]%(GSRV.PT[frase[0]].nick, str(GSRV.PT[frase[0]].ks)), 2)   #spammo monthly record
         elif 32 in res:
-            say(Lang["record_weekly"]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[0].ks]), 2)    #spammo weekly record
+            say(Lang["record_weekly"]%(GSRV.PT[frase[0]].nick, str(GSRV.PT[frase[0]].ks)), 2)    #spammo weekly record
         elif 64 in res:
-            say(Lang["record_daily"]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[0].ks]), 2)     #spammo daily record
+            say(Lang["record_daily"]%(GSRV.PT[frase[0]].nick, str(GSRV.PT[frase[0]].ks)), 2)     #spammo daily record
         if 128 in res:
-            say(Killz[0]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[1].nick]), 2)               #spammo stop ks in bigtext
+            say(Killz[0]%(GSRV.PT[frase[0]].nick, GSRV.PT[frase[1]].nick), 2)               #spammo stop ks in bigtext
         elif 256 in res:
-            say(Killz[0]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[1].nick]), 0)               #spammo stop ks in console
-        GSRV.PT[frase[0].kills[frase[2]]] += 1          #aggiungo la kill alle statistiche
+            say(Killz[0]%(GSRV.PT[frase[0]].nick, GSRV.PT[frase[1]].nick), 0)               #spammo stop ks in console
+        GSRV.PT[frase[0]].kills[frase[2]] += 1          #aggiungo la kill alle statistiche
     elif frase[2] in accident :                                                             #INCIDENTE
         pass                                            #TODO vedere se si vuole contare
     elif frase[2] == suicide:                                                               #SUICIDIO
-        GSRV.PT[frase[1].skill -= GSRV.Sk_penalty / GSRV.Sk_Kpp     #penalizzo la skill
+        GSRV.PT[frase[1].skill] -= GSRV.Sk_penalty / GSRV.Sk_Kpp     #penalizzo la skill
     elif frase[2] == kick:                                                                  #KICKED
         pass                                            #TODO vedere se si vuole contare
     elif frase[2] == nuked:                                                                 #NUKED
