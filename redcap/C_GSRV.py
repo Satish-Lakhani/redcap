@@ -17,6 +17,8 @@ class Server:
         self.Gametype = ""                                              #gametype
         self.KsMin = sk_pars["Ks_min"]                                  #minima streak affinche' il bot segnali la killstreak
         self.KsNot = sk_pars["Ks_not"]                                  #minima notoriety per segnalazione killstreak
+        self.Ks_show = sk_pars["Ks_show"]                       #minima ks per segnalazione in chat
+        self.Ks_showbig = sk_pars["Ks_showbig"]             #minima ks per segnalazione in bigtext
         self.MapName = ""                                               #nome mappa corrente
         self.MatchMode = ""                                             #stato matchmode
         self.MaxClients = ""                                            #Numero massimo player
@@ -38,7 +40,7 @@ class Server:
         self.Sk_team_impact = sk_pars["Sk_team_impact"]                 #frazione della skill calcolata sul team avversario, rispetto a quella calcolata sulla vittima
         self.Specialconf = False                                        #specifica se il server sta usando una config diversa da quella base
         self.Startup_end = False                                        #Se False il server e' in fase di avvio.
-        self.TopScores = [0,0,0,0]                                      #Top scores del server
+        self.TopScores = [0,0,0,0]                                      #Top scores del server (alltime, month, week, day)
         self.TeamSkill = [0,0]                                          #skill media team red e blue
         self.TeamSkillCoeff = 1                                         #coefficiente di bilanciamento per teams squilibrati
         self.TeamMembers = [0,0,0,0]                                    #players 0=sconosciuto, 1=red, 2=blue, 3=spect
@@ -49,12 +51,34 @@ class Server:
         self.WarnTk = warn_pars["tk_warn"]                              #valore di uno warn causato da un tk (in realta' un tk vale circa tk_warn + 3 hit_warn
         self.WarnHit = warn_pars["hit_warn"]                            #valore di uno warn dato da un team hit
 
-    def is_kstreak(self, K,V, stop = ""):
+    def is_kstreak(self, K,V):
         """gestisce la killstreak"""
-        pass
-
-        
-
+        res = 0
+        self.PT[K].ks += 1                                           #controllo streak del killer
+        if self.PT[K].ks >= self.Ks_showbig:
+            res +=  1                                                   #killstreak: Annuncio in bigtext
+        elif self.PT[K].ks >= self.Ks_show:
+            res += 2                                                 #killstreak: Annuncio in console
+        if self.PT[K].ks > self.PT[K].ksmax:
+           res += 4                                                     #killstreak: personal record
+        if self.PT[K].ks > self.TopScores[0]:                
+            self.TopScores = [self.PT[K].ks, self.PT[K].ks, self.PT[K].ks, self.PT[K].ks]           #killstreak: alltime record
+            res += 8
+        elif self.PT[K].ks > self.TopScores[1]:                
+            self.TopScores = [self.TopScores[0], self.PT[K].ks, self.PT[K].ks, self.PT[K].ks]       #killstreak: monthly record
+            res += 16
+        elif self.PT[K].ks > self.TopScores[2]:                
+            self.TopScores = [self.TopScores[0], self.TopScores[1], self.PT[K].ks, self.PT[K].ks]   #killstreak: weekly record
+            res += 32
+        elif self.PT[K].ks > self.TopScores[3]:                #killstreak: daily record
+            self.TopScores[3] = self.PT[K].ks
+            res += 64
+        if self.PT[V].ks >= self.Ks_showbig:
+           res += 128                                                     #Stop in bigtext
+        elif self.PT[V].ks >= self.Ks_show:
+           res += 256                                                    #Stop in console
+        self.PT[V].ks = 0                                           #metto a zero la ks della vittima
+        return res     
 
     def is_tkill(self, K, V):
         """verifica se e stato fatto un tkill e procede di conseguenza"""

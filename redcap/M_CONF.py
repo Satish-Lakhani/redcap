@@ -15,8 +15,8 @@ ServerPars = {
 "goodNick":r"[a-zA-Z]",             #Regex minima che il nick deve soddisfare.
 "Logfolder": "logs",                #cartella di registrazione dei log
 "MaxFlood" : 6,                     #massimo numero di say in un tempo fissato (CRON1)
-"MaxNickChanges" : 3,               #massimi change nick in un tempo fissato (CRON1)
-"MinNotoriety": -999,               #valore notoriety per giocare nel server. La notoriety di un nuovo player � 0
+"MaxNickChanges" : 3,           #massimi change nick in un tempo fissato (CRON1)
+"MinNotoriety": -999,             #valore notoriety per giocare nel server. La notoriety di un nuovo player e' 0
 "minNick":3,                        #Lunghezza minima nick
 "Passport" : False,                 #True=passport attivo gia' all'avvio, False=passport inattivo all'avvio.
 "UrtPath" : "../../../q3ut4",       #path relativo della cartella q3ut4 di urt
@@ -30,8 +30,8 @@ sv_WarnPars = {
 "hit_warn" : 0.3,                    #valore di uno warn dato da un team hit
 }
 ##SKILL (parametri per la formula skill)
-#NOTA:Numero di player a skill 0 che un giocatore a skill 1000 deve uccidere per compensare una sola uccisione da parte di un player a skill 0:
-#ES. range=300: kill 785; range=500: kill 55;  range=600: kill 28; range=700: kill 17; range=800: kill 12; range=900: kill 9; range=1000: kill 7; range=3000: kill 2;
+#NOTA: punteggio approssimativo di mappa che un giocatore a skill 1000 deve ottenere per mantenere la skill invariata:
+#ES. range=300: pt. 785-1; range=500: 55-1;  range=600: 28-1; range=700: 17-1; range=800: 12-1; range=900: 9-1; range=1000: 7-1; range=3000: 2-1;
 
 sv_SkillPars = {
 "Sk_team_impact" : 0.3,              #percentuale della skill calcolata in base alla teamskill avversaria (il resto e' calcolato in base alla skill dell'avversario diretto)
@@ -40,6 +40,8 @@ sv_SkillPars = {
 "Sk_penalty" : 4,                    #penalita' per teamkill (espressa come n� di kill da fare per bilanciare una penalty)
 "Ks_min" : 5,                        #minima streak affinche' il bot segnali la killstreak
 "Ks_not" : 0,                        #minima notoriety per segnalazione killstreak
+"Ks_show": 5,                       #minima ks per segnalazione in chat
+"Ks_showbig": 9,                #minima ks per segnalazione in bigtext
 }
 
 #NOTA LOGS: i log sono reperibili nella cartella logs e sono i seguenti
@@ -164,29 +166,6 @@ TempoControllo2 = 100           #Frequenza in sec per: messaggi di spam e disabi
 reg_only = True                 #If True only trusted player can save a record
 minKS = 4                       #minima stream affinche' il bot segnali la killstreak
 maxKS = 25                      #Lunghezza del dizionario in RCwords.py
-#messaggi di killstreak
-KS04 = '^2 4 noobs? you can do better!'
-KS05 = '^2 is warming up: ^15 ^2kills!'
-KS06 = '^2 killed 6 enemies in a row'
-KS07 = '^2 7 scalps? not bad!'
-KS08 = '^2 are you camping? ^1(8 kills!)'
-KS09 = '^2 9 kills. You are on fire!!'
-KS10 = '^2 1^40 ^3K^4I^5L^6L^8S^9!! '
-KS11 = '^2 11 kills! You sure ain\'t a noob...'
-KS12 = '^2 12 kills...aimbot or wallhack?'
-KS13 = '^2 13 kills? ^1You are a PRO!'
-KS14 = '^2 14 kills? kills? someone kill him!'
-KS15 = '^2 15 kills? are you Kabal?!'
-KS16 = '^2 16 kills? 16 kills? one more and i\'ll kick you!!'
-KS17 = '^2 17 kills? I was kidding!'
-KS18 = '^2 18 ^1You are more pro than before!'
-KS19 = '^2 19 kills! Are you playing against fools!?!?'
-KS20 = '^2 20 ^3KILLS^4!^5!^6!'
-KS21 = '^1 21 kills...i can\'t believe it! :-('
-KS22 = '^1 22 kills? 1337!'
-KS23 = '^2 23 kill? ^4ok guys, John Rambo is here'
-KS24 = '^2 24 corpses... ^4bigger massacre than waco!'
-KS25 = '^2Kill counter is OVER! ^3U^4N^6B^1E^7L^8I^9E^0V^1A^3B^5L^2E^6!'
 
 
 ##MESSAGGI

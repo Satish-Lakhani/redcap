@@ -15,6 +15,7 @@ exec("import M_%s" %M_CONF.RC_lang)            #importo modulo localizzazione li
 Lang = eval( "M_%s.RC_outputs" %M_CONF.RC_lang)
 Saluti = eval( "M_%s.RC_saluti" %M_CONF.RC_lang)
 Logs = eval("M_%s.RC_logoutputs" %M_CONF.RC_lang)
+Killz = eval("M_%s.RC_kills" %M_CONF.RC_lang)
 
 SCK = C_SOCKET.Sock(M_CONF.SocketPars)                          #Istanzio il socket
 GSRV = C_GSRV.Server(M_CONF.ServerPars, M_CONF.sv_SkillPars, M_CONF.sv_WarnPars)       #Istanzio il gameserver
@@ -222,8 +223,24 @@ def kills(frase):                                       #frase del tipo ['0', '0
         if GSRV.is_tkill(frase[0], frase[1]):
             tell(GSRV.PT[frase[0].slot_id], Lang["tkill"] %str(GSRV.PT[frase[0]].warning))  #TEAMKILL          
             return
-        GSRV.skill_variation(frase[0],frase[1])                                 #funzione che calcola ed assegna la variazione skill ai due players
-        #TODO: calcolo variazione kstreak (eventuale spam)
+        GSRV.skill_variation(frase[0],frase[1])                       #funzione che calcola ed assegna la variazione skill ai due players
+        res0 = GSRV.is_kstreak(frase[0],frase[1])                  #calcolo variazioni kstreak (eventuale spam)
+        res = option_checker(res0)                              #Separo le opzioni di ritorno
+        kz = GSRV.PT[frase[0].ks]
+        if kz > len(Killz): 
+            kz = len(Killz)                                              #n° della frase di kstreak da spammare
+        if 1 in res:                                                        #bigtext
+            say(Killz[kz]%GSRV.PT[frase[0].nick], 2)
+        elif 2 in res:                                                     #ks in console
+            say(Killz[kz]%GSRV.PT[frase[0].nick], 0)
+        if 4 in res:
+            say(Lang["personalrecord"]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[0].ks]))
+        if 8 in res:
+            #TODO alltime record
+
+
+
+        
         #TODO: verifica eventuali record (eventuale spam)
         pass
     elif frase[2] in accident :                                                 #INCIDENTE
