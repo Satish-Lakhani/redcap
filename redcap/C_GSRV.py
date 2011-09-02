@@ -54,11 +54,11 @@ class Server:
     def is_kstreak(self, K,V):
         """gestisce la killstreak"""
         res = 0
-        self.PT[K].ks += 1                                           #controllo streak del killer
+        self.PT[K].ks += 1                                              #controllo streak del killer
         if self.PT[K].ks >= self.Ks_showbig:
             res +=  1                                                   #killstreak: Annuncio in bigtext
         elif self.PT[K].ks >= self.Ks_show:
-            res += 2                                                 #killstreak: Annuncio in console
+            res += 2                                                    #killstreak: Annuncio in console
         if self.PT[K].ks > self.PT[K].ksmax:
            res += 4                                                     #killstreak: personal record
         if self.PT[K].ks > self.TopScores[0]:                
@@ -70,14 +70,14 @@ class Server:
         elif self.PT[K].ks > self.TopScores[2]:                
             self.TopScores = [self.TopScores[0], self.TopScores[1], self.PT[K].ks, self.PT[K].ks]   #killstreak: weekly record
             res += 32
-        elif self.PT[K].ks > self.TopScores[3]:                #killstreak: daily record
+        elif self.PT[K].ks > self.TopScores[3]:                         #killstreak: daily record
             self.TopScores[3] = self.PT[K].ks
             res += 64
         if self.PT[V].ks >= self.Ks_showbig:
-           res += 128                                                     #Stop in bigtext
+           res += 128                                                   #Stop in bigtext
         elif self.PT[V].ks >= self.Ks_show:
-           res += 256                                                    #Stop in console
-        self.PT[V].ks = 0                                           #metto a zero la ks della vittima
+           res += 256                                                   #Stop in console
+        self.PT[V].ks = 0                                               #metto a zero la ks della vittima
         return res     
 
     def is_tkill(self, K, V):
@@ -126,8 +126,8 @@ class Server:
         VT_variation =  -(1- math.tanh(Dv/self.Sk_range)) / self.Sk_Kpp              #Variazione skill della Vittima in base a skill team killer
         self.PT[K].skill += self.Sbil * (self.Sk_team_impact * KT_variation + (1 - self.Sk_team_impact) * K_opponent_variation) #(nuova skill)
         self.PT[V].skill += self.Sbil * (self.Sk_team_impact * VT_variation + (1 - self.Sk_team_impact) * V_opponent_variation) #(nuova skill)
-        self.PT[K].skill_var += self.Sbil * (self.Sk_team_impact * KT_variation + (1 - self.Sk_team_impact) * K_opponent_variation) #(variazione skill da inizio connessione)
-        self.PT[V].skill_var += self.Sbil * (self.Sk_team_impact * VT_variation + (1-  self.Sk_team_impact) * V_opponent_variation) #(variazione  skill da inizio connessione)
+        self.PT[K].skill_var += self.Sbil * (self.Sk_team_impact * KT_variation + (1 - self.Sk_team_impact) * K_opponent_variation) #(variazione skill da inizio connessione #TODO o per mappa?)
+        self.PT[V].skill_var += self.Sbil * (self.Sk_team_impact * VT_variation + (1 - self.Sk_team_impact) * V_opponent_variation) #(variazione  skill da inizio connessione)
         return
 
     def teamskill_eval(self):

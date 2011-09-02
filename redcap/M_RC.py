@@ -66,14 +66,14 @@ def clientdisconnect(id):
     DB.disconnetti()
     GSRV.player_DEL(id)
 
-def clientuserinfo(info):                                     #info (0=slot_id, 1=ip, 2=guid)
+def clientuserinfo(info):                       #info (0=slot_id, 1=ip, 2=guid)
     if GSRV.PT[info[0]].justconnected:                     #Se e un nuovo player
         GSRV.player_ADDINFO(info)                   #gli aggiungo GUID e IP
     elif info[2] <> GSRV.PT[info[0]].guid:            #cambio guid durante il gioco #TODO registrare il cambio guid???
         GSRV.PT[info[0]].notoriety += M_CONF.Notoriety["guidchange"]               #gli abbasso la notoriety in proporzione
         kick("Redcap", info[0], Lang["guidchange"]%info[1])
 
-def clientuserinfochanged(info):                    #info (0=id, 1=nick, 2=team)
+def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
     if GSRV.PT[info[0]].invalid_guid():                                                          #CONTROLLO VALIDITA GUID (adesso che ho pure il nick!)
         GSRV.PT[info[0]].notoriety += M_CONF.Notoriety["badguid"]               #abbasso la notoriety
         kick("Redcap", info[0], Lang["invalidguid"]%info[1])                            #e lo kikko        #TODO  registrare nick e ip in DB o in log
@@ -109,23 +109,23 @@ def clientuserinfochanged(info):                    #info (0=id, 1=nick, 2=team)
 
        # db_loccontrol(GSRV.PT[info[0]].guid)        #controllo il player nel DB (tb LOC)
 
-def comandi (frase):                                 # frase [id, testo] (es: "2:31 say: 3 Nero: !slap Cobr4" diventa: ["3", "!slap Cobr4"]
+def comandi (frase):                            #frase [id, testo] (es: "2:31 say: 3 Nero: !slap Cobr4" diventa: ["3", "!slap Cobr4"]
     """processo il comando prima di inviarlo alla finzione specializzata"""
-    if frase[0]not in GSRV.PT:   #potrebbero partire dei say prima del ClientBegin, dando errore "KeyError: '0'
+    if frase[0]not in GSRV.PT:                  #potrebbero partire dei say prima del ClientBegin, dando errore "KeyError: '0'
         return
-    for comando in M_CMD.comandi:                           #comando ["nomecomando","regex", livello]
-        res = re.search(comando[1], frase[1], re.I)          #Individuo il tipo di comando
-        if res:                                                                   #Ho trovato un comando
-            if comando[2] >= M_CONF.commandlogMinLevel:
+    for comando in M_CMD.comandi:               #comando ["nomecomando","regex", livello]
+        res = re.search(comando[1], frase[1], re.I)     #Individuo il tipo di comando
+        if res:                                         #Ho trovato un comando
+            if comando[2] >= M_CONF.commandlogMinLevel: #se e' un comando importante lo registro nel commandlog
                 scrivilog(Logs["command"] %(GSRV.PT[frase[0]].nick,  GSRV.PT[frase[0]].DBnick, GSRV.PT[frase[0]].level,  frase[1], comando[2]) , M_CONF.commandlog)
             if GSRV.PT[frase[0]].level < comando[2]:
                 tell(frase[0], Lang["nolevel"] %(str(comando[2]), GSRV.PT[frase[0]].level))        #player non autorizzato
             else:
                 #TODO inserire il controllo di bot in pausa
-                eval("%s(frase[0],res)" %comando[0]) #eseguo il comando e gli passo richiedente e parametri
+                eval("%s(frase[0],res)" %comando[0])    #eseguo il comando e gli passo richiedente e parametri
             break
         else:
-             tell(frase[0], Lang["wrongcmd"] )  #comando non riconosciuto
+             tell(frase[0], Lang["wrongcmd"] )          #comando non riconosciuto
 
 def cr_floodcontrol():
     """verifica (periodica) che nessun player abbia fatto flood"""
@@ -189,7 +189,7 @@ def db_loccontrol(guid):    #TODO unused
 
 
 def endMap(frase):
-    pass        #TODO
+    pass        #TODO salvare i record
 
 def endRound(frase):
     pass        #TODO
@@ -197,7 +197,7 @@ def endRound(frase):
 def hits():
     pass        #TODO
 
-def initGame(frase):    # frase (0=matchmode, 1=gametype, 2=maxclients,3=mapname)
+def initGame(frase):    # frase (0=matchmode, 1=gametype, 2=maxclients, 3=mapname)
     """Operazioni da fare a inizio mappa"""
     #recupero le modalita' server
     GSRV.MatchMode = frase[0]
@@ -208,8 +208,8 @@ def initGame(frase):    # frase (0=matchmode, 1=gametype, 2=maxclients,3=mapname
 
 def initRound(frase):
     if GRSV.self.Startup_end:
-        GSRV.teamskill_eval()                                # aggiorno le teamskill
-        GSRV.teamskill_sbil()                              #aggiorno il coefficiente di sbilanciamento skill
+        GSRV.teamskill_eval()                           #aggiorno le teamskill
+        GSRV.teamskill_sbil()                           #aggiorno il coefficiente di sbilanciamento skill
     #TODO settare i player non spect a vivo
     testo = " ^7U " + str(M_RC.GSRV.TeamMembers[0]) + "^1R " + str(M_RC.GSRV.TeamMembers[1]) + "^4B " + str(M_RC.GSRV.TeamMembers[2]) + "^2S " + str(M_RC.GSRV.TeamMembers[3]) #DEBUG
     say(testo, 1) #DEBUG
@@ -219,44 +219,43 @@ def kills(frase):                                       #frase del tipo ['0', '0
     GSRV.PT[frase[1]].vivo = 2                          #in ogni caso setto la vittima a "morto"
     if frase[2] == '10':                                #CHANGETEAM  #TODO gestire il changeteam  se necessario
         return
-    if frase[2] in normalKills :                                                #KILL DA ARMA
+    if frase[2] in normalKills :                                                            #KILL DA ARMA
         if GSRV.is_tkill(frase[0], frase[1]):
             tell(GSRV.PT[frase[0].slot_id], Lang["tkill"] %str(GSRV.PT[frase[0]].warning))  #TEAMKILL          
             return
-        GSRV.skill_variation(frase[0],frase[1])                       #funzione che calcola ed assegna la variazione skill ai due players
-        res0 = GSRV.is_kstreak(frase[0],frase[1])                  #calcolo variazioni kstreak (eventuale spam)
-        res = option_checker(res0)                              #Separo le opzioni di ritorno
-        kz = GSRV.PT[frase[0].ks]
-        if kz > len(Killz): 
-            kz = len(Killz)                                              #n° della frase di kstreak da spammare
-        if 1 in res:                                                        #bigtext
+        GSRV.skill_variation(frase[0],frase[1])         #funzione che calcola ed assegna la variazione skill ai due players
+        res0 = GSRV.is_kstreak(frase[0],frase[1])       #calcolo variazioni kstreak (eventuale spam)
+        res = option_checker(res0)                      #Separo le opzioni di ritorno
+        kz = GSRV.PT[frase[0].ks]                       #n. della frase di kstreak da spammare
+        if kz > len(Killz)-1:
+            kz = len(Killz)-1                           
+        if 1 in res:                                    #spammo ks in bigtext
             say(Killz[kz]%GSRV.PT[frase[0].nick], 2)
-        elif 2 in res:                                                     #ks in console
+        elif 2 in res:                                  #spammo ks in console
             say(Killz[kz]%GSRV.PT[frase[0].nick], 0)
-        if 4 in res:
-            say(Lang["personalrecord"]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[0].ks]))
+        if 4 in res:                                    #spammo personal record in console
+            say(Lang["record_personal"]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[0].ks]), 0)
         if 8 in res:
-            #TODO alltime record
-
-
-
-        
-        #TODO: verifica eventuali record (eventuale spam)
-        pass
-    elif frase[2] in accident :                                                 #INCIDENTE
-        pass
-    elif frase[2] == suicide:                                                   #SUICIDIO
-        pass
-    elif frase[2] == kick:                                                      #KICKED
-        pass
-    elif frase[2] == nuked:                                                     #NUKED
-        pass
-
-
-
-        
-        #TODO interrompere streak se in corso
-
+            say(Lang["record_alltime"]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[0].ks]), 2)   #spammo alltime record
+        elif 16 in res:
+            say(Lang["record_monthly"]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[0].ks]), 2)   #spammo monthly record
+        elif 32 in res:
+            say(Lang["record_weekly"]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[0].ks]), 2)    #spammo weekly record
+        elif 64 in res:
+            say(Lang["record_daily"]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[0].ks]), 2)     #spammo daily record
+        if 128 in res:
+            say(Killz[0]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[1].nick]), 2)               #spammo stop ks in bigtext
+        elif 256 in res:
+            say(Killz[0]%(GSRV.PT[frase[0].nick], GSRV.PT[frase[1].nick]), 0)               #spammo stop ks in console
+        GSRV.PT[frase[0].kills[frase[2]]] += 1          #aggiungo la kill alle statistiche
+    elif frase[2] in accident :                                                             #INCIDENTE
+        pass                                            #TODO vedere se si vuole contare
+    elif frase[2] == suicide:                                                               #SUICIDIO
+        GSRV.PT[frase[1].skill -= GSRV.Sk_penalty / GSRV.Sk_Kpp     #penalizzo la skill
+    elif frase[2] == kick:                                                                  #KICKED
+        pass                                            #TODO vedere se si vuole contare
+    elif frase[2] == nuked:                                                                 #NUKED
+        pass                                            #TODO vedere se si vuole contare
 
 def option_checker(v):
     """serve per estrarre le opzioni in base 2 da un numero"""

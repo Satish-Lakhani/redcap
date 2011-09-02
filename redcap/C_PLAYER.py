@@ -5,41 +5,40 @@ import re
 
 class Player:
     """rappresenta un singolo player e le sue proprieta'"""
-    def __init__(self ):  #la proprieta SLOT devo averla
-        self.alias = [] #tutti gli ultimi nick usati dal player
-        self.camp = 0 #hit/tempo di vita
-        self.DBnick = "" #(string) nick di registrazione in DB
-        self.deaths = {"6":0,"7":0,"9":0,"23":0,"24":0,"31":0,"34":0,"arma":0,"total":0} #morti subite dal player (non incluso il changeteam) #TODO non molto interessante. vedere se tenere
-        self.flood = 0 #numero di say in TempoControllo1
-        self.gained_skill = 0 #skill guadagnata nell'ultima connessione
-        self.guid = None  #(string) GUID
-        self.guidage = 0    #eta della guid che sta usando
-        self.hits = {"0":0,"1":0,"3":0,"4":0,"5":0,"6":0,"9":0,"total":0} #hit fatte dal player
-        #self.isk = float(0.0) #Skill istantanea
-        self.ip = "" #(string) IP
-        self.isinDB = False #Player esistente in DB.
-        self.kills = {"12":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"24":0,"25":0,"28":0,"30":0,"34":0,"35":0,"38":0,"40":0,"total":0} #kill fatte dal player
-        self.ks = 0 #killstreak
-        self.ksmax = 0 #max killstreak
-        self.lastconnect = 0 #data dell'ultimo connect
-        #self.lastdisconnect = None #data dell'ultimo disconnect
-        self.level = 0 #livello di autorizzazione all'uso del RedCap
-        self.justconnected = True #e' appena entrato
-        self.nick = "" #nick (stringa)
-        self.nickchanges = 0 #cambi nick in TempoControllo1
-        self.notoriety = 0 #livello di reputazione (sale con anzianita guid, rounds, bonus admin, scende con warning, tempban, tk, malus admin). Calcolata alla connessione
-        self.oldIP =[]      #IP usati precedentemente
-        self.reputation = 0 #reputazione assegnata dagli altri players (salvata in DB)
-        self.rounds = 0 #round giocati
-        #self.rusher =0 #tempo totale di vita sul gameserver / tempo totale (da un'idea della bravura e camperosita)
-        self.skill = 0.0 #skill
-        self.skill_var = 0.0 #variazione skill durante il periodo di connessione
-        self.slot_id = None #(string) slot id
-        self.team = 0 #(string) 0=Sconosciuto 1=red, 2=blue, 3=spect
-        self.tempban = 0 #data dell'ultimo tempban
-        #self.totalplayedtime = 0 #tempo totale di gioco
-        self.vivo = 0   #0=Sconosciuto 1=vivo, 2=morto #TODO mi interessa saperlo?
-        self.warning = 0.0    #warning assegnati al player da admin o per TK o thit
+    def __init__(self ):        #la proprieta SLOT devo averla
+        self.alias = []         #tutti gli ultimi nick usati dal player
+        self.camp = 0           #hit/tempo di vita
+        self.DBnick = ""        #(string) nick di registrazione in DB
+        #self.deaths = {"6":0,"7":0,"9":0,"23":0,"24":0,"31":0,"34":0,"arma":0,"total":0} #morti subite dal player (non incluso il changeteam)                          #TODO non molto interessante. vedere se tenere
+        self.flood = 0          #numero di say in TempoControllo1
+        self.guid = None        #(string) GUID
+        self.guidage = 0        #eta della guid che sta usando
+        self.hits = {"0":0,"1":0,"3":0,"4":0,"5":0,"6":0,"9":0,"total":0}   #hit fatte dal player
+        #self.isk = float(0.0)  #Skill istantanea
+        self.ip = ""            #(string) IP
+        self.isinDB = False     #Player esistente in DB.
+        self.kills = {"12":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"24":0,"25":0,"28":0,"30":0,"34":0,"35":0,"38":0,"40":0,"total":0}   #kill fatte dal player
+        self.ks = 0             #killstreak
+        self.ksmax = 0          #max killstreak
+        self.lastconnect = 0    #data dell'ultimo connect
+        #self.lastdisconnect = None                                         #data dell'ultimo disconnect
+        self.level = 0          #livello di autorizzazione all'uso del RedCap
+        self.justconnected = True                                           #e' appena entrato
+        self.nick = ""          #nick (stringa)
+        self.nickchanges = 0    #cambi nick in TempoControllo1
+        self.notoriety = 0      #livello di reputazione (sale con anzianita guid, rounds, bonus admin, scende con warning, tempban, tk, malus admin). Calcolata alla connessione
+        self.oldIP =[]          #IP usati precedentemente
+        self.reputation = 0     #reputazione assegnata dagli altri players (salvata in DB)
+        self.rounds = 0         #round giocati
+        #self.rusher =0         #tempo totale di vita sul gameserver / tempo totale (da un'idea della bravura e camperosita)
+        self.skill = 0.0        #skill
+        self.skill_var = 0.0    #variazione skill durante il periodo di connessione #TODO o mappa corrente?
+        self.slot_id = None     #(string) slot id
+        self.team = 0           #(string) 0=Sconosciuto 1=red, 2=blue, 3=spect
+        self.tempban = 0        #data dell'ultimo tempban
+        #self.totalplayedtime = 0                                           #tempo totale di gioco
+        self.vivo = 0           #0=Sconosciuto 1=vivo, 2=morto #TODO mi interessa saperlo?
+        self.warning = 0.0      #warning assegnati al player da admin o per TK o thit
 
     def invalid_guid(self):
         """verifica se la guid del player NON e' corretta"""

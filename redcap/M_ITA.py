@@ -22,8 +22,12 @@ RC_outputs = {
 "notimetocmd":"^2Devi aspettare ancora ^4%s minuti ^2per chiamare questo comando",
 "nuked":"^2Nuke lanciata su ^4%s",
 "ora":"^2Sono le ^4%s",
-"personalrecord": "^2Record personale di ^4s%: ^2%s kills",
 "pwdset":"^2Password inserita. ^3Sara' attiva dal prossimo map load",
+"record_alltime": "^6RECORD ASSOLUTO di ^4s%: ^6%s kills",
+"record_monthly": "^6RECORD MENSILE di ^4s%: ^6%s kills",
+"record_weekly": "^6RECORD SETTIMANALE di ^4s%: ^6%s kills",
+"record_daily": "^6RECORD ODIERNO di ^4s%: ^6%s kills",
+"record_personal": "^2Record personale di ^4s%: ^2%s kills",
 "stillban": "^1%s, sei ancora bannato fino al ^6%s",
 "tkill": "^1NO TEAMKILL! ^2Applicata penalita skill. ^4Livello warning: ^1%s ",
 "voteON":"^2Il voto e' ora attivo per ^4%s ^2secondi",
@@ -44,6 +48,7 @@ RC_logoutputs = {
 }
 
 RC_kills = {        #messaggi di killstreak
+0 :"^4%s ^2ha fermato la serie di ^5%s",
 1 :"",
 2 :"",
 3 :"",
@@ -70,5 +75,3 @@ RC_kills = {        #messaggi di killstreak
 24 : '^2 24 corpses... ^4bigger massacre than waco!',
 25 : '^2Kill counter is OVER! ^3U^4N^6B^1E^7L^8I^9E^0V^1A^3B^5L^2E^6!',
 }
-
-pass

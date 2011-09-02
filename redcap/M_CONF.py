@@ -48,7 +48,7 @@ sv_SkillPars = {
 crashlog = "crash.log"              #eventi di crash del server
 socketlog = "socket.log"            #comandi non inviati
 commandlog = "command.log"          #comandi bot inviati dai giocatori
-commandlogMinLevel = 0              #livello minimo del comando affinche sia registrato nel log (settare piu alto del pi� alto dei livelli di comando se non si vuole registrare nulla)
+commandlogMinLevel = 0              #livello minimo del comando affinche sia registrato nel log (settare piu alto del piu alto dei livelli di comando se non si vuole registrare nulla)
 
 #REDCAP
 botname = "^8RC| "             #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
