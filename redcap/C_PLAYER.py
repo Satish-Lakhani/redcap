@@ -32,6 +32,7 @@ class Player:
         self.rounds = 0         #round giocati
         #self.rusher =0         #tempo totale di vita sul gameserver / tempo totale (da un'idea della bravura e camperosita)
         self.skill = 0.0        #skill
+        self.skill_coeff = 1.0  #coefficiente di moltiplicazione skill che tende a 1 a round infiniti coeff = 1+[A/(round^C+B)]
         self.skill_var = 0.0    #variazione skill durante il periodo di connessione #TODO o mappa corrente?
         self.slot_id = None     #(string) slot id
         self.team = 0           #(string) 0=Sconosciuto 1=red, 2=blue, 3=spect
@@ -39,6 +40,33 @@ class Player:
         #self.totalplayedtime = 0                                           #tempo totale di gioco
         self.vivo = 0           #0=Sconosciuto 1=vivo, 2=morto #TODO mi interessa saperlo?
         self.warning = 0.0      #warning assegnati al player da admin o per TK o thit
+
+    def alias_to_db(self):
+        """prepara gli alias per scrittura in db"""
+        joiner1 = " "
+        joiner2 = "  "
+        alias = ""
+        for item in self.alias:
+            al = item[0] + joiner1 + item[1]+ joiner2
+            alias += al
+        return alias.rstrip()           #tolgo gli spazi finali
+
+    def dati_load(self,dati,N1,N2,time):
+        """Aggiorna il player con i dati presi dal database tabella DATI"""
+        self.DBnick = dati[1]                                         #dati = (guid, DBnick, skill, rounds, lastconn, level, tempban, notoriety, firstconn, streak, alias)
+        self.skill = dati[2]
+        self.rounds = dati[3]
+        self.lastconnect = dati[4]                                   #data dell'ultima connessione
+        self.level = dati[5]
+        self.tempban = dati[6]
+        self.guidage = (time - dati[8])/87400      #eta' della guid in giorni
+        self.reputation = dati[7]
+        self.notoriety = round(dati[3] / N1 + self.guidage / N2 + dati[7], 1)    #calcolo della notoriety (basata su round, guid age, e bonus/malus) - arrotondo a 1
+        self.ksmax = dati[9]
+        aliases = dati[10].split("  ")                                            #formatto gli alias in maniera leggibile
+        for al in aliases:
+            al=al.split(" ")
+            self.alias.append(al)
 
     def invalid_guid(self):
         """verifica se la guid del player NON e' corretta"""
@@ -57,20 +85,6 @@ class Player:
         else:
             return True
 
-    def dati_load(self,dati,N1,N2,time):
-        """Aggiorna il player con i dati presi dal database tabella DATI"""                                                               
-        self.DBnick = dati[1]                                         #dati = (guid, DBnick, skill, rounds, lastconn, level, tempban, notoriety, firstconn, streak, alias)
-        self.skill = dati[2]
-        self.rounds = dati[3]
-        self.lastconnect = dati[4]                                   #data dell'ultima connessione
-        self.level = dati[5]
-        self.tempban = dati[6]
-        self.guidage = (time - dati[8])/87400      #eta' della guid in giorni
-        self.reputation = dati[7]
-        self.notoriety = round(dati[3] / N1 + self.guidage / N2 + dati[7], 1)    #calcolo della notoriety (basata su round, guid age, e bonus/malus) - arrotondo a 1
-        self.ksmax = dati[9]
-        aliases = dati[10].split("  ")                                            #formatto gli alias in maniera leggibile
-        for al in aliases:
-            al=al.split(" ")
-            self.alias.append(al)
-
+    def skill_coeff_update(self):
+        self.skill_coeff = 1 + (600/(self.rounds**1.4 + 50))          #coefficiente skill che dipende dal n. di round giocati
+        print ("nome:",self.nick," rounds:",self.rounds," Coeff:",self.skill_coeff)  #DEBUG

@@ -8,6 +8,7 @@
 #TODO inserire controllo eliminazione vecchi alias
 #TODO fare anche ban per nick
 #TODO e' effettivamente necessario recuperare gli alias alla connection o si fa su richiesta?
+#TODO eliminare gli alias piu vecchi di n giorni
 
 import sys
 import C_PARSER       #Classe che rappresenta il parser
@@ -61,7 +62,7 @@ def redcap_main():
                         M_RC.comandi(frase[0])                    #passo richiedente e parametri alla funzione comandi del modulo M_RC
                         continue
                     elif frase[1] == "InitRound":
-                        pass    #TODO
+                        M_RC.initRound(frase[0])    
                         continue
                     elif frase[1] == "EndRound":
                         pass    #TODO

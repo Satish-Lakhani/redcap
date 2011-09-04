@@ -35,7 +35,7 @@ sv_WarnPars = {
 
 sv_SkillPars = {
 "Sk_team_impact" : 0.3,              #percentuale della skill calcolata in base alla teamskill avversaria (il resto e' calcolato in base alla skill dell'avversario diretto)
-"Sk_Kpp" : 50,                       #numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
+"Sk_Kpp" : 5,                       #numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
 "Sk_range" : 800,                    #piu grande e il valore, piu alti sono i valori di skill che si possono raggiungere.
 "Sk_penalty" : 4,                    #penalita' per teamkill (espressa come n� di kill da fare per bilanciare una penalty)
 "Ks_min" : 5,                        #minima streak affinche' il bot segnali la killstreak
@@ -65,7 +65,7 @@ SocketPars = {
 "ServerLog":  ServerPars["Logfolder"] + "/" + socketlog   #nome del log dove il socket registra i suoi errori.
 }
 ## PARSER
-NomeFileLog = "AUXILIARY/2011_May_31_log.log" #prova.log" # DEBUG"../games.log"    #(OBBLIGATORIO!) Percorso relativo del file di log da controllare
+NomeFileLog = "AUXILIARY/2011_Jul_24_log.log" #prova.log" # DEBUG"../games.log"    #(OBBLIGATORIO!) Percorso relativo del file di log da controllare
 
 ##TEMPI
 TempoCiclo = 0.5                #Frequenza in sec del controllo del log
