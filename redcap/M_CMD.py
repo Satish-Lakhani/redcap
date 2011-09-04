@@ -5,7 +5,6 @@ import M_CONF
 
 comandi = [
 #["autobalance",r": (?P<rich>\d+) .*?: !ab",RCconf.lev_autobalance],
-#["ban",r": (?P<rich>\d+) .*?: !ban (?P<target>.*)",RCconf.lev_ban],
 #["bilancia",r": (?P<rich>\d+) .*?: !tm",RCconf.lev_balance],
 ["callvote",r"!v$",M_CONF.lev_callvote],
 #["cyclemap",r": (?P<rich>\d+) .*?: !cy",RCconf.lev_cycle],
@@ -29,7 +28,7 @@ comandi = [
 #["skill",r": (?P<rich>\d+) .*?: !sk\s*(?P<target>.*)",RCconf.lev_skill],
 ["slap", r"!s(?P<num>\d*) (?P<target>.*)",M_CONF.lev_slap],
 #["status",r": (?P<rich>\d+) .*?: !status",RCconf.lev_status],
-#["tmpban",r": (?P<rich>\d+) .*?: !b(?P<num>\d*) (?P<target>.*)",RCconf.lev_tmpban],
+["tempban",r": (?P<rich>\d+) .*?: !b(?P<num>\d*) (?P<target>.*)",RCconf.lev_tempban],       #!b123 pippo
 #["top",r": (?P<rich>\d+) .*?: !top", RCconf.lev_top],
 #["war",r": (?P<rich>\d+) .*?: !!war \\(?P<pass>.*)", RCconf.lev_war],
 ]

@@ -29,6 +29,7 @@ sv_WarnPars = {
 "tk_warn" : 1.0,                     #valore di uno warn causato da un tk (in realta' un tk vale circa tk_warn + 3 hit_warn
 "hit_warn" : 0.3,                    #valore di uno warn dato da un team hit
 }
+
 ##SKILL (parametri per la formula skill)
 #NOTA: punteggio approssimativo di mappa che un giocatore a skill 1000 deve ottenere per mantenere la skill invariata:
 #ES. range=300: pt. 785-1; range=500: 55-1;  range=600: 28-1; range=700: 17-1; range=800: 12-1; range=900: 9-1; range=1000: 7-1; range=3000: 2-1;
@@ -68,8 +69,10 @@ SocketPars = {
 NomeFileLog = "AUXILIARY/2011_Jul_24_log.log" #prova.log" # DEBUG"../games.log"    #(OBBLIGATORIO!) Percorso relativo del file di log da controllare
 
 ##TEMPI
-TempoCiclo = 0.5                #Frequenza in sec del controllo del log
 CRON1 = 15                      #Frequenza in sec del cron1 (cronometro veloce)
+Tcyclemap = 12                  #tempo in minuti che deve intercorrere tra due cyclemap
+TempoCiclo = 0.5                #Frequenza in sec del controllo del log
+Ttempban = 96                   #durata massima tempban
 
 ##DATABASE
 NomeDB = "Rc_DB.sqlite"          #nome DB (se si cambia rinominare anche il file corrispondente)
@@ -83,7 +86,7 @@ unvoteType = 0                       #modalita' di voto permanente (0 esclude qu
 timeBetweenVote = 3            #tempo in minuti che deve intercorrere tra due voti
 
 ##CYCLEMAP
-Tcyclemap = 12                  #tempo in minuti che deve intercorrere tra due cyclemap
+
 
 ##LIVELLI COMANDI:
 #lev_autobalance = 2             #inserisce/disinserisce l'autobalance
@@ -107,7 +110,7 @@ lev_password = 3            #setta una password
 #lev_skill = 0                   #mostra skill del player
 lev_slap = 2                    #slap
 #lev_status = 3                  #status
-#lev_tmpban = 2                  #ban temporaneo
+lev_tmpban = 2                  #ban temporaneo
 #lev_top = 0                     #mostra i top record
 #lev_unreg = 3                   #toglie il passport
 lev_callvote = 0                    #chiama voto

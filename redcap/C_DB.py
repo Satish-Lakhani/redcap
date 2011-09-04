@@ -19,7 +19,7 @@ class Database:
         "newkill": """INSERT INTO KILL (GUID) VALUES (?)""",
         "newloc": """INSERT INTO LOC (GUID, IP) VALUES (?, ?)""",
         "salvadati":"""UPDATE DATI SET NICK=?, SKILL=?, ROUND=?, LASTCONN=?, LEVEL=?, TEMPBAN=?, REPUTATION=?, STREAK=?, ALIAS=? WHERE GUID=?""",
-
+        "tempban":"""UPDATE DATI SET TEMPBAN=? WHERE GUID=?""",
         }
 
     def connetti (self): 

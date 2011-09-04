@@ -60,7 +60,8 @@ class Server:
         elif self.PT[K].ks >= self.Ks_show:
             res += 2                                                    #killstreak: Annuncio in console
         if self.PT[K].ks > self.PT[K].ksmax:
-           res += 4                                                     #killstreak: personal record
+            self.PT[K].ksmax = self.PT[K].ks
+            res += 4                                                     #killstreak: personal record
         if self.PT[K].ks > self.TopScores[0]:                
             self.TopScores = [self.PT[K].ks, self.PT[K].ks, self.PT[K].ks, self.PT[K].ks]           #killstreak: alltime record
             res += 8

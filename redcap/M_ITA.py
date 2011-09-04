@@ -29,6 +29,8 @@ RC_outputs = {
 "record_daily": "^6RECORD ODIERNO di ^4s% ^6%s kills",
 "record_personal": "^2Record personale di ^4%s ^6%s kills",
 "stillban": "^1%s, sei ancora bannato fino al ^6%s",
+"tempban": "^1%s bannato per ore ^4%s",
+"tempbanmax": "^2Il massimo ban temporaneo è di ore ^4%s",
 "tkill": "^1NO TEAMKILL! ^2Applicata penalita skill. ^4Livello warning ^1%s ",
 "voteON":"^2Il voto e' ora attivo per ^4%s ^2secondi",
 "warning":"^2%s ^1kikkato per somma di warning",

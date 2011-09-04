@@ -331,6 +331,9 @@ def trovaslotdastringa(richiedente, stringa):
 ###############
 ##COMANDI RCON ##
 ###############
+def ban(richiedente, parametri):
+    """banna in maniera definitiva"""
+    pass
 
 def callvote(richiedente, parametri):
     """Chiama il voto di vario tipo"""
@@ -443,3 +446,19 @@ def slap(richiedente, parametri, reason=""):
 def tell(target,testo):
     """Invia un messaggio privato a target. Equivalente a "tell" da console. """
     SCK.cmd("tell " + target + " " + testo)
+
+def tempban(richiedente, parametri):    #TODO aggiungere reason?
+    """ban temporaneo"""
+    target = trovaslotdastringa(richiedente, parametri.group("target"))
+    if target.isdigit():                                                    #se ho trovato lo slot
+        if parametri.group("num").isdigit():                                #ho specificato la durata
+            ore = float(parametri.group("num"))
+            if ore > M_CONF.Ttempban:
+                ore = float(M_CONF.Ttempban)
+                tell(richiedente, Lang["tempbanmax"]%str(M_CONF.Ttempban))
+        else:
+            ore = 1.0         #se non specificato banno 1h
+        say(Lang["tempban"] %(GSRV.PT[target].nick, ore), 2)
+        time.sleep(1)
+        GSRV.PT[target].tempban = time.time() + ore*3600 #data scadenza ban
+        SCK.cmd("kick " + target)   #lo kikko (al clientdisconnect si aggiorna il tempban)
