@@ -12,14 +12,14 @@ class Server:
         self.Attivo = True                                              #TODO: da gestire. Presuppongo che il server sia up finche non provo il contrario
         self.BalanceMode = parametri["BalanceMode"]                     #modalita' di bilanciamento 0=disattivato 1=attivato 2=automatico
         self.Baseconf = parametri["Baseconf"]                           #config di base
-        #self.Banlist = []                                                               #copia in memoria della table BAN
+        #self.Banlist = []                                              #copia in memoria della table BAN
         self.FloodControl = parametri["FloodControl"]                   #Flood control abilitato
         self.Full = False                                               #Server pieno TODO da usare per kikkare gli spect o cose simili
         self.Gametype = ""                                              #gametype
         self.KsMin = sk_pars["Ks_min"]                                  #minima streak affinche' il bot segnali la killstreak
         self.KsNot = sk_pars["Ks_not"]                                  #minima notoriety per segnalazione killstreak
-        self.Ks_show = sk_pars["Ks_show"]                       #minima ks per segnalazione in chat
-        self.Ks_showbig = sk_pars["Ks_showbig"]             #minima ks per segnalazione in bigtext
+        self.Ks_show = sk_pars["Ks_show"]                               #minima ks per segnalazione in chat
+        self.Ks_showbig = sk_pars["Ks_showbig"]                         #minima ks per segnalazione in bigtext
         self.MapName = ""                                               #nome mappa corrente
         self.MatchMode = ""                                             #stato matchmode
         self.MaxClients = ""                                            #Numero massimo player
@@ -30,7 +30,7 @@ class Server:
         self.Nick_is_length = parametri["minNick"]                      #Lunghezza minima nick
         self.LastMapChange = 0                                          #Time al quale e' stato chiesto un cambio mappa
         self.LastVote = 0                                               #Time al quale e' stato chiesto l'ultimo voto
-        self.Logfolder = parametri["Logfolder"]
+        self.Logfolder = parametri["Logfolder"]                         #cartella dei logs
         #self.Passport = parametri["Passport"]                          #1=passport attivo 0=passport inattivo.
         self.PT = {}                                                    #PlayerTable: dizionario che rappresenta i players presenti sul server e le loro caratteristiche
         self.RedCapStatus = 0                                           #stato RedCap (1=paused 0=attivo)
@@ -143,6 +143,18 @@ class Server:
         self.PT[K].skill_var += Dsk_K                               #(variazione skill da inizio connessione #TODO o per mappa?)
         self.PT[V].skill_var += Dsk_V                               #(variazione  skill da inizio connessione)
         return
+
+    def team_balance(self, color):                                  #color = 1 muove red, 2 muove blu
+        """esegue il bilanciamento pesato dei teams"""
+        skill_to_move = (self.Teamskill[0] * self.TeamMembers[1] - self.Teamskill[1] * self.TeamMembers[2]) / 2
+        delta_min = 1000000.0                                         #valore sicuramente alto
+        for player in self.PT:
+            if self.PT[player].team == color:                       #e' del colore che devo muovere
+                delta = self.PT[player].skill - skill_to_move
+                if delta < delta_min:
+                    delta_min = delta
+                    target = player
+        return target
 
     def teamskill_eval(self):
         """Calcola le teamskill dei red e dei blue"""

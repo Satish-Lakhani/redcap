@@ -320,22 +320,22 @@ def trovaslotdastringa(richiedente, stringa):
     """recupera lo slot del target dalla stringa"""
     slot = []
     if stringa.isdigit():
-        return stringa                                                    #comando chiamato tramite routine interna
-    if stringa.startswith("#"):                                       #se inizia con cancelletto sto chiamando un clientnumber
+        return stringa                                                  #comando chiamato tramite routine interna
+    if stringa.startswith("#"):                                         #se inizia con cancelletto sto chiamando un clientnumber
         stringa = stringa.lstrip("#")
-        return stringa                                                        #ritorno un clientnumber
+        return stringa                                                  #ritorno un clientnumber
     for PL in GSRV.PT:
         if str.lower(GSRV.PT[PL].nick).find(str.lower(str.strip(stringa))) != -1: #porto tutto in minuscole e confronto
             slot.append(GSRV.PT[PL].slot_id)
     if len(slot) == 1:
-        return slot[0]                                                    #ritorno lo slot se e' univoco
+        return slot[0]                                                  #ritorno lo slot se e' univoco
     else:
-        tell(richiedente, Lang["nocleartarget"])                #lo slot non esiste o ne esiste piu di uno corrispondente al pezzo di nome. Se il nome e' ambiguo avverto ed esco
+        tell(richiedente, Lang["nocleartarget"])                        #lo slot non esiste o ne esiste piu di uno corrispondente al pezzo di nome. Se il nome e' ambiguo avverto ed esco
         return ""                                          
 
-##################################
+#####################################
 ## FUNZIONI CHIAMABILI DAL PLAYER  ##
-##################################
+#####################################
 
 def balancemode(richiedente, parametri):
     """setta il balancemode"""
@@ -360,9 +360,9 @@ def ban(richiedente, parametri):
         GSRV.PT[target].tempban = time.time() + 63072000   #ban per 2 anni
         #if GSRV.PT[target].ip in GSRV.Banlist...
         #GSRV.Banlist.append([])
-        #TODO oppure tenere la banlist in memoria (da pulire per i ban vecchi)
-        SCK.cmd("addIP " + GSRV.PT[target].ip)     #lo banno
-        SCK.cmd("kick " + target)                           #lo kikko (al clientdisconnect si aggiorna il tempban)
+        #TODO verificare se fare banlist da tenere in memoria (da pulire per i ban vecchi)
+        SCK.cmd("addIP " + GSRV.PT[target].ip)      #lo banno
+        SCK.cmd("kick " + target)                   #lo kikko (al clientdisconnect si aggiorna il tempban)
 
 
 def callvote(richiedente, parametri):
