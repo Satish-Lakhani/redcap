@@ -10,8 +10,9 @@ class Server:
         self.AliasDuration = parametri["AliasDuration"]
         self.AntiReconInterval = parametri["AntiReconInterval"]         #Tempo minimo fra due connessioni
         self.Attivo = True                                              #TODO: da gestire. Presuppongo che il server sia up finche non provo il contrario
-        self.AutoBalance = parametri["AutoBalance"]                     #modalita' di bilanciamento 0=disattivato 1=attivato 2=automatico
+        self.BalanceMode = parametri["BalanceMode"]                     #modalita' di bilanciamento 0=disattivato 1=attivato 2=automatico
         self.Baseconf = parametri["Baseconf"]                           #config di base
+        #self.Banlist = []                                                               #copia in memoria della table BAN
         self.FloodControl = parametri["FloodControl"]                   #Flood control abilitato
         self.Full = False                                               #Server pieno TODO da usare per kikkare gli spect o cose simili
         self.Gametype = ""                                              #gametype
@@ -135,12 +136,12 @@ class Server:
         V_opponent_variation = (2 / self.Sk_Kpp - K_opponent_variation)                #Variazione skill della Vittima in base a skill killer
         KT_variation =  (1- math.tanh(Dk/self.Sk_range)) / self.Sk_Kpp                  #Variazione skill del Killer in base a skill team vittima
         VT_variation =  -(1- math.tanh(Dv/self.Sk_range)) / self.Sk_Kpp                 #Variazione skill della Vittima in base a skill team killer
-        Dsk_K = self.PT[K].skill_coeff * self.Sbil * (self.Sk_team_impact * KT_variation + (1 - self.Sk_team_impact) * K_opponent_variation)     #delta skill del Killer
-        Dsk_V = self.PT[V].skill_coeff * self.Sbil * (self.Sk_team_impact * VT_variation + (1 - self.Sk_team_impact) * V_opponent_variation)     #delta skill della vittima
-        self.PT[K].skill += Dsk_K           #(nuova skill)
-        self.PT[V].skill += Dsk_V           #(nuova skill)
-        self.PT[K].skill_var += Dsk_K       #(variazione skill da inizio connessione #TODO o per mappa?)
-        self.PT[V].skill_var += Dsk_V       #(variazione  skill da inizio connessione)
+        Dsk_K = self.Sbil * (self.Sk_team_impact * KT_variation + (1 - self.Sk_team_impact) * K_opponent_variation)     #delta skill del Killer
+        Dsk_V = self.Sbil * (self.Sk_team_impact * VT_variation + (1 - self.Sk_team_impact) * V_opponent_variation)     #delta skill della vittima
+        self.PT[K].skill += Dsk_K * self.PT[K].skill_coeff          #(nuova skill)
+        self.PT[V].skill += Dsk_V * self.PT[V].skill_coeff          #(nuova skill)
+        self.PT[K].skill_var += Dsk_K                               #(variazione skill da inizio connessione #TODO o per mappa?)
+        self.PT[V].skill_var += Dsk_V                               #(variazione  skill da inizio connessione)
         return
 
     def teamskill_eval(self):

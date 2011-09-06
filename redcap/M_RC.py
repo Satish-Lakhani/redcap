@@ -12,6 +12,7 @@ import M_CONF      #Carico le configurazioni programma
 import M_SAYS         #dati ausiliari per gestire i say ed i comandi
 exec("import M_%s" %M_CONF.RC_lang)            #importo modulo localizzazione linguaggio
 
+#Carico i moduli di lingua
 Lang = eval( "M_%s.RC_outputs" %M_CONF.RC_lang)
 Saluti = eval( "M_%s.RC_saluti" %M_CONF.RC_lang)
 Logs = eval("M_%s.RC_logoutputs" %M_CONF.RC_lang)
@@ -20,6 +21,10 @@ Killz = eval("M_%s.RC_kills" %M_CONF.RC_lang)
 SCK = C_SOCKET.Sock(M_CONF.SocketPars)                          #Istanzio il socket
 GSRV = C_GSRV.Server(M_CONF.ServerPars, M_CONF.sv_SkillPars, M_CONF.sv_WarnPars)       #Istanzio il gameserver
 DB = C_DB.Database(M_CONF.NomeDB)                               #Istanzio il DB
+
+#DB.connetti()
+#GSRV.Banlist= (DB.esegui("""SELECT * FROM BAN""")).fetchall()   #carico la banlist #TODO da scaricare periodicamente (spostare in modulo apposito?)
+#DB.disconnetti()
 
 ##Parametri per le kill
 normalKills = ['12', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '25', '28', '30', '35', '38', '40' ]
@@ -328,12 +333,37 @@ def trovaslotdastringa(richiedente, stringa):
         tell(richiedente, Lang["nocleartarget"])                #lo slot non esiste o ne esiste piu di uno corrispondente al pezzo di nome. Se il nome e' ambiguo avverto ed esco
         return ""                                          
 
-###############
-##COMANDI RCON ##
-###############
+##################################
+## FUNZIONI CHIAMABILI DAL PLAYER  ##
+##################################
+
+def balancemode(richiedente, parametri):
+    """setta il balancemode"""
+    bmode = { 0:"OFF", 1:"Manual", 2:"Auto", }
+    if GSRV.BalanceMode == 0:
+        GSRV.BalanceMode = 1
+        say(Lang["balancemode"]%bmode[GSRV.BalanceMode])
+    elif GSRV.BalanceMode == 1:
+        GSRV.BalanceMode = 2
+        say(Lang["balancemode"]%bmode[GSRV.BalanceMode])
+    else:
+        GSRV.BalanceMode = 0
+        say(Lang["balancemode"]%bmode[GSRV.BalanceMode])
+
+
 def ban(richiedente, parametri):
     """banna in maniera definitiva"""
-    pass
+    target = trovaslotdastringa(richiedente, parametri.group("target"))
+    if target.isdigit():
+        say(Lang["ban"] %GSRV.PT[target].nick, 2)
+        time.sleep(1)
+        GSRV.PT[target].tempban = time.time() + 63072000   #ban per 2 anni
+        #if GSRV.PT[target].ip in GSRV.Banlist...
+        #GSRV.Banlist.append([])
+        #TODO oppure tenere la banlist in memoria (da pulire per i ban vecchi)
+        SCK.cmd("addIP " + GSRV.PT[target].ip)     #lo banno
+        SCK.cmd("kick " + target)                           #lo kikko (al clientdisconnect si aggiorna il tempban)
+
 
 def callvote(richiedente, parametri):
     """Chiama il voto di vario tipo"""
@@ -388,6 +418,13 @@ def mute(richiedente, parametri, reason = ""):
         if reason <> "":
             say(reason, 0)
         SCK.cmd("mute " + target)                                 #Invio al socket il comando mute
+
+def muteall(richiedente, parametri):
+    """Muta/smuta tutti i players di livello inferiore al richiedente"""
+    for player in GSRV.PT:
+        if GSRV.PT[player].level < GSRV.PT[richiedente].level
+            SCK.cmd("mute " + player)
+        say(Lang["muteall"], 2)
         
 def nuke(richiedente, parametri):
     """equivalente a "nuke" da console"""                   #TODO fare il nuke a morte
@@ -410,7 +447,6 @@ def password (richiedente, parametri):
     """Setta una password"""
     SCK.cmd("password " + parametri.group("pwd"))
     tell(richiedente, Lang["pwdset"])
-
 
 def level (richiedente, parametri):
     """assegna il livello ad un player"""

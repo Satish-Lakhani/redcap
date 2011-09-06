@@ -9,7 +9,7 @@ versione = "1.00 Alpha"         #RedCap Version. !!! PLEASE ADD "-MOD by YOURNAM
 ServerPars = {
 "AliasDuration": 90,                #tempo di memorizzazione in giorni di un vecchio alias prima che sia cancellato per inutilizzo
 "AntiReconInterval" : 0,            #Tempo di antireconnect in sec (se 0  = Disattivato)
-"AutoBalance" : 2,                  #0=disattivato 1=attivato 2=automatico
+"BalanceMode" : 2,                  #0=disattivato 1=attivato 2=automatico
 "Baseconf" : "server.cfg",          #nome della configurazione standard del gameserver
 "FloodControl" : True,              #Flood control abilitato = True, disabilitato = false (TODO comando per abilitare disabilitare da chat?)
 "goodNick":r"[a-zA-Z]",             #Regex minima che il nick deve soddisfare.
@@ -89,32 +89,33 @@ timeBetweenVote = 3            #tempo in minuti che deve intercorrere tra due vo
 
 
 ##LIVELLI COMANDI:
-#lev_autobalance = 2             #inserisce/disinserisce l'autobalance
-#lev_balance = 0                 #bilanciare team
-#lev_ban = 4                     #ban
-#lev_cycle = 2                   #cyclemap
+lev_balancemode = 2            #inserisce/disinserisce l'autobalance
+#lev_balance = 0                #bilanciare team
+lev_ban = 4                     #ban
+#lev_cycle = 2                  #cyclemap
 lev_force = 2                   #forceteam
-#lev_info = 0                    #mostra server IP e versione redcap
-#lev_isk =0                      #mostra instant skill del player
+#lev_info = 0                   #mostra server IP e versione redcap
+#lev_isk =0                     #mostra instant skill del player
 lev_kick = 2                    #kick
 lev_level = 4                   #assegno level
 lev_mute = 1                    #mute
-#lev_nick = 2                    #trova il nick ufficiale
+lev_muteall = 2                #mute all
+#lev_nick = 2                   #trova il nick ufficiale
 lev_nuke = 0                    #nuke #DEBUG
 lev_ora = 0                     #dice l'ora
-#lev_passport = 3                #attiva/disattiva il passport
-lev_password = 3            #setta una password
-#lev_pause = 3                   #mette il bot in pausa
-#lev_RCrestart = 4               #restart
-#lev_reg = 3                     #registrazione in DB ed assegnazione passport
-#lev_skill = 0                   #mostra skill del player
+#lev_passport = 3               #attiva/disattiva il passport
+lev_password = 3                #setta una password
+#lev_pause = 3                  #mette il bot in pausa
+#lev_RCrestart = 4              #restart
+#lev_reg = 3                    #registrazione in DB ed assegnazione passport
+#lev_skill = 0                  #mostra skill del player
 lev_slap = 2                    #slap
-#lev_status = 3                  #status
+#lev_status = 3                 #status
 lev_tmpban = 2                  #ban temporaneo
-#lev_top = 0                     #mostra i top record
-#lev_unreg = 3                   #toglie il passport
-lev_callvote = 0                    #chiama voto
-#lev_war = 1                     #configurazione per war
+#lev_top = 0                    #mostra i top record
+#lev_unreg = 3                  #toglie il passport
+lev_callvote = 0                #chiama voto
+#lev_war = 1                    #configurazione per war
 
 ##NOTORIETY
 # valore di notoriety aggiunto a quella del player in caso di alcuni avvenimenti. Quando la notoriety scende al di sotto di ServerPars["MinNotoriety"] il player non pu� piu accedere al server.
@@ -122,7 +123,7 @@ Notoriety = {
 "guidchange" : -5,          #penalizzazione punti per cambio guid al volo (probabile cheat)
 "badguid" : -20,            #penalizzazione punti per guid non corretta (probabile cheat)
 "roundXpoint": 100,       #num. di round da giocare per guadagnare un punto notoriety
-"dayXpoint": 5               #giorni di anzianit� della guid per guadagnare un punto notoriety
+"dayXpoint": 5               #giorni di anzianita della guid per guadagnare un punto notoriety
 }
 
 ##SALUTI

@@ -4,7 +4,8 @@
 import M_CONF
 
 comandi = [
-#["autobalance",r": (?P<rich>\d+) .*?: !ab",RCconf.lev_autobalance],
+["balancemode", r": (?P<rich>\d+) .*?: !bm", M_CONF.lev_balancemode],
+["ban", r"!ban (?P<target>.*)", M_CONF.lev_ban],
 #["bilancia",r": (?P<rich>\d+) .*?: !tm",RCconf.lev_balance],
 ["callvote",r"!v$",M_CONF.lev_callvote],
 #["cyclemap",r": (?P<rich>\d+) .*?: !cy",RCconf.lev_cycle],
@@ -16,6 +17,7 @@ comandi = [
 ["kick",r"!k (?P<target>.*)", M_CONF.lev_kick],
 ["level",r"!lev(?P<num>\d*) (?P<target>.*)",M_CONF.lev_level],
 ["mute",r"!m (?P<target>.*)",M_CONF.lev_mute],
+["muteall",r": (?P<rich>\d+) .*?: !mall", M_CONF.lev_muteall],
 #["nick",r": (?P<rich>\d+) .*?: !z (?P<target>.*)", RCconf.lev_nick],
 ["nuke",r"!n (?P<target>.*)",M_CONF.lev_nuke],
 #["nukeall",r": (?P<rich>\d+) .*?: !nall", RCconf.lev_nukeall],
@@ -28,7 +30,7 @@ comandi = [
 #["skill",r": (?P<rich>\d+) .*?: !sk\s*(?P<target>.*)",RCconf.lev_skill],
 ["slap", r"!s(?P<num>\d*) (?P<target>.*)",M_CONF.lev_slap],
 #["status",r": (?P<rich>\d+) .*?: !status",RCconf.lev_status],
-["tempban",r": (?P<rich>\d+) .*?: !b(?P<num>\d*) (?P<target>.*)",RCconf.lev_tempban],       #!b123 pippo
+["tempban",r": (?P<rich>\d+) .*?: !b(?P<num>\d*) (?P<target>.*)",M_CONF.lev_tempban],       #!b123 pippo
 #["top",r": (?P<rich>\d+) .*?: !top", RCconf.lev_top],
 #["war",r": (?P<rich>\d+) .*?: !!war \\(?P<pass>.*)", RCconf.lev_war],
 ]
