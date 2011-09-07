@@ -90,7 +90,7 @@ timeBetweenVote = 3            #tempo in minuti che deve intercorrere tra due vo
 
 ##LIVELLI COMANDI:
 lev_balancemode = 2            #inserisce/disinserisce l'autobalance
-#lev_balance = 0                #bilanciare team
+lev_balance = 0                #bilanciare team
 lev_ban = 4                     #ban
 #lev_cycle = 2                  #cyclemap
 lev_force = 2                   #forceteam

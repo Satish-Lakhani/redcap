@@ -48,7 +48,7 @@ def redcap_main():
                 elif frase[1].find("Client") !=  -1:            #gestisco le frasi Client indirizzando alla funzione appropriata (i comandi li parso anche in fase di startup)
                     exec("M_RC.%s(frase[0])"%frase[1].lower())
                     continue
-                if M_RC.GSRV.Startup_end:                           #ALTRI EVENTI da processare solo a startup finito
+                if M_RC.GSRV.Startup_end:                           #ALTRI EVENTI da processare solo a startup finito #TODO vedere se va bene cosi
                     if frase[1] == "Hits":
                         pass    #TODO
                         continue

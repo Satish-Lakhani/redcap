@@ -13,12 +13,13 @@ class Database:
         self.query = {
         "cercadati":"""SELECT * FROM DATI WHERE GUID = ?""",                    #cerca nella tab DATI in base alla GUID
         "cercaloc":"""SELECT * FROM LOC WHERE GUID = ?""",                      #cerca nella tab LOC in base alla GUID
-        "newdati" : """INSERT INTO DATI VALUES (?,?,?,?,?,?,?,?,?,?,?)""",       #inserisce un player  (guid, DBnick, skill, rounds, lastconnect, level, tempban, notoriety, firstconn, streak,alias,)
+        "newdati" : """INSERT INTO DATI VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",       #inserisce un player  (guid, DBnick, skill, rounds, lastconnect, level, tempban, notoriety, firstconn, streak, alias, varie)
         "newdeath": """INSERT INTO DEATH (GUID) VALUES (?)""",
         "newhit": """INSERT INTO HIT (GUID) VALUES (?)""",
         "newkill": """INSERT INTO KILL (GUID) VALUES (?)""",
         "newloc": """INSERT INTO LOC (GUID, IP) VALUES (?, ?)""",
-        "salvadati":"""UPDATE DATI SET NICK=?, SKILL=?, ROUND=?, LASTCONN=?, LEVEL=?, TEMPBAN=?, REPUTATION=?, STREAK=?, ALIAS=? WHERE GUID=?""",
+        "salvadati":"""UPDATE DATI SET NICK=?, SKILL=?, ROUND=?, LASTCONN=?, LEVEL=?, TEMPBAN=?, REPUTATION=?, STREAK=?, ALIAS=?, VARIE=? WHERE GUID=?""",
+        "salvakills":"""UPDATE KILL SET KNIFE=?, BERETTA=?, DE=?, SPAS=?, UMP45=?, MP5K=?, LR300=?, G36=?, PSG1=?, HK69=?, BLED=?, KICKED=?, NADE=?, SR8=?, AK103=?, NEGEV=?, M4=?, GOOMBA=? WHERE GUID=?""",
         "tempban":"""UPDATE DATI SET TEMPBAN=? WHERE GUID=?""",
         }
 

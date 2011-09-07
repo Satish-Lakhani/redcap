@@ -11,6 +11,7 @@ class Server:
         self.AntiReconInterval = parametri["AntiReconInterval"]         #Tempo minimo fra due connessioni
         self.Attivo = True                                              #TODO: da gestire. Presuppongo che il server sia up finche non provo il contrario
         self.BalanceMode = parametri["BalanceMode"]                     #modalita' di bilanciamento 0=disattivato 1=attivato 2=automatico
+        self.BalanceRequired = False                                #� stato richiesto un balance se True
         self.Baseconf = parametri["Baseconf"]                           #config di base
         #self.Banlist = []                                              #copia in memoria della table BAN
         self.FloodControl = parametri["FloodControl"]                   #Flood control abilitato
@@ -144,17 +145,23 @@ class Server:
         self.PT[V].skill_var += Dsk_V                               #(variazione  skill da inizio connessione)
         return
 
-    def team_balance(self, color):                                  #color = 1 muove red, 2 muove blu
+    def team_balance(self):                                  #color = 1 muove red, 2 muove blu
         """esegue il bilanciamento pesato dei teams"""
-        skill_to_move = (self.Teamskill[0] * self.TeamMembers[1] - self.Teamskill[1] * self.TeamMembers[2]) / 2
+        if self.TeamMembers[1] - self.TeamMembers[2] > 0:
+            team_to_increase = " blue"
+            team_to_reduce = 1
+        else:
+            team_to_increase = " red"
+            team_to_reduce = 2
+        skill_to_move = (self.TeamSkill[0] * self.TeamMembers[1] - self.TeamSkill[1] * self.TeamMembers[2]) / 2
         delta_min = 1000000.0                                         #valore sicuramente alto
         for player in self.PT:
-            if self.PT[player].team == color:                       #e' del colore che devo muovere
+            if self.PT[player].team == team_to_reduce:                       #e' del colore che devo muovere
                 delta = self.PT[player].skill - skill_to_move
                 if delta < delta_min:
                     delta_min = delta
                     target = player
-        return target
+        return target + team_to_increase
 
     def teamskill_eval(self):
         """Calcola le teamskill dei red e dei blue"""

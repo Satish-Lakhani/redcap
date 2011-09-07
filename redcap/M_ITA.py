@@ -2,15 +2,20 @@
 # -*- coding: utf-8 -*-
 
 #IMPORTANT!: TRANSLATION TO OTHER LANGUAGE
-#1) MAKE A COPY OF THIS FILE AND RENAME IT M_YOURLANGUAGE.PY
-#2)TRANSLATE IN YOUR LANGUAGE THE SENTENCE ON THE RIGHT OF COLON (:)
+#1) MAKE A COPY OF THIS FILE AND RENAME IT "M_YOURLANGUAGE.PY"
+#2)TRANSLATE INTO YOUR LANGUAGE THE SENTENCE ON THE RIGHT SIDE OF COLON (:) - USE ASCII 128 ONLY.
 #3)DO NOT MODIFY OR CANCEL THE %s VARIABLES!! DO NOT MODIFY ANYTHING OUTSIDE OF SENTENCES " " !!
-#4)IN M_CONF.PY CHANGE THE VALUE OF RC_lang = "ITA" TO RC_lang = "YOURLANGUAGE"
+#4)IN "M_CONF.PY" CHANGE THE VALUE OF RC_lang = "ITA" TO RC_lang = "YOURLANGUAGE"
 #5)RESTART REDCAP
 
 RC_outputs = {
 "antirecon": "^2%s ^1kikkato per doppia connessione in meno di ^4%s",
+"balanceauto":"^2Il bilanciamento avviene in ^4AUTOMATICO ^2all'inizio di ogni round",
+"balancexecuted": "^2Bilanciamento effettuato.",
+"balancemanual": "^2Il bilanciamento verra' effettuato ^4se necessario ^2a inizio round",
 "balancemode": "^2Bilanciamento teams %s",
+"balancenoneed": "^Teams equivalenti. Chiedere eventualmente lo shuffle ad un admin",
+"balanceoff":"La funzione bilanciamento non e' attiva. Usare il comando ^4!ab ^2 per attivarla",
 "ban": "^1La presenza di ^4%s ^1non e' piu' gradita su questo server",
 "flood": "^2%s ^1kikkato per flooding",
 "guidchange": "^2%s ^1kikkato per cambio GUID durante il gioco",
@@ -23,7 +28,7 @@ RC_outputs = {
 "nocleartarget": "^2Nick ambiguo. Riprova o usa lo slot ID",
 "nolevel": "^2Comando di ^4livello %s. ^2Il tuo livello e' %s",
 "notimetocmd": "^2Devi aspettare ancora ^4%s minuti ^2per chiamare questo comando",
-"nuked": "^2Nuke lanciata su ^4%s",
+"nuked": "^2Nuke lanciata su ^4%s ^2da ^4%s",
 "ora": "^2Sono le ^4%s",
 "pwdset": "^2Password inserita. ^3Sara' attiva dal prossimo map load",
 "record_alltime": "^6RECORD ASSOLUTO di ^4%s ^6%s kills",
@@ -31,7 +36,10 @@ RC_outputs = {
 "record_weekly": "^6RECORD SETTIMANALE di ^4%s ^6%s kills",
 "record_daily": "^6RECORD ODIERNO di ^4s% ^6%s kills",
 "record_personal": "^2Record personale di ^4%s ^6%s kills",
+"startup":"^2RedCap in fase di avvio",
+"startupend": "^2Fase di avvio terminata. ^4RedCap operativo",
 "stillban": "^1%s, sei ancora bannato fino al ^6%s",
+"suicide": "^1Suicidio: ^2penalizzazione di ^1%s ^2punti skill",
 "tempban": "^1%s bannato per ore ^4%s",
 "tempbanmax": "^2Il massimo ban temporaneo e' di ore ^4%s",
 "tkill": "^1NO TEAMKILL! ^2Applicata penalita skill. ^4Livello warning ^1%s ",

@@ -17,7 +17,7 @@ class Player:
         #self.isk = float(0.0)  #Skill istantanea
         self.ip = ""            #(string) IP
         self.isinDB = False     #Player esistente in DB.
-        self.kills = {"12":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"24":0,"25":0,"28":0,"30":0,"34":0,"35":0,"38":0,"40":0,"total":0}   #kill fatte dal player
+        self.kills = {"12":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"24":0,"25":0,"28":0,"30":0,"35":0,"38":0,"40":0}   #kill fatte dal player
         self.ks = 0             #killstreak
         self.ksmax = 0          #max killstreak
         self.lastconnect = 0    #data dell'ultimo connect
@@ -38,10 +38,11 @@ class Player:
         self.team = 0           #(string) 0=Sconosciuto 1=red, 2=blue, 3=spect
         self.tempban = 0        #data dell'ultimo tempban
         #self.totalplayedtime = 0                                           #tempo totale di gioco
+        self.varie = []         #varie
         self.vivo = 0           #0=Sconosciuto 1=vivo, 2=morto #TODO mi interessa saperlo?
         self.warning = 0.0      #warning assegnati al player da admin o per TK o thit
 
-    def alias_to_db(self):
+    def alias_to_DB(self):
         """prepara gli alias per scrittura in db"""
         joiner1 = " "
         joiner2 = "  "
@@ -53,7 +54,7 @@ class Player:
 
     def dati_load(self,dati,N1,N2,time):
         """Aggiorna il player con i dati presi dal database tabella DATI"""
-        self.DBnick = dati[1]                                         #dati = (guid, DBnick, skill, rounds, lastconn, level, tempban, notoriety, firstconn, streak, alias)
+        self.DBnick = dati[1]                                         #dati = (guid, DBnick, skill, rounds, lastconn, level, tempban, notoriety, firstconn, streak, alias, varie)
         self.skill = dati[2]
         self.rounds = dati[3]
         self.lastconnect = dati[4]                                   #data dell'ultima connessione
@@ -67,6 +68,7 @@ class Player:
         for al in aliases:
             al=al.split(" ")
             self.alias.append(al)
+        self.varie = dati[11].split()
 
     def invalid_guid(self):
         """verifica se la guid del player NON e' corretta"""
@@ -86,5 +88,11 @@ class Player:
             return True
 
     def skill_coeff_update(self):
-        self.skill_coeff = 1 + (600/(self.rounds**1.4 + 50))          #coefficiente skill che dipende dal n. di round giocati
-        print ("nome:",self.nick," rounds:",self.rounds," Coeff:",self.skill_coeff)  #DEBUG
+        self.skill_coeff = 1 + (1000/(self.rounds**1.2 + 60))          #coefficiente skill che dipende dal n. di round giocati
+
+    def varie_to_DB(self):
+        """prepara le varie per scrittura in db"""
+        varie = ""
+        for item in self.varie:
+            varie += item + " "
+        return varie.rstrip()           #tolgo gli spazi finali
