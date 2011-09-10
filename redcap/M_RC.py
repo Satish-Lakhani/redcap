@@ -63,7 +63,7 @@ def clientdisconnect(id):
     alias, varie, GSRV.PT[id].guid )) #salvo in tabella DATI
     DB.esegui(DB.query["salvakills"], (GSRV.PT[id].kills['12'], GSRV.PT[id].kills['14'], GSRV.PT[id].kills['15'], GSRV.PT[id].kills['16'], GSRV.PT[id].kills['17'], GSRV.PT[id].kills['18'], GSRV.PT[id].kills['19'],\
     GSRV.PT[id].kills['20'], GSRV.PT[id].kills['21'], GSRV.PT[id].kills['22'], GSRV.PT[id].kills['23'], GSRV.PT[id].kills['24'], GSRV.PT[id].kills['25'], GSRV.PT[id].kills['28'], GSRV.PT[id].kills['30'],\
-    GSRV.PT[id].kills['35'], GSRV.PT[id].kills['38'], GSRV.PT[id].kills['40'], GSRV.PT[id].guid))   #salvo in tabella KILL
+    GSRV.PT[id].kills['35'], GSRV.PT[id].kills['38'], GSRV.PT[id].kills['40'], GSRV.PT[id].deaths, GSRV.PT[id].guid))   #salvo in tabella KILL
     #TODO salvare altre tabelle
     DB.salva()
     DB.disconnetti()
@@ -144,13 +144,25 @@ def cr_floodcontrol():
 
 def cr_full():
     """verifica se il server e' pieno"""
-    pass #TODO fare
+    if GSRV.Startup_end:
+        clients = (GSRV.TeamMembers[0] + GSRV.TeamMembers[1] + GSRV.TeamMembers[2] + GSRV.TeamMembers[3])
+        if clients == GSRV.MaxClients:
+            GSRV.Full = 2                           #server pieno
+            if M_CONF.KickForSpace:
+                for PL in GSRV.PT:
+                    if GSRV.PT[PL].team == 3:
+                        kick("Redcap", GSRV.PT[PL].slot_id, Lang["space"]%GSRV.PT[PL].nick)
+        elif clients == 0:
+            GSRV.Full = 0                           #server vuoto
+            #TODO togliere configurazioni speciali tipo war (e approfittare per fare calcoli lunghi)
+        else:
+            GSRV.Full = 1
 
 def cr_nickrotation():
     """verifica (periodica) che nessun player abbia fatto nickrotation"""
     for PL in GSRV.PT:
         if GSRV.PT[PL].nickchanges > GSRV.MaxNickChanges:
-            #TODO gli abbasso la notoriety
+            #TODO gli abbasso la notoriety?
             kick("Redcap", GSRV.PT[PL].slot_id, Lang["nickchanges"]%(GSRV.PT[PL].nick, GSRV.PT[PL].nickchanges))
         else:
             GSRV.PT[PL].nickchanges = 0        #Se non e' kikkato lo rimetto a zero
@@ -232,7 +244,7 @@ def initRound(frase):
     else:
         say(Lang["startup"], 1)
 
-    testo = " ^7U " + str(GSRV.TeamMembers[0]) + "^1R " + str(GSRV.TeamMembers[1]) + "^4B " + str(GSRV.TeamMembers[2]) + "^2S " + str(GSRV.TeamMembers[3]) #DEBUG
+    testo =  str(GSRV.TeamMembers[0]) + str(GSRV.TeamMembers[1])  + str(GSRV.TeamMembers[2])  + str(GSRV.TeamMembers[3]) #DEBUG
     print testo
     say(testo, 1) #DEBUG
 
@@ -243,6 +255,7 @@ def kills(frase):                                       #frase del tipo ['0', '1
     if frase[2] == '10':                                #CHANGETEAM  #TODO gestire il changeteam  se necessario
         return
     if frase[2] in normalKills :                                                            #KILL DA ARMA
+        GSRV.PT[frase[0]].deaths += 1                        #aumento di 1 le deaths alla vittima
         if GSRV.is_tkill(frase[0], frase[1]):
             tell(GSRV.PT[frase[0]].slot_id, Lang["tkill"] %str(GSRV.PT[frase[0]].warning))  #TEAMKILL
             return
@@ -272,8 +285,10 @@ def kills(frase):                                       #frase del tipo ['0', '1
             say(Killz[0]%(GSRV.PT[frase[0]].nick, GSRV.PT[frase[1]].nick), 0)               #spammo stop ks in console
         GSRV.PT[frase[0]].kills[frase[2]] += 1          #aggiungo la kill alle statistiche
     elif frase[2] in accident :                                                             #INCIDENTE
-        pass                                            #TODO vedere se si vuole contare
+        GSRV.PT[frase[1]].deaths += 1                        #aumento di 1 le deaths alla vittima
+        say(Lang["accident"]%GSRV.PT[frase[1]].nick, 0)
     elif frase[2] == suicide:                                                               #SUICIDIO
+        GSRV.PT[frase[1]].deaths += 1                        #aumento di 1 le deaths alla vittima
         GSRV.PT[frase[1]].skill -= 2 * GSRV.PT[frase[1]].skill_coeff * GSRV.Sk_penalty / GSRV.Sk_Kpp     #penalizzo la skill
         tell(frase[1], Lang["suicide"]%str(round(2 * GSRV.Sk_penalty / GSRV.Sk_Kpp, 2)))
     elif frase[2] == nuked:                                                                 #NUKED
@@ -482,7 +497,14 @@ def password (richiedente, parametri):
 
 def level (richiedente, parametri):
     """assegna il livello ad un player"""
-    pass #TODO
+    if int(parametri.group("num")) > GSRV.PT[richiedente].level:
+        tell(richiedente, Lang["toohighlevel"]%str(GSRV.PT[richiedente].level))
+        return
+    target = trovaslotdastringa(richiedente, parametri.group("target"))
+    if target.isdigit():                                                   #se ho trovato lo slot
+        GSRV.PT[target].level = int(parametri.group("num"))
+        tell(richiedente, Lang["levassigned"]%(int(GSRV.PT[target].level, GSRV.PT[target].nick)))
+        tell(target, Lang["levassigned"]%(int(GSRV.PT[target].level, GSRV.PT[target].nick)))
 
 def say(testo,modo):
     """Manda messaggi pubblici da console. 0=say, 1=console, 2=bigtext"""

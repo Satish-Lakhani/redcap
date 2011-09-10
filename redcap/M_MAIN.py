@@ -9,6 +9,7 @@
 #TODO fare anche ban per nick
 #TODO e' effettivamente necessario recuperare gli alias alla connection o si fa su richiesta?
 #TODO eliminare gli alias piu vecchi di n giorni
+#TODO alla connessione di un player mandargli un tell con le sue info
 
 import sys
 import C_PARSER       #Classe che rappresenta il parser
@@ -72,9 +73,9 @@ def redcap_main():
                         continue
         if CRON1.is_time():                         #eseguo operazioni a cron1
             M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato
-            M_RC.cr_full()                             #controllo se il server � pieno
+            M_RC.cr_full()                             #controllo se il server e' pieno o vuoto
             M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotation
-            M_RC.cr_unvote()                       #controllo se c'� un voto speciale attivo
+            M_RC.cr_unvote()                       #controllo se c'e' un voto speciale attivo
             M_RC.cr_warning()                     #controllo se qualcuno ha troppi warning
 
 #AVVIO LA PROCEDURA PRINCIPALE

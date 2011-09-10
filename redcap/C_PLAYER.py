@@ -9,7 +9,7 @@ class Player:
         self.alias = []         #tutti gli ultimi nick usati dal player
         self.camp = 0           #hit/tempo di vita
         self.DBnick = ""        #(string) nick di registrazione in DB
-        #self.deaths = {"6":0,"7":0,"9":0,"23":0,"24":0,"31":0,"34":0,"arma":0,"total":0} #morti subite dal player (non incluso il changeteam)                          #TODO non molto interessante. vedere se tenere
+        self.deaths = 0             #morti subite dal player (non incluso il changeteam)                          
         self.flood = 0          #numero di say in TempoControllo1
         self.guid = None        #(string) GUID
         self.guidage = 0        #eta della guid che sta usando

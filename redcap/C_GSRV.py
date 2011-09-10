@@ -1,3 +1,4 @@
+import M_CONF
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
@@ -11,11 +12,11 @@ class Server:
         self.AntiReconInterval = parametri["AntiReconInterval"]         #Tempo minimo fra due connessioni
         self.Attivo = True                                              #TODO: da gestire. Presuppongo che il server sia up finche non provo il contrario
         self.BalanceMode = parametri["BalanceMode"]                     #modalita' di bilanciamento 0=disattivato 1=attivato 2=automatico
-        self.BalanceRequired = False                                #� stato richiesto un balance se True
+        self.BalanceRequired = False                                #e' stato richiesto un balance se True
         self.Baseconf = parametri["Baseconf"]                           #config di base
         #self.Banlist = []                                              #copia in memoria della table BAN
         self.FloodControl = parametri["FloodControl"]                   #Flood control abilitato
-        self.Full = False                                               #Server pieno TODO da usare per kikkare gli spect o cose simili
+        self.Full = 0                                                         #0 = vuoto, 1= c'e gente 2= pieno (da usare per kikkare gli spect o cose simili)
         self.Gametype = ""                                              #gametype
         self.KsMin = sk_pars["Ks_min"]                                  #minima streak affinche' il bot segnali la killstreak
         self.KsNot = sk_pars["Ks_not"]                                  #minima notoriety per segnalazione killstreak
@@ -64,18 +65,19 @@ class Server:
         if self.PT[K].ks > self.PT[K].ksmax:
             self.PT[K].ksmax = self.PT[K].ks
             res += 4                                                     #killstreak: personal record
-        if self.PT[K].ks > self.TopScores[0]:                
-            self.TopScores = [self.PT[K].ks, self.PT[K].ks, self.PT[K].ks, self.PT[K].ks]           #killstreak: alltime record
-            res += 8
-        elif self.PT[K].ks > self.TopScores[1]:                
-            self.TopScores = [self.TopScores[0], self.PT[K].ks, self.PT[K].ks, self.PT[K].ks]       #killstreak: monthly record
-            res += 16
-        elif self.PT[K].ks > self.TopScores[2]:                
-            self.TopScores = [self.TopScores[0], self.TopScores[1], self.PT[K].ks, self.PT[K].ks]   #killstreak: weekly record
-            res += 32
-        elif self.PT[K].ks > self.TopScores[3]:                         #killstreak: daily record
-            self.TopScores[3] = self.PT[K].ks
-            res += 64
+        if self.tot_players(1) >= M_CONF.MinPlayers and self.PT[K].notoriety > M_CONF.MinNotoriety:     #ci sono le condizioni per il record?
+            if self.PT[K].ks > self.TopScores[0]:
+                self.TopScores = [self.PT[K].ks, self.PT[K].ks, self.PT[K].ks, self.PT[K].ks]           #killstreak: alltime record
+                res += 8
+            elif self.PT[K].ks > self.TopScores[1]:
+                self.TopScores = [self.TopScores[0], self.PT[K].ks, self.PT[K].ks, self.PT[K].ks]       #killstreak: monthly record
+                res += 16
+            elif self.PT[K].ks > self.TopScores[2]:
+                self.TopScores = [self.TopScores[0], self.TopScores[1], self.PT[K].ks, self.PT[K].ks]   #killstreak: weekly record
+                res += 32
+            elif self.PT[K].ks > self.TopScores[3]:                         #killstreak: daily record
+                self.TopScores[3] = self.PT[K].ks
+                res += 64
         if self.PT[V].ks >= self.Ks_showbig:
            res += 128                                                   #Stop in bigtext
         elif self.PT[V].ks >= self.Ks_show:
@@ -177,5 +179,20 @@ class Server:
         if self.TeamMembers[2]:
             self.TeamSkill[1] = tot_blue_skill / self.TeamMembers[2]    #Team non vuoto
             self.Sbil = (float(self.TeamMembers[1]) / float(self.TeamMembers[2]))**0.75          #coefficiente di sbilanciamento teams
+
+    def tot_players(X=0):     #X=0 tutti X=1 red+blue X=2 vivi
+        """ritorna il numero di player sul server"""
+        if X == 0:
+            return len(self.PT)
+        elif X == 1:
+            return self.TeamMembers[1] + self.TeamMembers[2]
+        elif X == 2:
+            vivi =[]
+            for pl in self.PT:
+                if self.PT[pl].vivo == 1:
+                    vivi[0] += 1
+                    vivi[1].append(pl)
+                    return vivi
+                
 
 

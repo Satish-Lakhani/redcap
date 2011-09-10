@@ -66,7 +66,7 @@ SocketPars = {
 "ServerLog":  ServerPars["Logfolder"] + "/" + socketlog   #nome del log dove il socket registra i suoi errori.
 }
 ## PARSER
-NomeFileLog = "AUXILIARY/2011_Jul_24_log.log" #prova.log" # DEBUG"../games.log"    #(OBBLIGATORIO!) Percorso relativo del file di log da controllare
+NomeFileLog = "AUXILIARY/2011_Sep_01_log.log" #prova.log" # DEBUG"../games.log"    #(OBBLIGATORIO!) Percorso relativo del file di log da controllare
 
 ##TEMPI
 CRON1 = 15                      #Frequenza in sec del cron1 (cronometro veloce)
@@ -84,9 +84,6 @@ voteTime = 30,                        #tempo di abilitazione del voto
 voteType =536870986            #modalita' di voto temporanea (see http://www.urbanterror.info/docs/texts/123/#2.2)
 unvoteType = 0                       #modalita' di voto permanente (0 esclude qualsiasi tipo di voto)
 timeBetweenVote = 3            #tempo in minuti che deve intercorrere tra due voti
-
-##CYCLEMAP
-
 
 ##LIVELLI COMANDI:
 lev_balancemode = 2            #inserisce/disinserisce l'autobalance
@@ -122,19 +119,25 @@ lev_callvote = 0                #chiama voto
 Notoriety = {
 "guidchange" : -5,          #penalizzazione punti per cambio guid al volo (probabile cheat)
 "badguid" : -20,            #penalizzazione punti per guid non corretta (probabile cheat)
-"roundXpoint": 100,       #num. di round da giocare per guadagnare un punto notoriety
-"dayXpoint": 5               #giorni di anzianita della guid per guadagnare un punto notoriety
+"roundXpoint": 100,         #num. di round da giocare per guadagnare un punto notoriety
+"dayXpoint": 10             #giorni di anzianita della guid per guadagnare un punto notoriety
 }
 
 ##SALUTI
 #Opzioni di saluto player all'entrata in game (da sommare): 0 = nessun saluto 1 = nome attuale 2 = nome di registrazione in DB 4 = skill 8 = affidabilit� 16 = ultima visita
 saluti = 31
 
+##PLAYER
+KickForSpace = True
+
+##RECORD
+MinPlayers = 6      #numero minimo di players per considerare valido un record
+MinNotoriety = 1    #notoriety minima per segnare un record
 
 
 
 
-#PLAYER
+
 
 banned = -5                     #Valore di notoriety per essere bannato
 #CONSOLE SPAMS
@@ -168,9 +171,6 @@ TempoControllo2 = 100           #Frequenza in sec per: messaggi di spam e disabi
 
 ##KILLSTREAK
 reg_only = True                 #If True only trusted player can save a record
-minKS = 4                       #minima stream affinche' il bot segnali la killstreak
-maxKS = 25                      #Lunghezza del dizionario in RCwords.py
-
 
 ##MESSAGGI
 #messaggi
@@ -192,16 +192,5 @@ SP15 = " ^2Write ^1!!sk ^2to know your global skill level"
 SP16 = " ^2Write ^1!ora ^2to know the time"
 SP17 = " ^2Write ^1!top ^2to know the records"
 SP18 = " ^2To be registered as trusted player ^1put your clan tag"
-
-'''########## NON CAMBIARE I PARAMETRI QUI SOTTO ###########'''
-"""Do NOT MODIFY below this line or RedCap could hung up."""
-
-
-
-
-
-
-
-
 
         

@@ -19,7 +19,7 @@ class Database:
         "newkill": """INSERT INTO KILL (GUID) VALUES (?)""",
         "newloc": """INSERT INTO LOC (GUID, IP) VALUES (?, ?)""",
         "salvadati":"""UPDATE DATI SET NICK=?, SKILL=?, ROUND=?, LASTCONN=?, LEVEL=?, TEMPBAN=?, REPUTATION=?, STREAK=?, ALIAS=?, VARIE=? WHERE GUID=?""",
-        "salvakills":"""UPDATE KILL SET KNIFE=?, BERETTA=?, DE=?, SPAS=?, UMP45=?, MP5K=?, LR300=?, G36=?, PSG1=?, HK69=?, BLED=?, KICKED=?, NADE=?, SR8=?, AK103=?, NEGEV=?, M4=?, GOOMBA=? WHERE GUID=?""",
+        "salvakills":"""UPDATE KILL SET KNIFE=KNIFE+?, BERETTA=BERETTA+?, DE=DE+?, SPAS=SPAS+?, UMP45=UMP45+?, MP5K=MP5K+?, LR300=LR300+?, G36=G36+?, PSG1=PSG1+?, HK69=HK69+?, BLED=BLED+?, KICKED=KICKED+?, NADE=NADE+?, SR8=SR8+?, AK103=AK103+?, NEGEV=NEGEV+?, M4=M4+?, GOOMBA=GOOMBA+?, DEATHS=DEATHS+? WHERE GUID=?""",
         "tempban":"""UPDATE DATI SET TEMPBAN=? WHERE GUID=?""",
         }
 

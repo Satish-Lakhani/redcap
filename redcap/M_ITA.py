@@ -9,6 +9,7 @@
 #5)RESTART REDCAP
 
 RC_outputs = {
+"accident":"^4%s ^2non ha fatto attenzione e si e' ammazzato da solo",
 "antirecon": "^2%s ^1kikkato per doppia connessione in meno di ^4%s",
 "balanceauto":"^2Il bilanciamento avviene in ^4AUTOMATICO ^2all'inizio di ogni round",
 "balancexecuted": "^2Bilanciamento effettuato.",
@@ -22,6 +23,7 @@ RC_outputs = {
 "insults": "^2Gli insulti non sono permessi. ^1Ancora %s volte e verrai kikkato",
 "invalidguid": "^2%s ^1kikkato per GUID non regolare",
 "invalidnick": "^2%s ^1kikkato per NICK non regolare",
+"levassigned":"^2Assegnato livello ^4%s ^2a ^4%s.",
 "lownotoriety": "^2%s ^1kikkato per affidabilita troppo bassa: ^4%s2 ^2contro ^4%s3 ^2richiesta",
 "muteall": "^1SILENZIO, ^2per favore!",
 "nickchanges": "^2%s ^1kikkato per troppi cambi nick (%s)",
@@ -36,6 +38,7 @@ RC_outputs = {
 "record_weekly": "^6RECORD SETTIMANALE di ^4%s ^6%s kills",
 "record_daily": "^6RECORD ODIERNO di ^4s% ^6%s kills",
 "record_personal": "^2Record personale di ^4%s ^6%s kills",
+"space":"^2Slots pieni. Spettatore ^4%s ^kikkato.",
 "startup":"^2RedCap in fase di avvio",
 "startupend": "^2Fase di avvio terminata. ^4RedCap operativo",
 "stillban": "^1%s, sei ancora bannato fino al ^6%s",
@@ -43,6 +46,7 @@ RC_outputs = {
 "tempban": "^1%s bannato per ore ^4%s",
 "tempbanmax": "^2Il massimo ban temporaneo e' di ore ^4%s",
 "tkill": "^1NO TEAMKILL! ^2Applicata penalita skill. ^4Livello warning ^1%s ",
+"toohighlevel":"^1Non puoi assegnare livelli superiori al tuo che e' ^4%s",
 "voteON":"^2Il voto e' ora attivo per ^4%s ^2secondi",
 "warning":"^2%s ^1kikkato per somma di warning",
 "wrongcmd":"^3Comando non riconosciuto dal bot ^4RedCap",
