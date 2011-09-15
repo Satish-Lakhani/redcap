@@ -5,6 +5,71 @@ versione = "1.00 Alpha"         #RedCap Version. !!! PLEASE ADD "-MOD by YOURNAM
 
 '''########## (OBBLIGATORIO!) = CONFIGURAZIONE OBBLIGATORIA ###########'''
 
+##DATABASE
+NomeDB = "Rc_DB.sqlite"          #nome DB (se si cambia rinominare anche il file corrispondente)
+#minRounds = 60                  #numero minimo di round giocati per apparire nelle statistiche
+#maxAbsence = 25                 # giorni di assenza prima di essere cancellati dal server
+
+##LIVELLI COMANDI:
+lev_admin = 2                   #livello a partire dal quale un player � considerato admin (riceve pi� info in risposta a certi comandi, ed il fatto che sia presente abilita o disabilita alcune funzionalita del bot)
+lev_balancemode = 2             #inserisce/disinserisce l'autobalance
+lev_balance = 0                 #bilanciare team
+lev_ban = 4                     #ban
+lev_esegui = 4                  #esegue un qualsiasi comando rcon
+lev_cycle = 2                   #cyclemap
+lev_force = 2                   #forceteam
+#lev_info = 0                   #mostra server IP e versione redcap
+#lev_isk =0                     #mostra instant skill del player
+lev_kick = 2                    #kick
+lev_level = 4                   #assegno level
+lev_mute = 1                    #mute
+lev_muteall = 2                 #mute all
+lev_nuke = 0                    #nuke #DEBUG
+lev_ora = 0                     #dice l'ora
+#lev_passport = 3               #attiva/disattiva il passport
+lev_password = 3                #setta una password
+#lev_pause = 3                  #mette il bot in pausa
+#lev_RCrestart = 4              #restart
+#lev_reg = 3                    #registrazione in DB ed assegnazione passport
+lev_skill = 0                   #mostra skill del player
+lev_slap = 2                    #slap
+lev_status = 0                  #status (informazioni varie sul player)
+lev_tmpban = 2                  #ban temporaneo
+#lev_top = 0                    #mostra i top record
+#lev_unreg = 3                  #toglie il passport
+lev_callvote = 0                #chiama voto
+#lev_war = 1                    #configurazione per war
+
+##LOGS: i log sono reperibili nella cartella logs e sono i seguenti
+crashlog = "crash.log"              #eventi di crash del server
+socketlog = "socket.log"            #comandi non inviati
+commandlog = "command.log"          #comandi bot inviati dai giocatori
+commandlogMinLevel = 0              #livello minimo del comando affinche sia registrato nel log (settare piu alto del piu alto dei livelli di comando se non si vuole registrare nulla)
+
+##NOTORIETY
+# valore di notoriety aggiunto a quella del player in caso di alcuni avvenimenti. Quando la notoriety scende al di sotto di ServerPars["MinNotoriety"] il player non pu� piu accedere al server.
+Notoriety = {
+"guidchange" : -5,          #penalizzazione punti per cambio guid al volo (probabile cheat)
+"badguid" : -20,            #penalizzazione punti per guid non corretta (probabile cheat)
+"roundXpoint": 100,         #num. di round da giocare per guadagnare un punto notoriety
+"dayXpoint": 10             #giorni di anzianita della guid per guadagnare un punto notoriety
+}
+
+## PARSER
+NomeFileLog = "AUXILIARY/2011_Sep_01_log.log" #prova.log" # DEBUG"../games.log"    #(OBBLIGATORIO!) Percorso relativo del file di log da controllare
+
+##PLAYER
+KickForSpace = True         #se true kikka uno spect (se c'e') quando il server e' pieno
+
+##RECORD
+MinPlayers = 6              #numero minimo di players per considerare valido un record
+MinNotoriety = 1            #notoriety minima per segnare un record
+
+#REDCAP
+botname = "^8RC| "             #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
+RC_lang = "ITA"                    #Localizzazione linguaggio ITA #TODO (ENG FRA e altre, da fare)
+maxSlap = 10                        #massimo numero di slap che posso dare ad un player
+
 ##SERVER
 ServerPars = {
 "AliasDuration": 90,                #tempo di memorizzazione in giorni di un vecchio alias prima che sia cancellato per inutilizzo
@@ -19,21 +84,13 @@ ServerPars = {
 "MinNotoriety": -999,             #valore notoriety per giocare nel server. La notoriety di un nuovo player e' 0
 "minNick":3,                        #Lunghezza minima nick
 "Passport" : False,                 #True=passport attivo gia' all'avvio, False=passport inattivo all'avvio.
-"UrtPath" : "../../../q3ut4",       #path relativo della cartella q3ut4 di urt
-}
-
-##WARNING
-sv_WarnPars = {
-"max_warns" : 5.0,                   #valore di warning dopo di che vieni kikkato  (si azzerano al reconnect). Uno slap dati da Redcap o un tk o un hit comportano automaticamente un warning.
-"adm_warn" : 1.0,                    #valore di uno warn dato da un admin
-"tk_warn" : 1.0,                     #valore di uno warn causato da un tk (in realta' un tk vale circa tk_warn + 3 hit_warn
-"hit_warn" : 0.3,                    #valore di uno warn dato da un team hit
+"UrtPath" : "AUXILIARY",       #path relativo della cartella q3ut4 di urt  #DEBUG
+#"UrtPath" : "../../../q3ut4",       #path relativo della cartella q3ut4 di urt
 }
 
 ##SKILL (parametri per la formula skill)
 #NOTA: punteggio approssimativo di mappa che un giocatore a skill 1000 deve ottenere per mantenere la skill invariata:
 #ES. range=300: pt. 785-1; range=500: 55-1;  range=600: 28-1; range=700: 17-1; range=800: 12-1; range=900: 9-1; range=1000: 7-1; range=3000: 2-1;
-
 sv_SkillPars = {
 "Sk_team_impact" : 0.3,              #percentuale della skill calcolata in base alla teamskill avversaria (il resto e' calcolato in base alla skill dell'avversario diretto)
 "Sk_Kpp" : 5,                       #numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
@@ -45,17 +102,6 @@ sv_SkillPars = {
 "Ks_showbig": 9,                #minima ks per segnalazione in bigtext
 }
 
-#NOTA LOGS: i log sono reperibili nella cartella logs e sono i seguenti
-crashlog = "crash.log"              #eventi di crash del server
-socketlog = "socket.log"            #comandi non inviati
-commandlog = "command.log"          #comandi bot inviati dai giocatori
-commandlogMinLevel = 0              #livello minimo del comando affinche sia registrato nel log (settare piu alto del piu alto dei livelli di comando se non si vuole registrare nulla)
-
-#REDCAP
-botname = "^8RC| "             #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
-RC_lang = "ITA"                    #Localizzazione linguaggio ITA #TODO (ENG FRA e altre, da fare)
-maxSlap = 10                        #massimo numero di slap che posso dare ad un player
-
 ## SOCKET
 SocketPars = {
 "ServerRcon" : "xxxxxx",          #(OBBLIGATORIO!) rconpassword (inserire la password di rcon fra le virgolette)
@@ -65,8 +111,26 @@ SocketPars = {
 "Tsleep" : 0.8,                     #(OBBLIGATORIO!) Tempo di attesa tra due comandi rcon successivi  (NON CAMBIARE!)
 "ServerLog":  ServerPars["Logfolder"] + "/" + socketlog   #nome del log dove il socket registra i suoi errori.
 }
-## PARSER
-NomeFileLog = "AUXILIARY/2011_Sep_01_log.log" #prova.log" # DEBUG"../games.log"    #(OBBLIGATORIO!) Percorso relativo del file di log da controllare
+
+##STATUS Sommare i parametri desiderati
+'''
+1: Benvenuto %nome
+2: Skill
+4: Istskill
+8: Streak
+16: Rounds
+32: Affidabilita
+64: Slot
+128: Nick ufficiale
+256: IP
+512: Level
+1024: Alias
+2048: Ultima visita
+4096: Warning
+'''
+saluti = 1 + 2048                                                       #informazioni di saluto
+status = 1 + 2 + 8 + 32 + 128                                    #informazioni date ai non admin
+status_adm = 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 1024 + 2048 + 4096    #info date agli admin
 
 ##TEMPI
 CRON1 = 15                      #Frequenza in sec del cron1 (cronometro veloce)
@@ -74,65 +138,22 @@ Tcyclemap = 12                  #tempo in minuti che deve intercorrere tra due c
 TempoCiclo = 0.5                #Frequenza in sec del controllo del log
 Ttempban = 96                   #durata massima tempban
 
-##DATABASE
-NomeDB = "Rc_DB.sqlite"          #nome DB (se si cambia rinominare anche il file corrispondente)
-#minRounds = 60                  #numero minimo di round giocati per apparire nelle statistiche
-#maxAbsence = 25                 # giorni di assenza prima di essere cancellati dal server
-
 ##VOTO
 voteTime = 30,                        #tempo di abilitazione del voto
 voteType =536870986            #modalita' di voto temporanea (see http://www.urbanterror.info/docs/texts/123/#2.2)
 unvoteType = 0                       #modalita' di voto permanente (0 esclude qualsiasi tipo di voto)
 timeBetweenVote = 3            #tempo in minuti che deve intercorrere tra due voti
 
-##LIVELLI COMANDI:
-lev_balancemode = 2            #inserisce/disinserisce l'autobalance
-lev_balance = 0                #bilanciare team
-lev_ban = 4                     #ban
-#lev_cycle = 2                  #cyclemap
-lev_force = 2                   #forceteam
-#lev_info = 0                   #mostra server IP e versione redcap
-#lev_isk =0                     #mostra instant skill del player
-lev_kick = 2                    #kick
-lev_level = 4                   #assegno level
-lev_mute = 1                    #mute
-lev_muteall = 2                #mute all
-#lev_nick = 2                   #trova il nick ufficiale
-lev_nuke = 0                    #nuke #DEBUG
-lev_ora = 0                     #dice l'ora
-#lev_passport = 3               #attiva/disattiva il passport
-lev_password = 3                #setta una password
-#lev_pause = 3                  #mette il bot in pausa
-#lev_RCrestart = 4              #restart
-#lev_reg = 3                    #registrazione in DB ed assegnazione passport
-#lev_skill = 0                  #mostra skill del player
-lev_slap = 2                    #slap
-#lev_status = 3                 #status
-lev_tmpban = 2                  #ban temporaneo
-#lev_top = 0                    #mostra i top record
-#lev_unreg = 3                  #toglie il passport
-lev_callvote = 0                #chiama voto
-#lev_war = 1                    #configurazione per war
-
-##NOTORIETY
-# valore di notoriety aggiunto a quella del player in caso di alcuni avvenimenti. Quando la notoriety scende al di sotto di ServerPars["MinNotoriety"] il player non pu� piu accedere al server.
-Notoriety = {
-"guidchange" : -5,          #penalizzazione punti per cambio guid al volo (probabile cheat)
-"badguid" : -20,            #penalizzazione punti per guid non corretta (probabile cheat)
-"roundXpoint": 100,         #num. di round da giocare per guadagnare un punto notoriety
-"dayXpoint": 10             #giorni di anzianita della guid per guadagnare un punto notoriety
+##WARNING
+sv_WarnPars = {
+"max_warns" : 5.0,                   #valore di warning dopo di che vieni kikkato  (si azzerano al reconnect). Uno slap dati da Redcap o un tk o un hit comportano automaticamente un warning.
+"adm_warn" : 1.0,                    #valore di uno warn dato da un admin
+"tk_warn" : 1.0,                     #valore di uno warn causato da un tk (in realta' un tk vale circa tk_warn + 3 hit_warn
+"hit_warn" : 0.3,                    #valore di uno warn dato da un team hit
 }
 
-##SALUTI
-#Opzioni di saluto player all'entrata in game (da sommare): 0 = nessun saluto 1 = nome attuale 2 = nome di registrazione in DB 4 = skill 8 = affidabilit� 16 = ultima visita
-saluti = 31
 
-##PLAYER
-KickForSpace = True
 
-##RECORD
-MinPlayers = 6      #numero minimo di players per considerare valido un record
-MinNotoriety = 1    #notoriety minima per segnare un record
 
 
 
@@ -163,11 +184,6 @@ dialoghi = "dialoghi.htm"       #file dialoghi
 DailyControl = 6                #ora alla quale vengono eseguite le operazioni periodiche giornaliere
 WeekControl = 1                 #giorno della settimana per operazioni settimanali (0=Domenica, 1=lunedi, ecc.)
 MonthControl = 28               #giorno del mese (da 1 a 28) per operazioni mensili (cancellazione record mensile)
-max_Tban = 48                   #durata massima del ban temporaneo in ore
-
-
-TempoControllo2 = 100           #Frequenza in sec per: messaggi di spam e disabilitazione automatica passport e war mode a server vuoto.
-
 
 ##KILLSTREAK
 reg_only = True                 #If True only trusted player can save a record

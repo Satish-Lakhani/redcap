@@ -7,13 +7,13 @@ class Player:
     """rappresenta un singolo player e le sue proprieta'"""
     def __init__(self ):        #la proprieta SLOT devo averla
         self.alias = []         #tutti gli ultimi nick usati dal player
-        self.camp = 0           #hit/tempo di vita
+        #self.camp = 0           #hit/tempo di vita #TODO serve?
         self.DBnick = ""        #(string) nick di registrazione in DB
         self.deaths = 0             #morti subite dal player (non incluso il changeteam)                          
         self.flood = 0          #numero di say in TempoControllo1
         self.guid = None        #(string) GUID
         self.guidage = 0        #eta della guid che sta usando
-        self.hits = {"0":0,"1":0,"3":0,"4":0,"5":0,"6":0,"9":0,"total":0}   #hit fatte dal player
+        self.hits = {"0":0, "1":0, "2":0, "3":0, "4":0, "5":0, "6":0, "total":0}   #hit fatte dal player
         #self.isk = float(0.0)  #Skill istantanea
         self.ip = ""            #(string) IP
         self.isinDB = False     #Player esistente in DB.
@@ -89,6 +89,28 @@ class Player:
 
     def skill_coeff_update(self):
         self.skill_coeff = 1 + (1000/(self.rounds**1.2 + 60))          #coefficiente skill che dipende dal n. di round giocati
+
+    def stats (self):
+        aliases = ""
+        for al in self.alias:
+            aliases += al[1] + " "
+        aliases = aliases.rstrip()
+        X = {
+        1: self.nick,
+        2: self.skill,
+        4: self.skill_var,
+        8: self.ksmax,
+        16: self.rounds,
+        32: self.notoriety,
+        64: self.slot_id,
+        128: self.DBnick,
+        256: self.ip,
+        512: self.level,
+        1024: aliases,
+        2048:self.lastconnect,
+        4096: self.warning,
+        }
+        return X
 
     def varie_to_DB(self):
         """prepara le varie per scrittura in db"""

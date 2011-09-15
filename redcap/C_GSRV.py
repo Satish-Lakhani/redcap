@@ -16,7 +16,7 @@ class Server:
         self.Baseconf = parametri["Baseconf"]                           #config di base
         #self.Banlist = []                                              #copia in memoria della table BAN
         self.FloodControl = parametri["FloodControl"]                   #Flood control abilitato
-        self.Full = 0                                                         #0 = vuoto, 1= c'e gente 2= pieno (da usare per kikkare gli spect o cose simili)
+        self.Full = 1                                                         #0 = vuoto, 1= c'e gente 2= pieno (da usare per kikkare gli spect o cose simili)
         self.Gametype = ""                                              #gametype
         self.KsMin = sk_pars["Ks_min"]                                  #minima streak affinche' il bot segnali la killstreak
         self.KsNot = sk_pars["Ks_not"]                                  #minima notoriety per segnalazione killstreak
@@ -37,13 +37,12 @@ class Server:
         self.PT = {}                                                    #PlayerTable: dizionario che rappresenta i players presenti sul server e le loro caratteristiche
         self.RedCapStatus = 0                                           #stato RedCap (1=paused 0=attivo)
         self.Sbil = 1                                                   #coefficiente di sbilanciamento teams
+        self.Server_mode = 0                                            #0 = fase avvio 1 = normale 2 = warmode
         self.Sk_Kpp = sk_pars["Sk_Kpp"]                                 #Sensibilita' skill: numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
-        self.Sk_penalty = sk_pars["Sk_penalty"]                         #penalita' per teamkill (espressa come n� di kill da fare per bilanciare una penalty)
+        self.Sk_penalty = sk_pars["Sk_penalty"]                         #penalita' per teamkill (espressa come n. di kill da fare per bilanciare una penalty)
         self.Sk_range = sk_pars["Sk_range"]                             #Ampiezza curva skill:piu grande e' il valore, piu' alti sono i valori di skill che si possono raggiungere.
         self.Sk_team_impact = sk_pars["Sk_team_impact"]                 #frazione della skill calcolata sul team avversario, rispetto a quella calcolata sulla vittima
-        self.Specialconf = False                                        #specifica se il server sta usando una config diversa da quella base
-        self.Startup_end = False                                        #Se False il server e' in fase di avvio.
-        self.TopScores = [0,0,0,0]                                      #Top scores del server (alltime, month, week, day)
+        self.TopScores = [[0.0, 0, " "],[0.0, 0, " "],[0.0, 0, " "],[0.0, 0, " "]]          #Top scores del server (alltime, month, week, day) (time, valore, DBnick)
         self.TeamSkill = [0,0]                                          #skill media team red e blue
         self.TeamSkillCoeff = 1                                         #coefficiente di bilanciamento per teams squilibrati
         self.TeamMembers = [0,0,0,0]                                    #players 0=sconosciuto, 1=red, 2=blue, 3=spect
@@ -54,7 +53,7 @@ class Server:
         self.WarnTk = warn_pars["tk_warn"]                              #valore di uno warn causato da un tk (in realta' un tk vale circa tk_warn + 3 hit_warn
         self.WarnHit = warn_pars["hit_warn"]                            #valore di uno warn dato da un team hit
 
-    def is_kstreak(self, K,V):
+    def is_kstreak(self, K, V, ora):
         """gestisce la killstreak"""
         res = 0
         self.PT[K].ks += 1                                              #controllo streak del killer
@@ -64,19 +63,20 @@ class Server:
             res += 2                                                    #killstreak: Annuncio in console
         if self.PT[K].ks > self.PT[K].ksmax:
             self.PT[K].ksmax = self.PT[K].ks
-            res += 4                                                     #killstreak: personal record
+            res += 4                                                    #killstreak: personal record
         if self.tot_players(1) >= M_CONF.MinPlayers and self.PT[K].notoriety > M_CONF.MinNotoriety:     #ci sono le condizioni per il record?
-            if self.PT[K].ks > self.TopScores[0]:
-                self.TopScores = [self.PT[K].ks, self.PT[K].ks, self.PT[K].ks, self.PT[K].ks]           #killstreak: alltime record
+            dati = [ora, self.PT[K].ks, self.PT[K].DBnick]
+            if self.PT[K].ks > self.TopScores[0][1]:
+                self.TopScores = [dati, dati, dati, dati]   #killstreak: alltime record
                 res += 8
-            elif self.PT[K].ks > self.TopScores[1]:
-                self.TopScores = [self.TopScores[0], self.PT[K].ks, self.PT[K].ks, self.PT[K].ks]       #killstreak: monthly record
+            elif self.PT[K].ks > self.TopScores[1][1]:
+                self.TopScores = [self.TopScores[0], dati, dati, dati]      #killstreak: monthly record
                 res += 16
-            elif self.PT[K].ks > self.TopScores[2]:
-                self.TopScores = [self.TopScores[0], self.TopScores[1], self.PT[K].ks, self.PT[K].ks]   #killstreak: weekly record
+            elif self.PT[K].ks > self.TopScores[2][1]:
+                self.TopScores = [self.TopScores[0], self.TopScores[1], dati, dati]         #killstreak: weekly record
                 res += 32
-            elif self.PT[K].ks > self.TopScores[3]:                         #killstreak: daily record
-                self.TopScores[3] = self.PT[K].ks
+            elif self.PT[K].ks > self.TopScores[3][1]:
+                self.TopScores[3] = dati                                                                    #killstreak: daily record
                 res += 64
         if self.PT[V].ks >= self.Ks_showbig:
            res += 128                                                   #Stop in bigtext
@@ -84,6 +84,12 @@ class Server:
            res += 256                                                   #Stop in console
         self.PT[V].ks = 0                                               #metto a zero la ks della vittima
         return res     
+
+    def is_thit(self, K, V):
+        """verifica se e stato fatto un thit e procede di conseguenza"""
+        if self.PT[K].team == self.PT[V].team:
+            self.PT[K].warning += self.WarnHit                           #aumento il warning
+            return True
 
     def is_tkill(self, K, V):
         """verifica se e stato fatto un tkill e procede di conseguenza"""
@@ -180,7 +186,7 @@ class Server:
             self.TeamSkill[1] = tot_blue_skill / self.TeamMembers[2]    #Team non vuoto
             self.Sbil = (float(self.TeamMembers[1]) / float(self.TeamMembers[2]))**0.75          #coefficiente di sbilanciamento teams
 
-    def tot_players(X=0):     #X=0 tutti X=1 red+blue X=2 vivi
+    def tot_players(self, X=0):     #X=0 tutti X=1 red+blue X=2 vivi
         """ritorna il numero di player sul server"""
         if X == 0:
             return len(self.PT)

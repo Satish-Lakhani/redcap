@@ -2,35 +2,34 @@
 # -*- coding: utf-8 -*-
 
 import M_CONF
-
+#TODO siamo sicuri che (?P<rich>\d+) sia ancora necessario?
 comandi = [
-["balancemode", r": (?P<rich>\d+) .*?: !ab", M_CONF.lev_balancemode],
+["balancemode", r": !ab", M_CONF.lev_balancemode],
 ["ban", r"!ban (?P<target>.*)", M_CONF.lev_ban],
-["bilancia",r": (?P<rich>\d+) .*?: !tm", M_CONF.lev_balance],
-["callvote",r"!v$",M_CONF.lev_callvote],
-#["cyclemap",r": (?P<rich>\d+) .*?: !cy",RCconf.lev_cycle],
+["bilancia",r": !tm", M_CONF.lev_balance],
+["callvote",r": !v$",M_CONF.lev_callvote],
+["cyclemap",r": !cy", M_CONF.lev_cycle],
 #["deregistra",r": (?P<rich>\d+) .*?: !unreg (?P<target>.*)", RCconf.lev_unreg],
+["esegui", r": !cmd  (?P<cmd>.*)", M_CONF.lev_esegui],
 ["forceteam",r"!f(?P<team>[rbs]) (?P<target>.*)",M_CONF.lev_force],
 #["info",r": (?P<rich>\d+) .*?: !info", RCconf.lev_info],
-#["isk",r": (?P<rich>\d+) .*?: !isk", RCconf.lev_isk],
 #["join",r": (?P<rich>\d+) .*?: !join (?P<target>.*)", RCconf.lev_join],
 ["kick",r"!k (?P<target>.*)", M_CONF.lev_kick],
 ["level",r"!lev(?P<num>\d*) (?P<target>.*)",M_CONF.lev_level],
 ["mute",r"!m (?P<target>.*)",M_CONF.lev_mute],
-["muteall",r": (?P<rich>\d+) .*?: !mall", M_CONF.lev_muteall],
-#["nick",r": (?P<rich>\d+) .*?: !z (?P<target>.*)", RCconf.lev_nick],
+["muteall",r": !mall", M_CONF.lev_muteall],
 ["nuke",r"!n (?P<target>.*)",M_CONF.lev_nuke],
 #["nukeall",r": (?P<rich>\d+) .*?: !nall", RCconf.lev_nukeall],
 ["ora",r"!ora$",M_CONF.lev_ora],
 #["passport",r": (?P<rich>\d+) .*?: !passport", RCconf.lev_passport],
-["password",r": (?P<rich>\d+) .*?: !pwd (?P<pwd>\S*)", M_CONF.lev_password],                             #\S = qualsiasi carattere salvo lo spazio.
+["password",r": !pwd (?P<pwd>\S*)", M_CONF.lev_password],                             #\S = qualsiasi carattere salvo lo spazio.
 #["pause",r": (?P<rich>\d+) .*?: !pause", RCconf.lev_pause],
 #["rcrestart",r": (?P<rich>\d+) .*?: !restart",RCconf.lev_RCrestart],
 #["registra",r": (?P<rich>\d+) .*?: !reg (?P<target>.*)", RCconf.lev_reg],
-#["skill",r": (?P<rich>\d+) .*?: !sk\s*(?P<target>.*)",RCconf.lev_skill],
-["slap", r"!s(?P<num>\d*) (?P<target>.*)",M_CONF.lev_slap],
-#["status",r": (?P<rich>\d+) .*?: !status",RCconf.lev_status],
-["tempban",r": (?P<rich>\d+) .*?: !b(?P<num>\d*) (?P<target>.*)",M_CONF.lev_tmpban],       #!b123 pippo
+["skill",r": !sk\s*(?P<target>.*)",M_CONF.lev_skill],
+["slap", r"!s(?P<num>\d*) (?P<target>.*)", M_CONF.lev_slap],
+["status", r"!z\s*(?P<target>.*)", M_CONF.lev_status],
+["tempban",r": !b(?P<num>\d*) (?P<target>.*)",M_CONF.lev_tmpban],       #!b123 pippo
 #["top",r": (?P<rich>\d+) .*?: !top", RCconf.lev_top],
 #["war",r": (?P<rich>\d+) .*?: !!war \\(?P<pass>.*)", RCconf.lev_war],
 ]

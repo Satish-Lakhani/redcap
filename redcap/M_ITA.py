@@ -18,6 +18,9 @@ RC_outputs = {
 "balancenoneed": "^Teams equivalenti. Chiedere eventualmente lo shuffle ad un admin",
 "balanceoff":"La funzione bilanciamento non e' attiva. Usare il comando ^4!ab ^2 per attivarla",
 "ban": "^1La presenza di ^4%s ^1non e' piu' gradita su questo server",
+"bestplayers": "^2Migliori player:",
+"mapskill": " ^4%s^2 skill di mappa: ^5%s",
+"executed": "^2Comando ^4%s ^2eseguito",
 "flood": "^2%s ^1kikkato per flooding",
 "guidchange": "^2%s ^1kikkato per cambio GUID durante il gioco",
 "insults": "^2Gli insulti non sono permessi. ^1Ancora %s volte e verrai kikkato",
@@ -26,6 +29,7 @@ RC_outputs = {
 "levassigned":"^2Assegnato livello ^4%s ^2a ^4%s.",
 "lownotoriety": "^2%s ^1kikkato per affidabilita troppo bassa: ^4%s2 ^2contro ^4%s3 ^2richiesta",
 "muteall": "^1SILENZIO, ^2per favore!",
+"muted":"^4%s ^2mutato in quanto era mutato all'ultima disconnessione",
 "nickchanges": "^2%s ^1kikkato per troppi cambi nick (%s)",
 "nocleartarget": "^2Nick ambiguo. Riprova o usa lo slot ID",
 "nolevel": "^2Comando di ^4livello %s. ^2Il tuo livello e' %s",
@@ -38,6 +42,7 @@ RC_outputs = {
 "record_weekly": "^6RECORD SETTIMANALE di ^4%s ^6%s kills",
 "record_daily": "^6RECORD ODIERNO di ^4s% ^6%s kills",
 "record_personal": "^2Record personale di ^4%s ^6%s kills",
+"skill": "^2Skill: ^4%s ^2Instantanea: ^4%s",
 "space":"^2Slots pieni. Spettatore ^4%s ^kikkato.",
 "startup":"^2RedCap in fase di avvio",
 "startupend": "^2Fase di avvio terminata. ^4RedCap operativo",
@@ -45,23 +50,12 @@ RC_outputs = {
 "suicide": "^1Suicidio: ^2penalizzazione di ^1%s ^2punti skill",
 "tempban": "^1%s bannato per ore ^4%s",
 "tempbanmax": "^2Il massimo ban temporaneo e' di ore ^4%s",
+"thit": "^1NO TEAMHITS! ^2Applicata penalita skill. ^4Livello warning ^1%s ",
 "tkill": "^1NO TEAMKILL! ^2Applicata penalita skill. ^4Livello warning ^1%s ",
 "toohighlevel":"^1Non puoi assegnare livelli superiori al tuo che e' ^4%s",
 "voteON":"^2Il voto e' ora attivo per ^4%s ^2secondi",
 "warning":"^2%s ^1kikkato per somma di warning",
 "wrongcmd":"^3Comando non riconosciuto dal bot ^4RedCap",
-}
-
-RC_saluti = {
-1: "^2Benvenuto ^4%s",
-2: " ^2alias ^3%s",
-4: " 2 ^2Skill: ^3%s",
-8: " ^2Affidabilita: ^3%s",
-16:" ^2Ultima visita: ^3%s",
-}
-
-RC_logoutputs = {
-"command": "%s alias %s (lev:%s) ha usato: %s (lev:%s)",
 }
 
 RC_kills = {        #messaggi di killstreak
@@ -91,4 +85,24 @@ RC_kills = {        #messaggi di killstreak
 23 : '^4%s^2 23 kill? ^4ok guys, John Rambo is here',
 24 : '^4%s^2 24 corpses... ^4bigger massacre than waco!',
 25 : '^4%s^2Kill counter is OVER! ^3U^4N^6B^1E^7L^8I^9E^0V^1A^3B^5L^2E^6!',
+}
+
+RC_logoutputs = {
+"command": "%s alias %s (lev:%s) ha usato: %s (lev:%s)",
+}
+
+RC_status = {
+1: "^2Player ^4%s ",
+2: "^2Skill:^5%s ",
+4: "^2Istskill:^5%s ",
+8: "^2Streak:^5%s ",
+16: "^2Rounds:^5%s ",
+32: "^2Affidabilita:^5%s ",
+64: "^2Slot:^5%s ",
+128: "Registrato:^4%s ",
+256: "^2IP:^5%s ",
+512: "^2Level:^5%s ",
+1024: "^2Alias:^7%s ",
+2048:" ^2Ultima visita: ^3%s ",
+4096: "^2Warning:^1%s ",
 }

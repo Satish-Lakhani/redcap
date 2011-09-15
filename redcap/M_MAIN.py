@@ -10,6 +10,9 @@
 #TODO e' effettivamente necessario recuperare gli alias alla connection o si fa su richiesta?
 #TODO eliminare gli alias piu vecchi di n giorni
 #TODO alla connessione di un player mandargli un tell con le sue info
+#TODO note per warmode: no kick, warn o richiami per badguid o badnick, tkill o thit o censura (registrare variazione skill?), non registrare ne spammare record. no spam vari.
+#TODO prevedere silentmode.
+#TODO fare comando hit che dice le hit eseguite in percentuale
 
 import sys
 import C_PARSER       #Classe che rappresenta il parser
@@ -49,14 +52,14 @@ def redcap_main():
                 elif frase[1].find("Client") !=  -1:            #gestisco le frasi Client indirizzando alla funzione appropriata (i comandi li parso anche in fase di startup)
                     exec("M_RC.%s(frase[0])"%frase[1].lower())
                     continue
-                if M_RC.GSRV.Startup_end:                           #ALTRI EVENTI da processare solo a startup finito #TODO vedere se va bene cosi
+                if M_RC.GSRV.Server_mode <> 0:             #ALTRI EVENTI da processare solo a startup finito #TODO vedere se va bene cosi
                     if frase[1] == "Hits":
-                        pass    #TODO
+                        M_RC.hits(frase[0])                         #del tipo (['1', '0', '3', '5'], 'Hits') Vittima, Killer, Zona, Arma
                         continue
                     elif frase[1] == "Says":                         #SAY frase[0] (0,0=id, 0,1=testo)
                         M_RC.says(frase[0])
                         continue
-                    elif frase[1] == "Kills":           #del tipo (['0', '0', '10'], 'Kills')
+                    elif frase[1] == "Kills":                           #del tipo (['0', '0', '10'], 'Kills')
                         M_RC.kills(frase[0])
                         continue
                     elif frase[1] == "Comandi":                   #COMANDI frase[0] (0,0=id, 0,1=comando)
@@ -66,10 +69,10 @@ def redcap_main():
                         M_RC.initRound(frase[0])    
                         continue
                     elif frase[1] == "EndRound":
-                        pass    #TODO
+                        M_RC.endRound(frase[0])
                         continue
                     elif frase[1] == "EndMap":                    
-                        pass    #TODO
+                        M_RC.endMap(frase[0])
                         continue
         if CRON1.is_time():                         #eseguo operazioni a cron1
             M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato

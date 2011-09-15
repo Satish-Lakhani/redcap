@@ -36,7 +36,7 @@ class Parser:
         self.nuovotesto = self.nuovotesto.split("\n")         #separo le linee del log
         for x in self.nuovotesto:                              #analizzo ciascuna nuova linea del log
             if x.find("Hit: ")!= -1:                                                                      #Trovo tutti gli HITS
-                self.outputs.append((x, "Hits"))
+                self.outputs.append((re.search(r'Hit: (?P<hit>\d+ \d+ \d+ \d+):', x).group('hit').split(), "Hits"))
             elif x.find("say:") != -1 or x.find("sayteam:") != -1:                          #Trovo TUTTE LE FRASI DETTE IN CHAT
                 res = re.search( r"say(team)?: (?P<id>\d+) .*?: (?P<testo>.*)",x)
                 id = res.group("id")
@@ -44,7 +44,8 @@ class Parser:
                 frase = [id, testo]
                 if re.search(r"^!\w",testo):                                                          #separo i COMANDI
                     self.outputs.append((frase, "Comandi"))
-                self.outputs.append((frase, "Says"))
+                else:
+                    self.outputs.append((frase, "Says"))
             elif x.find("ClientUserinfo:") !=  -1:                                                       #trovo tutti i CLIENTUSERINFO
                 res = re.search(r"ClientUserinfo: (?P<id>\d+)", x)                        #Recupero l'ID
                 res1 = re.search(r"\\ip\\(?P<ip>\d*\.\d*\.\d*\.\d*)",x)         #Recupero l'IP
