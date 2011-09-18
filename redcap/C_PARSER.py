@@ -82,8 +82,8 @@ class Parser:
 
     def q3ut4_check(self,path,info):
         """recupero informazioni dalla directory q3ut4"""
-        list = os.listdir(path)
-        for element in list:
+        lista = os.listdir(path)
+        for element in lista:
             if element.rfind(".cfg") != -1:
                 info["cfg"].append(element)
             elif element.rfind(".pk3") != -1:

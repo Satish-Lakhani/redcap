@@ -85,10 +85,39 @@ ServerPars = {
 "MinNotoriety": -999,               #valore notoriety per giocare nel server. La notoriety di un nuovo player e' 0
 "minNick":3,                        #Lunghezza minima nick
 "Passport" : False,                 #True=passport attivo gia' all'avvio, False=passport inattivo all'avvio.
-"UrtPath" : "AUXILIARY",            #path relativo della cartella q3ut4 di urt  #DEBUG
+"UrtPath" : "../../../../home/ale/UT/q3ut4",            #path relativo della cartella q3ut4 di urt  #DEBUG
 "MapCycle": "mycycle.txt"           #path del file di cyclemap
 #"UrtPath" : "../../../q3ut4",      #path relativo della cartella q3ut4 di urt
 }
+
+StandardMaps = [                    #mappe standard incluse nello z_pack
+"ut4_abbey",
+"ut4_algiers",
+"ut4_ambush",
+"ut4_austria",
+"ut4_casa",
+"ut4_crossing",
+"ut4_eagle",
+"ut4_elgin",
+"ut4_harbortown",
+"ut4_kingdom",
+"ut4_mandolin",
+"ut4_maya",
+"ut4_oildepot",
+"ut4_prague",
+"ut4_ramelle",
+"ut4_riyadh",
+"ut4_sanctuary",
+"ut4_suburbs",
+"ut4_subway",
+"ut4_swim",
+"ut4_thingley",
+"ut4_tombs",
+"ut4_toxic",
+"ut4_tunis",
+"ut4_turnpike",
+"ut4_uptown",
+]
 
 ##SKILL (parametri per la formula skill)
 #NOTA: punteggio approssimativo di mappa che un giocatore a skill 1000 deve ottenere per mantenere la skill invariata:

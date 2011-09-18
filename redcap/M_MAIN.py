@@ -80,8 +80,10 @@ def redcap_main():
             M_RC.cr_unvote()                    #controllo se c'e' un voto speciale attivo
             M_RC.cr_warning()                   #controllo se qualcuno ha troppi warning
             if CRON1.ticks == 1: #240: DEBUG                   #E' passata 1 ora circa
-                 PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4)    #controllo lista mappe e cfg
-                 CRON1.reset()
+                M_RC.GSRV.Q3ut4["map"] = M_CONF.StandardMaps,                       #carico solo mappe di base
+                M_RC.GSRV.Q3ut4["cfg"] = []
+                PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4)    #controllo lista mappe e cfg
+                CRON1.reset()
         if CRON2.is_time():
             pass                                #eseguire operazioni giornaliere (pulizia DB, riavvio server, etc)
 
