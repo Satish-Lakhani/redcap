@@ -12,11 +12,10 @@ class Server:
         self.AntiReconInterval = parametri["AntiReconInterval"]         #Tempo minimo fra due connessioni
         self.Attivo = True                                              #TODO: da gestire. Presuppongo che il server sia up finche non provo il contrario
         self.BalanceMode = parametri["BalanceMode"]                     #modalita' di bilanciamento 0=disattivato 1=attivato 2=automatico
-        self.BalanceRequired = False                                #e' stato richiesto un balance se True
+        self.BalanceRequired = False                                    #e' stato richiesto un balance se True
         self.Baseconf = parametri["Baseconf"]                           #config di base
-        #self.Banlist = []                                              #copia in memoria della table BAN
         self.FloodControl = parametri["FloodControl"]                   #Flood control abilitato
-        self.Full = 1                                                         #0 = vuoto, 1= c'e gente 2= pieno (da usare per kikkare gli spect o cose simili)
+        self.Full = 1                                                   #0 = vuoto, 1= c'e gente 2= pieno (da usare per kikkare gli spect o cose simili)
         self.Gametype = ""                                              #gametype
         self.KsMin = sk_pars["Ks_min"]                                  #minima streak affinche' il bot segnali la killstreak
         self.KsNot = sk_pars["Ks_not"]                                  #minima notoriety per segnalazione killstreak
@@ -35,6 +34,7 @@ class Server:
         self.Logfolder = parametri["Logfolder"]                         #cartella dei logs
         #self.Passport = parametri["Passport"]                          #1=passport attivo 0=passport inattivo.
         self.PT = {}                                                    #PlayerTable: dizionario che rappresenta i players presenti sul server e le loro caratteristiche
+        self.Q3ut4 = {"cfg":[], "map":[], "mapcycle":parametri["MapCycle"]}                #elenco mappe, cfg e mapcycle
         self.RedCapStatus = 0                                           #stato RedCap (1=paused 0=attivo)
         self.Sbil = 1                                                   #coefficiente di sbilanciamento teams
         self.Server_mode = 0                                            #0 = fase avvio 1 = normale 2 = warmode
@@ -52,6 +52,7 @@ class Server:
         self.WarnAdm = warn_pars["adm_warn"]                            #valore di uno warn dato da un admin
         self.WarnTk = warn_pars["tk_warn"]                              #valore di uno warn causato da un tk (in realta' un tk vale circa tk_warn + 3 hit_warn
         self.WarnHit = warn_pars["hit_warn"]                            #valore di uno warn dato da un team hit
+        self.z_profiler = { }                                           #DEBUG
 
     def is_kstreak(self, K, V, ora):
         """gestisce la killstreak"""
@@ -149,8 +150,8 @@ class Server:
         Dsk_V = self.Sbil * (self.Sk_team_impact * VT_variation + (1 - self.Sk_team_impact) * V_opponent_variation)     #delta skill della vittima
         self.PT[K].skill += Dsk_K * self.PT[K].skill_coeff          #(nuova skill)
         self.PT[V].skill += Dsk_V * self.PT[V].skill_coeff          #(nuova skill)
-        self.PT[K].skill_var += Dsk_K                               #(variazione skill da inizio connessione #TODO o per mappa?)
-        self.PT[V].skill_var += Dsk_V                               #(variazione  skill da inizio connessione)
+        self.PT[K].skill_var += Dsk_K                               #variazione skill per mappa
+        self.PT[V].skill_var += Dsk_V                               #variazione skill per mappa
         return
 
     def team_balance(self):                                  #color = 1 muove red, 2 muove blu

@@ -11,17 +11,19 @@ NomeDB = "Rc_DB.sqlite"          #nome DB (se si cambia rinominare anche il file
 #maxAbsence = 25                 # giorni di assenza prima di essere cancellati dal server
 
 ##LIVELLI COMANDI:
-lev_admin = 2                   #livello a partire dal quale un player � considerato admin (riceve pi� info in risposta a certi comandi, ed il fatto che sia presente abilita o disabilita alcune funzionalita del bot)
+lev_admin = 2                   #livello a partire dal quale un player e' considerato admin (riceve piu' info in risposta a certi comandi, ed il fatto che sia presente abilita o disabilita alcune funzionalita del bot)
 lev_balancemode = 2             #inserisce/disinserisce l'autobalance
 lev_balance = 0                 #bilanciare team
 lev_ban = 4                     #ban
 lev_esegui = 4                  #esegue un qualsiasi comando rcon
+lev_callvote = 0                #chiama voto
 lev_cycle = 2                   #cyclemap
 lev_force = 2                   #forceteam
 #lev_info = 0                   #mostra server IP e versione redcap
 #lev_isk =0                     #mostra instant skill del player
 lev_kick = 2                    #kick
 lev_level = 4                   #assegno level
+lev_map = 2                     #cambio mappa
 lev_mute = 1                    #mute
 lev_muteall = 2                 #mute all
 lev_nuke = 0                    #nuke #DEBUG
@@ -37,7 +39,6 @@ lev_status = 0                  #status (informazioni varie sul player)
 lev_tmpban = 2                  #ban temporaneo
 #lev_top = 0                    #mostra i top record
 #lev_unreg = 3                  #toglie il passport
-lev_callvote = 0                #chiama voto
 #lev_war = 1                    #configurazione per war
 
 ##LOGS: i log sono reperibili nella cartella logs e sono i seguenti
@@ -47,7 +48,7 @@ commandlog = "command.log"          #comandi bot inviati dai giocatori
 commandlogMinLevel = 0              #livello minimo del comando affinche sia registrato nel log (settare piu alto del piu alto dei livelli di comando se non si vuole registrare nulla)
 
 ##NOTORIETY
-# valore di notoriety aggiunto a quella del player in caso di alcuni avvenimenti. Quando la notoriety scende al di sotto di ServerPars["MinNotoriety"] il player non pu� piu accedere al server.
+# valore di notoriety aggiunto a quella del player in caso di alcuni avvenimenti. Quando la notoriety scende al di sotto di ServerPars["MinNotoriety"] il player non puo' piu accedere al server.
 Notoriety = {
 "guidchange" : -5,          #penalizzazione punti per cambio guid al volo (probabile cheat)
 "badguid" : -20,            #penalizzazione punti per guid non corretta (probabile cheat)
@@ -56,7 +57,7 @@ Notoriety = {
 }
 
 ## PARSER
-NomeFileLog = "AUXILIARY/2011_Sep_01_log.log" #prova.log" # DEBUG"../games.log"    #(OBBLIGATORIO!) Percorso relativo del file di log da controllare
+NomeFileLog = "AUXILIARY/prova.log"   #2011_Sep_01_log.log" #" # DEBUG"../games.log"    #(OBBLIGATORIO!) Percorso relativo del file di log da controllare
 
 ##PLAYER
 KickForSpace = True         #se true kikka uno spect (se c'e') quando il server e' pieno
@@ -80,26 +81,27 @@ ServerPars = {
 "goodNick":r"[a-zA-Z]",             #Regex minima che il nick deve soddisfare.
 "Logfolder": "logs",                #cartella di registrazione dei log
 "MaxFlood" : 6,                     #massimo numero di say in un tempo fissato (CRON1)
-"MaxNickChanges" : 3,           #massimi change nick in un tempo fissato (CRON1)
-"MinNotoriety": -999,             #valore notoriety per giocare nel server. La notoriety di un nuovo player e' 0
+"MaxNickChanges" : 3,               #massimi change nick in un tempo fissato (CRON1)
+"MinNotoriety": -999,               #valore notoriety per giocare nel server. La notoriety di un nuovo player e' 0
 "minNick":3,                        #Lunghezza minima nick
 "Passport" : False,                 #True=passport attivo gia' all'avvio, False=passport inattivo all'avvio.
-"UrtPath" : "AUXILIARY",       #path relativo della cartella q3ut4 di urt  #DEBUG
-#"UrtPath" : "../../../q3ut4",       #path relativo della cartella q3ut4 di urt
+"UrtPath" : "AUXILIARY",            #path relativo della cartella q3ut4 di urt  #DEBUG
+"MapCycle": "mycycle.txt"           #path del file di cyclemap
+#"UrtPath" : "../../../q3ut4",      #path relativo della cartella q3ut4 di urt
 }
 
 ##SKILL (parametri per la formula skill)
 #NOTA: punteggio approssimativo di mappa che un giocatore a skill 1000 deve ottenere per mantenere la skill invariata:
-#ES. range=300: pt. 785-1; range=500: 55-1;  range=600: 28-1; range=700: 17-1; range=800: 12-1; range=900: 9-1; range=1000: 7-1; range=3000: 2-1;
+#ES. range=300: score: 785-1; range=500: 55-1;  range=600: 28-1; range=700: 17-1; range=800: 12-1; range=900: 9-1; range=1000: 7-1; range=3000: 2-1;
 sv_SkillPars = {
 "Sk_team_impact" : 0.3,              #percentuale della skill calcolata in base alla teamskill avversaria (il resto e' calcolato in base alla skill dell'avversario diretto)
-"Sk_Kpp" : 5,                       #numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
+"Sk_Kpp" : 5,                        #numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
 "Sk_range" : 800,                    #piu grande e il valore, piu alti sono i valori di skill che si possono raggiungere.
-"Sk_penalty" : 4,                    #penalita' per teamkill (espressa come n� di kill da fare per bilanciare una penalty)
+"Sk_penalty" : 4,                    #penalita' per teamkill (espressa come n. di kill da fare per bilanciare una penalty)
 "Ks_min" : 5,                        #minima streak affinche' il bot segnali la killstreak
 "Ks_not" : 0,                        #minima notoriety per segnalazione killstreak
 "Ks_show": 5,                       #minima ks per segnalazione in chat
-"Ks_showbig": 9,                #minima ks per segnalazione in bigtext
+"Ks_showbig": 9,                    #minima ks per segnalazione in bigtext
 }
 
 ## SOCKET
@@ -134,6 +136,7 @@ status_adm = 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 1024 + 2048 + 4096
 
 ##TEMPI
 CRON1 = 15                      #Frequenza in sec del cron1 (cronometro veloce)
+CRON2 = 3600                    #Frequenza in sec del cron1 (cronometro lento)
 Tcyclemap = 12                  #tempo in minuti che deve intercorrere tra due cyclemap
 TempoCiclo = 0.5                #Frequenza in sec del controllo del log
 Ttempban = 96                   #durata massima tempban

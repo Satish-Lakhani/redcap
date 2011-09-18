@@ -80,3 +80,15 @@ class Parser:
             elif x.find("Exit:")!= -1:                                      #trovo gli ENDMAP
                 self.outputs.append((x, "EndMap"))
 
+    def q3ut4_check(self,path,info):
+        """recupero informazioni dalla directory q3ut4"""
+        list = os.listdir(path)
+        for element in list:
+            if element.rfind(".cfg") != -1:
+                info["cfg"].append(element)
+            elif element.rfind(".pk3") != -1:
+                mapname = element.rstrip(".pk3")
+                info["map"].append(mapname)
+        #TODO parsare la cyclemap
+        
+

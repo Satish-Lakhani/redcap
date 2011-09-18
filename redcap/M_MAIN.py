@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 #TODO fare controllo armi ammesse per team
-#TODO fare l'automute che muta il player non appena entra (serve campo nel DB)
 #TODO comando !bonus n per gestire la notoriety
 #TODO aggiungere gestione del ritorno dei comandi (chi, riusciti, non riusciti)
 #TODO inserire controllo eliminazione vecchi alias
@@ -30,20 +29,20 @@ def crashlog(t, v, tra):
         evento = evento + str(stringa)
     for stringa in traceback.format_exception_only(sys.last_type, sys.last_value):
         evento = evento + str(stringa)
-    M_RC.scriviLog(evento, M_CONF.ServerPars["Logfolder"] + "/" + M_CONF.crashlog)
+    M_RC.scrivilog(evento, M_CONF.ServerPars["Logfolder"] + "/" + M_CONF.crashlog)
     sys.exit()
 
 sys.excepthook = crashlog                                       #abilito il log dei crash
 
 #TODO gserver_is_active() #Controllo che il gameserver sia attivo, se no IL REDCAP SI FERMA QUI IN LOOP finche' il server non torna attivo.
 
-PARSER = C_PARSER.Parser(M_CONF.NomeFileLog)          #Istanzio il Parser
-CRON1 = M_AUX.Cronometro(M_CONF.CRON1)                    #Istanzio il cron1
-
+PARSER = C_PARSER.Parser(M_CONF.NomeFileLog)    #Istanzio il Parser
+CRON1 = M_AUX.Cronometro(M_CONF.CRON1)          #Istanzio il cron1
+CRON2 = M_AUX.Cronometro(M_CONF.CRON2)          #Istanzio il cron2
 
 def redcap_main():
     while 1:
-        M_AUX.sleep(M_CONF.TempoCiclo)             #wait for a cycletime
+        M_RC.sleep(M_CONF.TempoCiclo)             #wait for a cycletime
         if PARSER.novita():                                           #log check
             for frase in PARSER.outputs:                          #frase[0]=contenuto, frase[1]=tipo di frase (assigned from PARSER)
                 if frase[1] == "InitGame":
@@ -74,12 +73,17 @@ def redcap_main():
                     elif frase[1] == "EndMap":                    
                         M_RC.endMap(frase[0])
                         continue
-        if CRON1.is_time():                         #eseguo operazioni a cron1
+        if CRON1.is_time():                     #eseguo operazioni a cron1
             M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato
-            M_RC.cr_full()                             #controllo se il server e' pieno o vuoto
+            M_RC.cr_full()                      #controllo se il server e' pieno o vuoto
             M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotation
-            M_RC.cr_unvote()                       #controllo se c'e' un voto speciale attivo
-            M_RC.cr_warning()                     #controllo se qualcuno ha troppi warning
+            M_RC.cr_unvote()                    #controllo se c'e' un voto speciale attivo
+            M_RC.cr_warning()                   #controllo se qualcuno ha troppi warning
+            if CRON1.ticks == 1: #240: DEBUG                   #E' passata 1 ora circa
+                 PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4)    #controllo lista mappe e cfg
+                 CRON1.reset()
+        if CRON2.is_time():
+            pass                                #eseguire operazioni giornaliere (pulizia DB, riavvio server, etc)
 
 #AVVIO LA PROCEDURA PRINCIPALE
 redcap_main()

@@ -32,6 +32,7 @@ RC_outputs = {
 "muted":"^4%s ^2mutato in quanto era mutato all'ultima disconnessione",
 "nickchanges": "^2%s ^1kikkato per troppi cambi nick (%s)",
 "nocleartarget": "^2Nick ambiguo. Riprova o usa lo slot ID",
+"noclearmap": "^2Mappa ambigua o inesistente. Riprova o usa ^4!cmd nomemappa",
 "nolevel": "^2Comando di ^4livello %s. ^2Il tuo livello e' %s",
 "notimetocmd": "^2Devi aspettare ancora ^4%s minuti ^2per chiamare questo comando",
 "nuked": "^2Nuke lanciata su ^4%s ^2da ^4%s",

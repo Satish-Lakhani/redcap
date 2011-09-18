@@ -37,6 +37,7 @@ nuked = '34'
 def censura(frase):
     """controlla se nella frase ci sono parole non ammesse"""
     testo=frase.replace(".","") #tolgo i punti dei furbetti.
+    testo=frase.replace("_","") 
     for insulto in M_SAYS.censura:
         if re.search(insulto,testo,re.I):                       #ho trovato un insulto
             return True
@@ -71,17 +72,13 @@ def clientdisconnect(id):
     GSRV.player_DEL(id)
 
 def clientuserinfo(info):                       #info (0=slot_id, 1=ip, 2=guid)
-    t1 = time.time()
     if GSRV.PT[info[0]].justconnected:                     #Se e un nuovo player
         GSRV.player_ADDINFO(info)                   #gli aggiungo GUID e IP
     elif info[2] <> GSRV.PT[info[0]].guid:            #cambio guid durante il gioco #TODO registrare il cambio guid???
         GSRV.PT[info[0]].notoriety += M_CONF.Notoriety["guidchange"]            #gli abbasso la notoriety in proporzione
         kick("Redcap", info[0], Lang["guidchange"]%info[1])
-    t2 = time.time() -t1
-    print "clientuserinfo " + str(t2)
 
 def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
-    t1 = time.time()
     if GSRV.PT[info[0]].invalid_guid():                                                             #CONTROLLO VALIDITA GUID (adesso che ho pure il nick!)
         GSRV.PT[info[0]].notoriety += M_CONF.Notoriety["badguid"]               #abbasso la notoriety
         kick("Redcap", info[0], Lang["invalidguid"]%info[1])                    #e lo kikko         #TODO  registrare nick e ip in DB o in log
@@ -118,8 +115,6 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
                 alias[0] = str(time.time())                                     #se esiste aggiorno la data di ultimo utilizzo
         if not esiste:
             GSRV.PT[info[0]].alias.append([str(time.time()), info[1]])          #se non esiste lo aggiungo
-    t2 = time.time() -t1
-    print "clientuserinfochange " + str(t2)
 
        # db_loccontrol(GSRV.PT[info[0]].guid)        #controllo il player nel DB (tb LOC)
 
@@ -186,7 +181,7 @@ def cr_unvote():
 def cr_warning():
     """verifica se qualche player ha troppi warning"""
     for PL in GSRV.PT:
-        if GSRV.PT[PL].warning >= M_CONF.Warning["max_warns"]:
+        if GSRV.PT[PL].warning >= GSRV.WarnMax:
             #TODO gli abbasso la notoriety?
             kick("Redcap", GSRV.PT[PL].slot_id, Lang["warning"]%GSRV.PT[PL].nick)
 
@@ -245,7 +240,7 @@ def endMap(frase):
 def endRound(frase):
     pass        #TODO
 
-def hits(frase):                                                #del tipo ['1', '0', '3', '5'] Vittima, Killer, Zona, Arma (per il momento arma non � utilizzato)
+def hits(frase):                                                #del tipo ['1', '0', '3', '5'] Vittima, Killer, Zona, Arma (per il momento arma non e' utilizzato)
     if frase[0] not in GSRV.PT:                         #in rari casi il player puo' essere hittato dopo clientdisconnect
         return
     if GSRV.is_thit(frase[1], frase[0]):               #controllo che non faccia THIT
@@ -385,6 +380,9 @@ def scrivilog(evento, nomelog):
     f.write(evento)
     f.close()
 
+def sleep(tempo):
+    time.sleep(tempo)
+
 def tell(target,testo):
     """Invia un messaggio privato a target. Equivalente a "tell" da console. """
     SCK.cmd("tell " + target + " " + testo)
@@ -485,6 +483,10 @@ def forceteam(richiedente, parametri): #param richiedente target colore
     if target.isdigit():
         SCK.cmd("forceteam " + target + " " + team)
 
+def info(richiedente, parametri):
+    """parametri vari server:IP admin, nextmap,ecc"""
+    pass
+
 def kick(richiedente, parametri, reason = ""):
     """Kikka un player dal server"""
     if richiedente == "Redcap":                                 #kick richiesto direttamente dal RedCap
@@ -496,6 +498,19 @@ def kick(richiedente, parametri, reason = ""):
             say(reason, 0)
             time.sleep(1)
         SCK.cmd("kick " + target)                                 #Invio al socket il comando kick
+
+def map(richiedente, parametri):
+    """carica una mappa"""
+    mapname = []
+    reqmap = parametri.group("map")
+    for mappa in GSRV.Q3ut4["map"]:
+        if str.lower(reqmap).find(str.lower(str.strip(mappa))) != -1:   #trovato un file corrispondente
+            mapname.append(mappa)
+    if len(mapname) == 1:
+        SCK.cmd("map " + mapname[0])
+    else:
+        tell(richiedente, Lang["noclearmap"])
+    
 
 def mute(richiedente, parametri, reason = ""):
     """Muta/smuta un player"""
@@ -518,7 +533,7 @@ def muteall(richiedente, parametri):
         say(Lang["muteall"], 2)
         
 def nuke(richiedente, parametri):
-    """equivalente a "nuke" da console"""                   #TODO fare il nuke a morte
+    """equivalente a "nuke" da console"""                   
     if richiedente == "Redcap":                                 #mute richiesto direttamente dal RedCap
         lanciatore = "RedCap"
         target = parametri
@@ -599,7 +614,7 @@ def status(richiedente, parametri, modo = M_CONF.status):
         #print frase         #DEBUG
 
 
-def tempban(richiedente, parametri):    #TODO aggiungere reason?
+def tempban(richiedente, parametri):   
     """ban temporaneo"""
     target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():                                                    #se ho trovato lo slot
@@ -614,4 +629,20 @@ def tempban(richiedente, parametri):    #TODO aggiungere reason?
         time.sleep(1)
         GSRV.PT[target].tempban = time.time() + ore*3600 #data scadenza ban
         SCK.cmd("kick " + target)   #lo kikko (al clientdisconnect si aggiorna il tempban)
+
+def z_profiler(routine ="", tim="", modo=""):      #funzione di debug
+    if modo == True:
+        if routine not in GSRV.z_profiler:
+            GSRV.z_profiler[routine] = 0.0
+        GSRV.z_profiler[routine] -=  tim
+    elif modo == False:
+        GSRV.z_profiler[routine] +=  tim
+    else:
+        for controllo in GSRV.z_profiler:
+            print controllo + str(GSRV.z_profiler[controllo])
+            for rout in GSRV.z_profiler:
+                GSRV.z_profiler[rout] = 0.0
+
+
+
 
