@@ -31,6 +31,7 @@ RC_outputs = {
 "muteall": "^1SILENZIO, ^2per favore!",
 "muted":"^4%s ^2mutato in quanto era mutato all'ultima disconnessione",
 "nickchanges": "^2%s ^1kikkato per troppi cambi nick (%s)",
+"noclearcfg": "^2Configurazione ambigua o inesistente.",
 "nocleartarget": "^2Nick ambiguo. Riprova o usa lo slot ID",
 "noclearmap": "^2Mappa ambigua o inesistente. Riprova o usa ^4!cmd nomemappa",
 "nolevel": "^2Comando di ^4livello %s. ^2Il tuo livello e' %s",
@@ -55,7 +56,10 @@ RC_outputs = {
 "tkill": "^1NO TEAMKILL! ^2Applicata penalita skill. ^4Livello warning ^1%s ",
 "toohighlevel":"^1Non puoi assegnare livelli superiori al tuo che e' ^4%s",
 "voteON":"^2Il voto e' ora attivo per ^4%s ^2secondi",
+"warbaseloaded" : "^5Modalita war. ^2Carico Warbase.cfg ...",
+"warloaded": "^5Modalita' WAR. ^2Carico %s ...",
 "warning":"^2%s ^1kikkato per somma di warning",
+"warunloaded": "^5Fine WAR. ^2Ritorno a modalita' normale",
 "wrongcmd":"^3Comando non riconosciuto dal bot ^4RedCap",
 }
 

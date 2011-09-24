@@ -12,14 +12,13 @@
 #TODO note per warmode: no kick, warn o richiami per badguid o badnick, tkill o thit o censura (registrare variazione skill?), non registrare ne spammare record. no spam vari.
 #TODO prevedere silentmode.
 #TODO fare comando hit che dice le hit eseguite in percentuale
+#TODO verificare tutto quello che c'e' da bloccare quando si e' in modalità war.
 
 import sys
-import C_PARSER       #Classe che rappresenta il parser
-import M_AUX             #Modulo funzioni ausiliarie
-import M_CONF          #Modulo configurazioni programma
-import M_RC               #Modulo che gestisce le azioni del Redcap
-
-#res = M_AUX.avvio()                                               #attivita di avvio del gameserver
+import C_PARSER         #Classe che rappresenta il parser
+import M_AUX            #Modulo funzioni ausiliarie
+import M_CONF           #Modulo configurazioni programma
+import M_RC             #Modulo che gestisce le azioni del Redcap
 
 def crashlog(t, v, tra):
     """gestisce i crash del programma, scrivendo l'errore nel file di log"""
@@ -34,11 +33,21 @@ def crashlog(t, v, tra):
 
 sys.excepthook = crashlog                                       #abilito il log dei crash
 
-#TODO gserver_is_active() #Controllo che il gameserver sia attivo, se no IL REDCAP SI FERMA QUI IN LOOP finche' il server non torna attivo.
-
 PARSER = C_PARSER.Parser(M_CONF.NomeFileLog)    #Istanzio il Parser
 CRON1 = M_AUX.Cronometro(M_CONF.CRON1)          #Istanzio il cron1
 CRON2 = M_AUX.Cronometro(M_CONF.CRON2)          #Istanzio il cron2
+
+def init_jobs():
+    """attivita' da fare all'avvio di redcap"""
+    q3ut4_parse()
+    #TODO gserver_is_active() #Controllo che il gameserver sia attivo, se no IL REDCAP SI FERMA QUI IN LOOP finche' il server non torna attivo.
+    redcap_main()                               #LANCIO LA PROCEDURA PRINCIPALE
+
+def q3ut4_parse():
+    """parsa la directory q3ut4"""
+    M_RC.GSRV.Q3ut4["map"] = M_CONF.StandardMaps                       #carico solo mappe di base
+    M_RC.GSRV.Q3ut4["cfg"] = []
+    PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4)   #recupero mappe e cfg.
 
 def redcap_main():
     while 1:
@@ -79,13 +88,11 @@ def redcap_main():
             M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotation
             M_RC.cr_unvote()                    #controllo se c'e' un voto speciale attivo
             M_RC.cr_warning()                   #controllo se qualcuno ha troppi warning
-            if CRON1.ticks == 1: #240: DEBUG                   #E' passata 1 ora circa
-                M_RC.GSRV.Q3ut4["map"] = M_CONF.StandardMaps,                       #carico solo mappe di base
-                M_RC.GSRV.Q3ut4["cfg"] = []
-                PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4)    #controllo lista mappe e cfg
+            if CRON1.ticks == 240:              #E' passata 1 ora circa
+                q3ut4_parse()
                 CRON1.reset()
         if CRON2.is_time():
             pass                                #eseguire operazioni giornaliere (pulizia DB, riavvio server, etc)
 
-#AVVIO LA PROCEDURA PRINCIPALE
-redcap_main()
+#AVVIO IL REDCAP
+init_jobs()

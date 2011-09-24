@@ -133,8 +133,7 @@ def comandi (frase):                            #frase [id, testo] (es: "2:31 sa
                 #TODO inserire il controllo di bot in pausa
                 eval("%s(frase[0],res)" %comando[0])    #eseguo il comando e gli passo richiedente e parametri
             break
-        else:
-             tell(frase[0], Lang["wrongcmd"] )          #comando non riconosciuto
+    tell(frase[0], Lang["wrongcmd"] )          #comando non riconosciuto
 
 def cr_floodcontrol():
     """verifica (periodica) che nessun player abbia fatto flood"""
@@ -146,10 +145,10 @@ def cr_floodcontrol():
             GSRV.PT[PL].flood = 0        #Se non e kikkato lo rimetto a zero
 
 def cr_full():
-    """verifica se il server e' pieno"""
+    """verifica se il server e' pieno o vuoto"""
     if GSRV.Server_mode <> 0:
         clients = (GSRV.TeamMembers[0] + GSRV.TeamMembers[1] + GSRV.TeamMembers[2] + GSRV.TeamMembers[3])
-        if clients == GSRV.MaxClients:      # faccio operazioni da server pieno
+        if clients == GSRV.MaxClients:              # faccio operazioni da server pieno
             GSRV.Full = 2                           
             if M_CONF.KickForSpace and GSRV.Server_mode <> 2:
                 for PL in GSRV.PT:
@@ -158,7 +157,7 @@ def cr_full():
         elif clients == 0:                          # faccio operazioni da server vuoto
             GSRV.Full = 0
             if GSRV.Server_mode <> 1:
-                SCK.cmd("g_password ''")        #tolgo la password
+                SCK.cmd("g_password ''")            #tolgo la password
                 SCK.cmd("exec " + GSRV.Baseconf)    #carico la config di base
                 GSRV.Server_mode = 1
         else:
@@ -510,7 +509,6 @@ def map(richiedente, parametri):
         SCK.cmd("map " + mapname[0])
     else:
         tell(richiedente, Lang["noclearmap"])
-    
 
 def mute(richiedente, parametri, reason = ""):
     """Muta/smuta un player"""
@@ -613,7 +611,6 @@ def status(richiedente, parametri, modo = M_CONF.status):
         tell(richiedente, frase)            #TODO verificare se con \n si pu� andare a capo nelle frasi di chat senza perdere il colore.
         #print frase         #DEBUG
 
-
 def tempban(richiedente, parametri):   
     """ban temporaneo"""
     target = trovaslotdastringa(richiedente, parametri.group("target"))
@@ -630,7 +627,33 @@ def tempban(richiedente, parametri):
         GSRV.PT[target].tempban = time.time() + ore*3600 #data scadenza ban
         SCK.cmd("kick " + target)   #lo kikko (al clientdisconnect si aggiorna il tempban)
 
-def z_profiler(routine ="", tim="", modo=""):      #funzione di debug
+def unwar(richiedente, parametri):   
+    """resetta il server in modalita' normale"""
+    SCK.cmd("g_matchmode 0")
+    say(Lang["warunloaded"]%GSRV.Baseconf , 2)
+    SCK.cmd("exec %s" %GSRV.Baseconf)                #eseguo la config di base
+    GSRV.Server_mode = 1                            #passo in modalità normale
+
+def war(richiedente, parametri):
+    """setta il server in modalita' war"""
+    tmp = []
+    if parametri.group('cfg'):                      #e' stata indicata una configurazione
+        for cfg in GSRV.Q3ut4["cfg"]:
+            if str.lower(cfg).find(str.lower(str.strip(parametri.group('cfg')))) != -1: #porto tutto in minuscole e confronto
+            tmp.append(cfg)
+        if len(slot) == 1:
+            SCK.cmd("exec %s" %tmp[0])              #eseguo la config richiesta
+            say(Lang["warloaded"] %tmp[0] , 2)
+        else:
+            say(Lang["noclearcfg"], 2)
+            return
+    else:
+        SCK.cmd("exec %s" %GSRV.Basewar)            #eseguo la config richiesta
+        say(Lang["warbaseloaded"]%GSRV.Basewar , 2)
+    SCK.cmd("reload")                               #avvio la cfg
+    GSRV.Server_mode = 2                            #passo in modalità war
+
+def z_profiler(routine ="", tim="", modo=""):       #funzione di debug
     if modo == True:
         if routine not in GSRV.z_profiler:
             GSRV.z_profiler[routine] = 0.0
@@ -642,7 +665,4 @@ def z_profiler(routine ="", tim="", modo=""):      #funzione di debug
             print controllo + str(GSRV.z_profiler[controllo])
             for rout in GSRV.z_profiler:
                 GSRV.z_profiler[rout] = 0.0
-
-
-
-
+                

@@ -39,7 +39,8 @@ lev_status = 0                  #status (informazioni varie sul player)
 lev_tmpban = 2                  #ban temporaneo
 #lev_top = 0                    #mostra i top record
 #lev_unreg = 3                  #toglie il passport
-#lev_war = 1                    #configurazione per war
+lev_war = 0                     #configurazione per war
+lev_unwar = 0                   #eliminare configurazione war
 
 ##LOGS: i log sono reperibili nella cartella logs e sono i seguenti
 crashlog = "crash.log"              #eventi di crash del server
@@ -77,6 +78,7 @@ ServerPars = {
 "AntiReconInterval" : 0,            #Tempo di antireconnect in sec (se 0  = Disattivato)
 "BalanceMode" : 2,                  #0=disattivato 1=attivato 2=automatico
 "Baseconf" : "server.cfg",          #nome della configurazione standard del gameserver
+"Basewar" : "basewar.cfg",          #nome della config minima per cw che viene caricata se non ce ne sono altre
 "FloodControl" : True,              #Flood control abilitato = True, disabilitato = false (TODO comando per abilitare disabilitare da chat?)
 "goodNick":r"[a-zA-Z]",             #Regex minima che il nick deve soddisfare.
 "Logfolder": "logs",                #cartella di registrazione dei log

@@ -14,6 +14,7 @@ class Server:
         self.BalanceMode = parametri["BalanceMode"]                     #modalita' di bilanciamento 0=disattivato 1=attivato 2=automatico
         self.BalanceRequired = False                                    #e' stato richiesto un balance se True
         self.Baseconf = parametri["Baseconf"]                           #config di base
+        self.Basewar = parametri["Basewar"]                             #config di base per CW
         self.FloodControl = parametri["FloodControl"]                   #Flood control abilitato
         self.Full = 1                                                   #0 = vuoto, 1= c'e gente 2= pieno (da usare per kikkare gli spect o cose simili)
         self.Gametype = ""                                              #gametype
@@ -35,7 +36,7 @@ class Server:
         #self.Passport = parametri["Passport"]                          #1=passport attivo 0=passport inattivo.
         self.PT = {}                                                    #PlayerTable: dizionario che rappresenta i players presenti sul server e le loro caratteristiche
         self.Q3ut4 = {"cfg":[], "map":[], "mapcycle":parametri["MapCycle"]}                #elenco mappe, cfg e mapcycle
-        self.RedCapStatus = 0                                           #stato RedCap (1=paused 0=attivo)
+        self.RedCapStatus = 0                                           #stato RedCap (1=paused 0=attivo) #TODO serve o basta server_mode?
         self.Sbil = 1                                                   #coefficiente di sbilanciamento teams
         self.Server_mode = 0                                            #0 = fase avvio 1 = normale 2 = warmode
         self.Sk_Kpp = sk_pars["Sk_Kpp"]                                 #Sensibilita' skill: numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
