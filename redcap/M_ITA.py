@@ -104,7 +104,7 @@ RC_status = {
 16: "^2Rounds:^5%s ",
 32: "^2Affidabilita:^5%s ",
 64: "^2Slot:^5%s ",
-128: "Registrato:^4%s ",
+128: "^2Registrato:^4%s ",
 256: "^2IP:^5%s ",
 512: "^2Level:^5%s ",
 1024: "^2Alias:^7%s ",

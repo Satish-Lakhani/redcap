@@ -13,6 +13,10 @@
 #TODO prevedere silentmode.
 #TODO fare comando hit che dice le hit eseguite in percentuale
 #TODO verificare tutto quello che c'e' da bloccare quando si e' in modalita'� war.
+#TODO vedere come assegnare il livello
+#TODO vedere perchè da sempre comando non riconosciuto
+#TODO se crashlog non esiste deve venire creato
+#TODO verificare come mai status non viene detto tutto (limite lunghezza frase?)
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -28,7 +32,7 @@ def crashlog(t, v, tra):
         evento = evento + str(stringa)
     for stringa in traceback.format_exception_only(sys.last_type, sys.last_value):
         evento = evento + str(stringa)
-    M_RC.scrivilog(evento, M_CONF.ServerPars["Logfolder"] + "/" + M_CONF.crashlog)
+    M_RC.scrivilog(evento, M_CONF.crashlog)
     sys.exit()
 
 sys.excepthook = crashlog                                       #abilito il log dei crash

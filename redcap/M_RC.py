@@ -71,8 +71,8 @@ def clientdisconnect(id):
     DB.disconnetti()
     GSRV.player_DEL(id)
 
-def clientuserinfo(info):                       #info (0=slot_id, 1=ip, 2=guid)
-    if GSRV.PT[info[0]].justconnected:                     #Se e un nuovo player
+def clientuserinfo(info):                           #info (0=slot_id, 1=ip, 2=guid)
+    if GSRV.PT[info[0]].justconnected:              #Se e un nuovo player
         GSRV.player_ADDINFO(info)                   #gli aggiungo GUID e IP
     elif info[2] <> GSRV.PT[info[0]].guid:            #cambio guid durante il gioco
         if GSRV.Server_mode <> 2:                           #non attivo in warmode
@@ -612,9 +612,8 @@ def status(richiedente, parametri, modo = M_CONF.status):
         frase = ""
         while opzioni:
             opz = opzioni.pop()
-            frase += Status[opz]%stat[opz]
-        tell(richiedente, frase)            #TODO verificare se con \n si pu� andare a capo nelle frasi di chat senza perdere il colore.
-        #print frase         #DEBUG
+            frase += Status[opz]%str(stat[opz])
+        tell(richiedente, frase)            #TODO verificare se con n si puo andare a capo nelle frasi di chat senza perdere il colore.
 
 def tempban(richiedente, parametri):   
     """ban temporaneo"""
