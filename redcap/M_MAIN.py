@@ -12,7 +12,7 @@
 #TODO note per warmode: no kick, warn o richiami per badguid o badnick, tkill o thit o censura (registrare variazione skill?), non registrare ne spammare record. no spam vari.
 #TODO prevedere silentmode.
 #TODO fare comando hit che dice le hit eseguite in percentuale
-#TODO verificare tutto quello che c'e' da bloccare quando si e' in modalità war.
+#TODO verificare tutto quello che c'e' da bloccare quando si e' in modalita'� war.
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -60,7 +60,10 @@ def redcap_main():
                 elif frase[1].find("Client") !=  -1:            #gestisco le frasi Client indirizzando alla funzione appropriata (i comandi li parso anche in fase di startup)
                     exec("M_RC.%s(frase[0])"%frase[1].lower())
                     continue
-                if M_RC.GSRV.Server_mode <> 0:             #ALTRI EVENTI da processare solo a startup finito #TODO vedere se va bene cosi
+                elif frase[1] == "Comandi":                   #COMANDI frase[0] (0,0=id, 0,1=comando)
+                    M_RC.comandi(frase[0])                    #passo richiedente e parametri alla funzione comandi del modulo M_RC
+                    continue
+                if M_RC.GSRV.Server_mode == 1:             #ALTRI EVENTI da processare solo a startup finito e non in war
                     if frase[1] == "Hits":
                         M_RC.hits(frase[0])                         #del tipo (['1', '0', '3', '5'], 'Hits') Vittima, Killer, Zona, Arma
                         continue
@@ -69,9 +72,6 @@ def redcap_main():
                         continue
                     elif frase[1] == "Kills":                           #del tipo (['0', '0', '10'], 'Kills')
                         M_RC.kills(frase[0])
-                        continue
-                    elif frase[1] == "Comandi":                   #COMANDI frase[0] (0,0=id, 0,1=comando)
-                        M_RC.comandi(frase[0])                    #passo richiedente e parametri alla funzione comandi del modulo M_RC
                         continue
                     elif frase[1] == "InitRound":
                         M_RC.initRound(frase[0])    
@@ -83,11 +83,12 @@ def redcap_main():
                         M_RC.endMap(frase[0])
                         continue
         if CRON1.is_time():                     #eseguo operazioni a cron1
-            M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato
-            M_RC.cr_full()                      #controllo se il server e' pieno o vuoto
-            M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotation
-            M_RC.cr_unvote()                    #controllo se c'e' un voto speciale attivo
-            M_RC.cr_warning()                   #controllo se qualcuno ha troppi warning
+            if M_RC.GSRV.Server_mode == 1:
+                M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato
+                M_RC.cr_full()                      #controllo se il server e' pieno o vuoto
+                M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotation
+                M_RC.cr_unvote()                    #controllo se c'e' un voto speciale attivo
+                M_RC.cr_warning()                   #controllo se qualcuno ha troppi warning
             if CRON1.ticks == 240:              #E' passata 1 ora circa
                 q3ut4_parse()
                 CRON1.reset()
