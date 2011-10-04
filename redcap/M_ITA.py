@@ -30,6 +30,7 @@ RC_outputs = {
 "lownotoriety": "^2%s ^1kikkato per affidabilita troppo bassa: ^4%s2 ^2contro ^4%s3 ^2richiesta",
 "muteall": "^1SILENZIO, ^2per favore!",
 "muted":"^4%s ^2mutato in quanto era mutato all'ultima disconnessione",
+"nextmap": "^2Prossima mappa: ^4%s",
 "nickchanges": "^2%s ^1kikkato per troppi cambi nick (%s)",
 "noclearcfg": "^2Configurazione ambigua o inesistente.",
 "nocleartarget": "^2Nick ambiguo. Riprova o usa lo slot ID",

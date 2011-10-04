@@ -72,6 +72,9 @@ def clientdisconnect(id):
     GSRV.player_DEL(id)
 
 def clientuserinfo(info):                           #info (0=slot_id, 1=ip, 2=guid)
+    if GSRV.Server_mode == 0 and info[0] not in GSRV.PT:            #se fase avvio e il player non è in lista
+        newplayer = C_PLAYER.Player()                               #lo creo
+        GSRV.player_NEW(newplayer, info[0], time.time())            #lo aggiungo alla PlayerTable ed ai TeamMember
     if GSRV.PT[info[0]].justconnected:              #Se e un nuovo player
         GSRV.player_ADDINFO(info)                   #gli aggiungo GUID e IP
     elif info[2] <> GSRV.PT[info[0]].guid:            #cambio guid durante il gioco
@@ -136,7 +139,8 @@ def comandi (frase):                            #frase [id, testo] (es: "2:31 sa
                 #TODO inserire il controllo di bot in pausa
                 eval("%s(frase[0],res)" %comando[0])    #eseguo il comando e gli passo richiedente e parametri
             break
-    tell(frase[0], Lang["wrongcmd"] )          #comando non riconosciuto
+    if not res:
+        tell(frase[0], Lang["wrongcmd"] )          #comando non riconosciuto
 
 def cr_floodcontrol():
     """verifica (periodica) che nessun player abbia fatto flood"""
@@ -257,13 +261,15 @@ def initGame(frase):    # frase (0=matchmode, 1=gametype, 2=maxclients, 3=mapnam
     GSRV.Gametype = frase[1]
     GSRV.MaxClients = frase[2]
     GSRV.MapName = frase[3]
-    if GSRV.Server_mode == 0:
-        GSRV.Server_mode = 1                #Finisce la fase di startup (se non era gia finita)
-        say(Lang["startupend"], 1)
     initRound(frase)                        #richiamo anche le solite operazioni da initround
 
 def initRound(frase):
-    if GSRV.Server_mode == 1:                                 #solo in modalit� normale. No war e no startup
+    if GSRV.Server_mode == 0 and GSRV.TeamMembers[0] == 0: #TODO non funziona bene verificare
+        GSRV.Server_mode = 1                #Finisce la fase di startup (se non era gia finita)
+        say(Lang["startupend"], 1)
+    else:
+        say(Lang["startup"], 1)
+    if GSRV.Server_mode == 1:                                 #solo in modalita normale. No war e no startup
         say(str(GSRV.TeamMembers[0]) + str(GSRV.TeamMembers[1])  + str(GSRV.TeamMembers[2])  + str(GSRV.TeamMembers[3]), 1) #DEBUG
         GSRV.teamskill_eval()                                          #aggiorno le teamskill e il coefficiente di sbilanciamento skill
         GSRV.players_alive()                                            #setto i player non spect a vivo, gli aggiungo un round e updato il coeff skill.
@@ -273,6 +279,12 @@ def initRound(frase):
                 SCK.cmd("forceteam " + moving)
                 GSRV.BalanceRequired = False
                 say(Lang["balancexecuted"], 0)
+        if GSRV.MapName in GSRV.Q3ut4["mapcycle"]:      #verifico qual'e la prossima mappa
+            indice_nextmap = GSRV.Q3ut4["mapcycle"].index(GSRV.MapName) +1
+            if indice_nextmap == len(GSRV.Q3ut4["mapcycle"]):
+                indice_nextmap = 0
+            nextmap = GSRV.Q3ut4["mapcycle"][indice_nextmap]         #TODO verificare che funzioni
+            say(Lang["nextmap"]%nextmap, 1)
     elif GSRV.Server_mode == 0:
         say(Lang["startup"], 1)
 
@@ -355,15 +367,14 @@ def saluta(modo, id):
         opz = opzioni.pop()
         saluto += Status[opz]%stat[opz]
     say(saluto, 0)
-    #print saluto #DEBUG
 
 def say(testo,modo):
     """Manda messaggi pubblici da console. 0=say, 1=console, 2=bigtext"""
     modi= {
-    0 : 'say ',
-    1 : '',
-    2 : 'bigtext '}
-    SCK.cmd(modi[modo] + testo)
+    0 : 'say "',
+    1 : '"',
+    2 : 'bigtext "'}
+    SCK.cmd(modi[modo] + testo + '"')
    
 def says(frase):                 #frase (0=id, 1=testo)
     #print frase[1] #DEBUG
@@ -487,9 +498,10 @@ def forceteam(richiedente, parametri): #param richiedente target colore
 
 def info(richiedente, parametri):       #TODO finire
     """parametri vari server:IP admin, nextmap,ecc"""
-    versione = "^5RedCap %s" %M_CONF.versione
-    autore = "bw|Lebbra!"
-    tell(richiedente, info)
+    versione = "^2RedCap ^5%s " %M_CONF.versione
+    autore = "by bw|Lebbra! ^2Server IP: ^5"
+    server = "%s:%s" %(M_CONF.SocketPars["ServerIP"], M_CONF.SocketPars["ServerPort"])
+    tell(richiedente, versione + autore + server)
 
 def kick(richiedente, parametri, reason = ""):
     """Kikka un player dal server"""

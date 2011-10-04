@@ -85,10 +85,19 @@ class Parser:
         lista = os.listdir(path)
         for element in lista:
             if element.rfind(".cfg") != -1:
-                info["cfg"].append(element)
+                info["cfg"].append(element)         #recupero i cfg
             elif element.rfind(".pk3") != -1:
                 mapname = element.rstrip(".pk3")
-                info["map"].append(mapname)
-        #TODO parsare la cyclemap
+                info["map"].append(mapname)     #recupero le mappe disponibili
+        tag = False
+        for line in open(path +"/mycycle.txt", "r"):
+            if  "{" in line:
+                tag = True
+                continue
+            elif "}" in line:
+                tag = False
+                continue
+            elif not tag:
+                info["mapcycle"].append(line)                      #parso il cyclemap
         
 

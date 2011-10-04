@@ -6,7 +6,7 @@ import M_CONF
 comandi = [
 ["balancemode", r"!ab", M_CONF.lev_balancemode],
 ["ban", r"!ban (?P<target>.*)", M_CONF.lev_ban],
-["bilancia",r"!tm", M_CONF.lev_balance],
+["balance",r"!tm", M_CONF.lev_balance],
 ["callvote",r"!v$",M_CONF.lev_callvote],
 ["cyclemap",r"!cy", M_CONF.lev_cycle],
 #["deregistra",r": (?P<rich>\d+) .*?: !unreg (?P<target>.*)", RCconf.lev_unreg],

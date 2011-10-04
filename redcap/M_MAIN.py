@@ -12,11 +12,10 @@
 #TODO note per warmode: no kick, warn o richiami per badguid o badnick, tkill o thit o censura (registrare variazione skill?), non registrare ne spammare record. no spam vari.
 #TODO prevedere silentmode.
 #TODO fare comando hit che dice le hit eseguite in percentuale
-#TODO verificare tutto quello che c'e' da bloccare quando si e' in modalita'� war.
+#TODO verificare tutto quello che c'e' da bloccare quando si e' in modalita' war.
 #TODO vedere come assegnare il livello
-#TODO vedere perchè da sempre comando non riconosciuto
-#TODO se crashlog non esiste deve venire creato
 #TODO verificare come mai status non viene detto tutto (limite lunghezza frase?)
+#TODO togliere clientconnect per aggiungere players ed usare clientuserinfo (verificare anche come fa il vecchio redcap)
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -97,6 +96,7 @@ def redcap_main():
                 q3ut4_parse()
                 CRON1.reset()
         if CRON2.is_time():
+            PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4)       #controllo mappe e cyclemap
             pass                                #eseguire operazioni giornaliere (pulizia DB, riavvio server, etc)
 
 #AVVIO IL REDCAP

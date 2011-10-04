@@ -10,9 +10,9 @@ NomeDB = "Rc_DB.sqlite"          #nome DB (se si cambia rinominare anche il file
 #minRounds = 60                  #numero minimo di round giocati per apparire nelle statistiche
 #maxAbsence = 25                 # giorni di assenza prima di essere cancellati dal server
 
-##LIVELLI COMANDI:
+##LIVELLI COMANDI (Max lev = 100):
 lev_admin = 2                   #livello a partire dal quale un player e' considerato admin (riceve piu' info in risposta a certi comandi, ed il fatto che sia presente abilita o disabilita alcune funzionalita del bot)
-lev_balancemode = 2             #inserisce/disinserisce l'autobalance
+lev_balancemode = 2          #inserisce/disinserisce l'autobalance
 lev_balance = 0                 #bilanciare team
 lev_ban = 4                     #ban
 lev_esegui = 4                  #esegue un qualsiasi comando rcon
