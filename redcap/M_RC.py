@@ -72,7 +72,7 @@ def clientdisconnect(id):
     GSRV.player_DEL(id)
 
 def clientuserinfo(info):                           #info (0=slot_id, 1=ip, 2=guid)
-    if GSRV.Server_mode == 0 and info[0] not in GSRV.PT:            #se fase avvio e il player non è in lista
+    if GSRV.Server_mode == 0 and info[0] not in GSRV.PT:            #se fase avvio e il player non e in lista
         newplayer = C_PLAYER.Player()                               #lo creo
         GSRV.player_NEW(newplayer, info[0], time.time())            #lo aggiungo alla PlayerTable ed ai TeamMember
     if GSRV.PT[info[0]].justconnected:              #Se e un nuovo player
@@ -83,6 +83,8 @@ def clientuserinfo(info):                           #info (0=slot_id, 1=ip, 2=gu
             kick("Redcap", info[0], Lang["guidchange"]%info[1])
 
 def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
+    if GSRV.Server_mode == 0 and info[0] not in GSRV.PT:            #se fase avvio e il player non e in lista skippo
+        return
     if GSRV.Server_mode <> 2:                           #non attivo in warmode
         if GSRV.PT[info[0]].invalid_guid():                                                             #CONTROLLO VALIDITA GUID (adesso che ho pure il nick!)
             GSRV.PT[info[0]].notoriety += M_CONF.Notoriety["badguid"]               #abbasso la notoriety
@@ -112,7 +114,8 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
         GSRV.PT[info[0]].lastconnect = time.time()                              #aggiorno il lastconnect
         GSRV.PT[info[0]].skill_coeff_update()                                   #aggiorno il coefficiente skill
         GSRV.PT[info[0]].justconnected = False                                  #non e piu nuovo
-        saluta(M_CONF.saluti, info[0])                                          #chiamo la funzione che si occupa eventualmente di salutare il player
+        if GSRV.Server_mode <> 2:                           #non attivo in warmode
+            saluta(M_CONF.saluti, info[0])                                          #chiamo la funzione che si occupa eventualmente di salutare il player
     if res:                                                                     #CONTROLLO ALIAS (solo per player NON nuovi)
         esiste = False
         for alias in GSRV.PT[info[0]].alias:
@@ -136,7 +139,6 @@ def comandi (frase):                            #frase [id, testo] (es: "2:31 sa
             if GSRV.PT[frase[0]].level < comando[2]:
                 tell(frase[0], Lang["nolevel"] %(str(comando[2]), GSRV.PT[frase[0]].level))        #player non autorizzato
             else:
-                #TODO inserire il controllo di bot in pausa
                 eval("%s(frase[0],res)" %comando[0])    #eseguo il comando e gli passo richiedente e parametri
             break
     if not res:
@@ -210,6 +212,9 @@ def db_datacontrol(guid,id):
         DB.esegui(DB.query["newloc"], (GSRV.PT[id].guid, GSRV.PT[id].ip))    #gli salvo il suo primo IP
         DB.salva()
     DB.disconnetti()
+    if guid in M_CONF.AdminGuids:       #se � admin gli do il massimo livello
+         GSRV.PT[id].level = 100
+         tell(GSRV.PT[id].slot_id, Lang["adminrights"]%GSRV.PT[id].nick)
 
 def db_loccontrol(guid):    #TODO unused
     DB.connetti()
@@ -270,7 +275,7 @@ def initRound(frase):
     else:
         say(Lang["startup"], 1)
     if GSRV.Server_mode == 1:                                 #solo in modalita normale. No war e no startup
-        say(str(GSRV.TeamMembers[0]) + str(GSRV.TeamMembers[1])  + str(GSRV.TeamMembers[2])  + str(GSRV.TeamMembers[3]), 1) #DEBUG
+        say(str(GSRV.TeamMembers[0]) + "^1" + str(GSRV.TeamMembers[1])  + "^5" + str(GSRV.TeamMembers[2])  + "^2" + str(GSRV.TeamMembers[3]), 1) #DEBUG
         GSRV.teamskill_eval()                                          #aggiorno le teamskill e il coefficiente di sbilanciamento skill
         GSRV.players_alive()                                            #setto i player non spect a vivo, gli aggiungo un round e updato il coeff skill.
         if GSRV.BalanceMode == 2 or GSRV.BalanceRequired:               #eseguo bilanciamento automatico o su richiesta
@@ -491,15 +496,15 @@ def forceteam(richiedente, parametri): #param richiedente target colore
         target = parametri[0]
         team = parametri[1]
     else:
-        team = {"r":"red","b":"blue","s":"spectator"}[parametri.group("target").lower()]
+        team = {"r":"red","b":"blue","s":"spectator"}[parametri.group("team").lower()]
         target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():
         SCK.cmd("forceteam " + target + " " + team)
 
-def info(richiedente, parametri):       #TODO finire
+def info(richiedente, parametri):       #TODO finire    #FUNZIONA
     """parametri vari server:IP admin, nextmap,ecc"""
     versione = "^2RedCap ^5%s " %M_CONF.versione
-    autore = "by bw|Lebbra! ^2Server IP: ^5"
+    autore = "^3by bw|Lebbra! ^2Server IP: ^5"
     server = "%s:%s" %(M_CONF.SocketPars["ServerIP"], M_CONF.SocketPars["ServerPort"])
     tell(richiedente, versione + autore + server)
 
@@ -541,6 +546,9 @@ def mute(richiedente, parametri, reason = ""):
 
 def muteall(richiedente, parametri):
     """Muta/smuta tutti i players di livello inferiore al richiedente"""
+    if GSRV.Server_mode == 0:                               #comando non disponibile in fase di avvio
+        tell(richiedente, Lang["noavailcmd"])
+        return
     for player in GSRV.PT:
         if GSRV.PT[player].level < GSRV.PT[richiedente].level:
             GSRV.PT[player].varie.append("muted")
@@ -562,16 +570,16 @@ def nuke(richiedente, parametri):
 def nukeall():
     pass #TODO da fare
 
-def ora (richiedente, parametri):
+def ora (richiedente, parametri):   #FUNZIONA
     """dice l'ora"""
     tell(richiedente, Lang["ora"] %(time.strftime("%H.%M.%S", time.localtime())))
 
-def password (richiedente, parametri):
+def password (richiedente, parametri):  #FUNZIONA
     """Setta una password"""
-    SCK.cmd("password " + parametri.group("pwd"))
+    SCK.cmd("g_password " + parametri.group("pwd"))
     tell(richiedente, Lang["pwdset"])
 
-def level (richiedente, parametri):
+def level (richiedente, parametri):  #FUNZIONA
     """assegna il livello ad un player"""
     if int(parametri.group("num")) > GSRV.PT[richiedente].level:
         tell(richiedente, Lang["toohighlevel"]%str(GSRV.PT[richiedente].level))
@@ -579,14 +587,17 @@ def level (richiedente, parametri):
     target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():                                                   #se ho trovato lo slot
         GSRV.PT[target].level = int(parametri.group("num"))
-        tell(richiedente, Lang["levassigned"]%(int(GSRV.PT[target].level, GSRV.PT[target].nick)))
-        tell(target, Lang["levassigned"]%(int(GSRV.PT[target].level, GSRV.PT[target].nick)))
+        tell(richiedente, Lang["levassigned"]%(int(GSRV.PT[target].level), GSRV.PT[target].nick))
+        tell(target, Lang["levassigned"]%(int(GSRV.PT[target].level), GSRV.PT[target].nick))
 
 def skill(richiedente, parametri):
     """Comunica la skill del player"""
+    if not parametri.group("target"):           #richiesta propria skill
+        tell(richiedente, Lang["skill"]%(GSRV.PT[richiedente].skill, GSRV.PT[richiedente].skill_var, GSRV.PT[richiedente].ksmax))
+        return
     target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():                                                   #se ho trovato lo slot
-        tell(richiedente, Lang["skill"]%(GSRV.PT[target].skill, GSRV.PT[target].skill_var))                    #Invio al socket il comando kick
+        tell(richiedente, Lang["skill"]%(GSRV.PT[target].skill, GSRV.PT[target].skill_var, GSRV.PT[target].ksmax))                    #Invio al socket il comando kick
 
 def slap(richiedente, parametri, reason=""):
     """equivalente a "slap" da console, ma puo' essere chiamato piu' volte di fila"""
@@ -607,9 +618,12 @@ def slap(richiedente, parametri, reason=""):
         for i in range(int(volte)): #Invio al buffer il comando un numero "param[1]" di volte
             SCK.cmd("slap " + target)
 
-def status(richiedente, parametri, modo = M_CONF.status):
+def status(richiedente, parametri, modo = M_CONF.status):       #corrisponde al comando !z
     """fornisce informazioni sui giocatori o saluta"""
-    if not parametri.group("target"):                     #comando status senza target: do nick e slot
+    if GSRV.Server_mode == 0:                               #comando non disponibile in fase di avvio
+        tell(richiedente, Lang["noavailcmd"])
+        return
+    if not parametri.group("target"):                     #comando status senza target: do nick e slot di tutti
         for player in GSRV.PT:
             tell(richiedente, ("^4" + GSRV.PT[player].nick + "^2: slot " + GSRV.PT[player].slot_id))
         return
@@ -643,12 +657,12 @@ def tempban(richiedente, parametri):
         GSRV.PT[target].tempban = time.time() + ore*3600 #data scadenza ban
         SCK.cmd("kick " + target)   #lo kikko (al clientdisconnect si aggiorna il tempban)
 
-def unwar(richiedente, parametri):   
+def unwar(richiedente, parametri):   #FUNZIONA
     """resetta il server in modalita' normale"""
     SCK.cmd("g_matchmode 0")
-    say(Lang["warunloaded"]%GSRV.Baseconf , 2)
+    say(Lang["warunloaded"]%GSRV.Baseconf, 2)
     SCK.cmd("exec %s" %GSRV.Baseconf)                #eseguo la config di base
-    GSRV.Server_mode = 1                                       #passo in modalita� normale
+    GSRV.Server_mode = 1                             #passo in modalita normale
 
 def war(richiedente, parametri):
     """setta il server in modalita' war"""
@@ -658,16 +672,17 @@ def war(richiedente, parametri):
             if str.lower(cfg).find(str.lower(str.strip(parametri.group('cfg')))) != -1: #porto tutto in minuscole e confronto
                 tmp.append(cfg)
         if len(tmp) == 1:
-            say(Lang["warloaded"] %tmp[0] , 2)
+            say(Lang["warloaded"] %tmp[0], 2)
             SCK.cmd("exec %s" %tmp[0])              #eseguo la config richiesta
         else:
             tell(richiedente, Lang["noclearcfg"])
             return
     else:
+        print GSRV.Basewar  #DEBUG
         say(Lang["warbaseloaded"]%GSRV.Basewar , 2)
         SCK.cmd("exec %s" %GSRV.Basewar)            #eseguo la config richiesta
     SCK.cmd("reload")                               #avvio la cfg
-    GSRV.Server_mode = 2                            #passo in modalita� war
+    GSRV.Server_mode = 2                            #passo in modalita war
 
 def z_profiler(routine ="", tim="", modo=""):       #funzione di debug
     if modo == True:

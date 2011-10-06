@@ -57,7 +57,7 @@ class Player:
         self.DBnick = dati[1]                                         #dati = (guid, DBnick, skill, rounds, lastconn, level, tempban, notoriety, firstconn, streak, alias, varie)
         self.skill = dati[2]
         self.rounds = dati[3]
-        self.lastconnect = dati[4]                                   #data dell'ultima connessione
+        self.lastconnect = dati[4]                                 #data dell'ultima connessione
         self.level = dati[5]
         self.tempban = dati[6]
         self.guidage = (time - dati[8])/87400      #eta' della guid in giorni

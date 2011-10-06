@@ -10,6 +10,7 @@
 
 RC_outputs = {
 "accident":"^4%s ^2non ha fatto attenzione e si e' ammazzato da solo",
+"adminrights": "^2Assegnato livello admin a %s",
 "antirecon": "^2%s ^1kikkato per doppia connessione in meno di ^4%s",
 "balanceauto":"^2Il bilanciamento avviene in ^4AUTOMATICO ^2all'inizio di ogni round",
 "balancexecuted": "^2Bilanciamento effettuato.",
@@ -32,6 +33,7 @@ RC_outputs = {
 "muted":"^4%s ^2mutato in quanto era mutato all'ultima disconnessione",
 "nextmap": "^2Prossima mappa: ^4%s",
 "nickchanges": "^2%s ^1kikkato per troppi cambi nick (%s)",
+"noavailcmd": "^2Comando non disponibile in fase di avvio.",
 "noclearcfg": "^2Configurazione ambigua o inesistente.",
 "nocleartarget": "^2Nick ambiguo. Riprova o usa lo slot ID",
 "noclearmap": "^2Mappa ambigua o inesistente. Riprova o usa ^4!cmd nomemappa",
@@ -39,13 +41,13 @@ RC_outputs = {
 "notimetocmd": "^2Devi aspettare ancora ^4%s minuti ^2per chiamare questo comando",
 "nuked": "^2Nuke lanciata su ^4%s ^2da ^4%s",
 "ora": "^2Sono le ^4%s",
-"pwdset": "^2Password inserita. ^3Sara' attiva dal prossimo map load",
+"pwdset": "^2Password inserita. ^4Sara' attiva dal prossimo map load",
 "record_alltime": "^6RECORD ASSOLUTO di ^4%s ^6%s kills",
 "record_monthly": "^6RECORD MENSILE di ^4%s ^6%s kills",
 "record_weekly": "^6RECORD SETTIMANALE di ^4%s ^6%s kills",
 "record_daily": "^6RECORD ODIERNO di ^4s% ^6%s kills",
 "record_personal": "^2Record personale di ^4%s ^6%s kills",
-"skill": "^2Skill: ^4%s ^2Instantanea: ^4%s",
+"skill": "^2Skill: ^4%s ^2Instantanea: ^4%s ^2Streak: ^4%s ",
 "space":"^2Slots pieni. Spettatore ^4%s ^kikkato.",
 "startup":"^2RedCap in fase di avvio",
 "startupend": "^2Fase di avvio terminata. ^4RedCap operativo",
@@ -57,11 +59,11 @@ RC_outputs = {
 "tkill": "^1NO TEAMKILL! ^2Applicata penalita skill. ^4Livello warning ^1%s ",
 "toohighlevel":"^1Non puoi assegnare livelli superiori al tuo che e' ^4%s",
 "voteON":"^2Il voto e' ora attivo per ^4%s ^2secondi",
-"warbaseloaded" : "^5Modalita war. ^2Carico Warbase.cfg ...",
+"warbaseloaded" : "^5Modalita war. ^2Carico %s ...",
 "warloaded": "^5Modalita' WAR. ^2Carico %s ...",
 "warning":"^2%s ^1kikkato per somma di warning",
-"warunloaded": "^5Fine WAR. ^2Ritorno a modalita' normale",
-"wrongcmd":"^3Comando non riconosciuto dal bot ^4RedCap",
+"warunloaded": "^5Fine WAR. ^2Ricarico %s ...",
+"wrongcmd":"^1Comando non riconosciuto dal bot ^4RedCap",
 }
 
 RC_kills = {        #messaggi di killstreak

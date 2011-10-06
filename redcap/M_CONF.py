@@ -19,7 +19,7 @@ lev_esegui = 4                  #esegue un qualsiasi comando rcon
 lev_callvote = 0                #chiama voto
 lev_cycle = 2                   #cyclemap
 lev_force = 2                   #forceteam
-#lev_info = 0                   #mostra server IP e versione redcap
+lev_info = 0                   #mostra server IP e versione redcap
 #lev_isk =0                     #mostra instant skill del player
 lev_kick = 2                    #kick
 lev_level = 4                   #assegno level
@@ -71,6 +71,7 @@ MinNotoriety = 1            #notoriety minima per segnare un record
 botname = "^8RC| "             #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
 RC_lang = "ITA"                    #Localizzazione linguaggio ITA #TODO (ENG FRA e altre, da fare)
 maxSlap = 10                        #massimo numero di slap che posso dare ad un player
+AdminGuids = ["0606EE61D6F696AAE452385F765D78CF"]                  #guid automaticamente abilitata al max liv di autorizzazione
 
 ##SERVER
 ServerPars = {

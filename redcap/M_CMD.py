@@ -12,7 +12,7 @@ comandi = [
 #["deregistra",r": (?P<rich>\d+) .*?: !unreg (?P<target>.*)", RCconf.lev_unreg],
 ["esegui", r"!cmd (?P<cmd>.*)", M_CONF.lev_esegui],
 ["forceteam",r"!f(?P<team>[rbs]) (?P<target>.*)",M_CONF.lev_force],
-#["info",r": (?P<rich>\d+) .*?: !info", RCconf.lev_info],
+["info",r"!info", M_CONF.lev_info],
 #["join",r": (?P<rich>\d+) .*?: !join (?P<target>.*)", RCconf.lev_join],
 ["kick",r"!k (?P<target>.*)", M_CONF.lev_kick],
 ["level",r"!lev(?P<num>\d*) (?P<target>.*)",M_CONF.lev_level],
