@@ -17,7 +17,7 @@
 #TODO sistemare orario ultima visita
 #TODO mettere decimali a skill e isk
 #TODO Prelevare record da db all'avvio del bot'
-#TODO fare un comando specifico per gli alias
+#TODO finire comando specifico per gli alias
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -45,9 +45,9 @@ CRON2 = M_AUX.Cronometro(M_CONF.CRON2)          #Istanzio il cron2
 def init_jobs():
     """attivita' da fare all'avvio di redcap"""
     M_RC.say("^2RedCap in Avvio", 2)    #DEBUG
-    M_RC.clientlist()          #TODO recupero i client gia presenti sul server
+    M_RC.clientlist()          #recupero i client gia presenti sul server
+    M_RC.recordlist()          #recupero i record dal server
     q3ut4_parse()
-    #TODO gserver_is_active() #Controllo che il gameserver sia attivo, se no IL REDCAP SI FERMA QUI IN LOOP finche' il server non torna attivo.
     redcap_main()                               #LANCIO LA PROCEDURA PRINCIPALE
 
 def q3ut4_parse():

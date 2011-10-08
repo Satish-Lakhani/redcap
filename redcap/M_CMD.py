@@ -4,6 +4,7 @@
 import M_CONF
 #TODO siamo sicuri che (?P<rich>\d+) sia ancora necessario?
 comandi = [
+["alias", r"!al (?P<target>.*)", M_CONF.lev_alias],
 ["balancemode", r"!ab", M_CONF.lev_balancemode],
 ["ban", r"!ban (?P<target>.*)", M_CONF.lev_ban],
 ["balance",r"!tm", M_CONF.lev_balance],
@@ -31,7 +32,7 @@ comandi = [
 ["slap", r"!s(?P<num>\d*) (?P<target>.*)", M_CONF.lev_slap],
 ["status", r"!z\s*(?P<target>.*)", M_CONF.lev_status],
 ["tempban",r"!b(?P<num>\d*) (?P<target>.*)",M_CONF.lev_tmpban],       #!b123 pippo
-#["top",r": (?P<rich>\d+) .*?: !top", RCconf.lev_top],
+["top",r"!top", M_CONF.lev_top],
 ["unwar",r"!unwar", M_CONF.lev_unwar],
 ["war",r"!war\s*(?P<cfg>.*)", M_CONF.lev_war],
 ]

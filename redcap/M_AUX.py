@@ -3,13 +3,6 @@
 
 import time                     #Funzioni tempo
 
-'''def avvio():
-    #controllo esistenza log
-    try:
-        f = open("logs/crash.log", "a")
-    except:'''
-
-
 class Cronometro:
     """classe per controlli a tempo"""
     def __init__(self, periodo):

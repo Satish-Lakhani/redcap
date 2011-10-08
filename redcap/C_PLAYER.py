@@ -106,9 +106,9 @@ class Player:
         128: self.DBnick,
         256: self.ip,
         512: self.level,
-        1024: aliases,
+        1024: self.warning,
         2048:self.lastconnect,
-        4096: self.warning,
+        4096: aliases,
         }
         return X
 

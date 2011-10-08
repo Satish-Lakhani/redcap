@@ -43,7 +43,7 @@ class Server:
         self.Sk_penalty = sk_pars["Sk_penalty"]                         #penalita' per teamkill (espressa come n. di kill da fare per bilanciare una penalty)
         self.Sk_range = sk_pars["Sk_range"]                             #Ampiezza curva skill:piu grande e' il valore, piu' alti sono i valori di skill che si possono raggiungere.
         self.Sk_team_impact = sk_pars["Sk_team_impact"]                 #frazione della skill calcolata sul team avversario, rispetto a quella calcolata sulla vittima
-        self.TopScores = [[0.0, 0, " "],[0.0, 0, " "],[0.0, 0, " "],[0.0, 0, " "]]          #Top scores del server (alltime, month, week, day) (time, valore, DBnick)
+        self.TopScores = {"Alltime":[0.0, 0, " "],"Month":[0.0, 0, " "],"Week":[0.0, 0, " "],"Day":[0.0, 0, " "], "HSkill":[0.0, 0, " "], "LSkill":[0.0, 0, " "]} #Top scores del server (alltime, month, week, day, Hskill Lskill) (time, valore, DBnick)
         self.TeamSkill = [0,0]                                          #skill media team red e blue
         self.TeamSkillCoeff = 1                                         #coefficiente di bilanciamento per teams squilibrati
         self.TeamMembers = [0,0,0,0]                                    #players 0=sconosciuto, 1=red, 2=blue, 3=spect

@@ -77,16 +77,16 @@ def clientlist():
     if Res[1]:
         list = Res[0].split("\n")   #List = GUID, SLOT, NICK
         if len(list) > 2:
-            del(list[0])                #pulisco la risposta
+            del(list[0])                        #pulisco la risposta
             list.reverse()
             del(list[0])
-            for pl in list:             #aggiungo i nuovi players
+            for pl in list:                     #aggiungo i nuovi players
                 dati = pl.split()
-                newplayer = C_PLAYER.Player()               #lo creo
+                newplayer = C_PLAYER.Player()   #lo creo
                 GSRV.player_NEW(newplayer,dati[1], time.time()) #lo aggiungo alla PlayerTable ed ai TeamMember
                 GSRV.PT[dati[1]].guid = dati[0]
                 GSRV.PT[dati[1]].nick = dati[2]
-                say("^1DBG MSG:^3Find %s"%dati[2], 1)
+                say("^1DBG MSG:^3Find %s"%dati[2], 1)       #DEBUG
 
 def clientuserinfo(info):                       #info (0=slot_id, 1=ip, 2=guid)
     if GSRV.PT[info[0]].justconnected:              #Se e un nuovo player
@@ -372,6 +372,16 @@ def option_checker(v):
                     go = False
     return option
 
+def recordlist():
+    """recupera i record dal db"""
+    DB.connetti()
+    dati = DB.esegui(DB.query["getrecords"]).fetchall()
+    DB.disconnetti()
+    for element in dati:
+        GSRV.TopScores[element[0]][0] = element[2]   #time
+        GSRV.TopScores[element[0]][1] = element[1]   #val
+        GSRV.TopScores[element[0]][2] = element[3]   #owner
+    
 def saluta(modo, id):
     """si occupa di salutare il player al suo ingresso in game"""
     if GSRV.Server_mode == 2:                               #non attivo in warmode
@@ -438,6 +448,19 @@ def trovaslotdastringa(richiedente, stringa):
 #####################################
 ## FUNZIONI CHIAMABILI DAL PLAYER  ##
 #####################################
+
+def alias(richiedente, parametri):      #TODO dafinire
+    """espone gli alias di un player"""
+    while opzioni:
+        opz = opzioni.pop()
+        frase += Status[opz]%str(stat[opz])
+        i += 1
+        if i == 3:
+            tell(richiedente, frase)
+            frase = ""
+            i = 0
+    if i <> 0:
+            tell(richiedente, frase)
 
 def balance(richiedente, parametri):
     """Esegue il bilanciamento dei teams"""
@@ -693,6 +716,15 @@ def tempban(richiedente, parametri):
         GSRV.PT[target].tempban = time.time() + ore*3600 #data scadenza ban
         SCK.cmd("kick " + target)   #lo kikko (al clientdisconnect si aggiorna il tempban)
 
+def top(richiedente, parametri):
+    """dice i record"""
+    tell(richiedente, Lang["top"]%("Alltime", str(GSRV.TopScores["Alltime"][1]), str(GSRV.TopScores["Alltime"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Alltime"][0]))))
+    tell(richiedente, Lang["top"]%("Month", str(GSRV.TopScores["Month"][1]), str(GSRV.TopScores["Month"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Month"][0]))))
+    tell(richiedente, Lang["top"]%("Week", str(GSRV.TopScores["Week"][1]), str(GSRV.TopScores["Week"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Week"][0]))))
+    tell(richiedente, Lang["top"]%("Day", str(GSRV.TopScores["Day"][1]), str(GSRV.TopScores["Day"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Day"][0]))))
+    #tell(richiedente, Lang["top"]%("HSkill", str(GSRV.TopScores["HSkill"][1]), str(GSRV.TopScores["HSkill"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["HSkill"][0])))) #TODO HI e LO skill (da fare)
+    #tell(richiedente, Lang["top"]%("LSkill", str(GSRV.TopScores["LSkill"][1]), str(GSRV.TopScores["LSkill"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["LSkill"][0]))))
+
 def unwar(richiedente, parametri):   #FUNZIONA
     """resetta il server in modalita' normale"""
     SCK.cmd("g_matchmode 0")
@@ -714,13 +746,13 @@ def war(richiedente, parametri):
             tell(richiedente, Lang["noclearcfg"])
             return
     else:
-        print GSRV.Basewar  #DEBUG
+        #print GSRV.Basewar  #DEBUG
         say(Lang["warbaseloaded"]%GSRV.Basewar , 2)
         SCK.cmd("exec %s" %GSRV.Basewar)            #eseguo la config richiesta
     SCK.cmd("reload")                               #avvio la cfg
     GSRV.Server_mode = 2                            #passo in modalita war
 
-def z_profiler(routine ="", tim="", modo=""):       #funzione di debug
+'''def z_profiler(routine ="", tim="", modo=""):       #funzione di debug
     if modo == True:
         if routine not in GSRV.z_profiler:
             GSRV.z_profiler[routine] = 0.0
@@ -732,4 +764,4 @@ def z_profiler(routine ="", tim="", modo=""):       #funzione di debug
             print controllo + str(GSRV.z_profiler[controllo])
             for rout in GSRV.z_profiler:
                 GSRV.z_profiler[rout] = 0.0
-                
+'''

@@ -59,6 +59,7 @@ RC_outputs = {
 "thit": "^1NO TEAMHITS! ^2Applicata penalita skill. ^4Livello warning ^1%s ",
 "tkill": "^1NO TEAMKILL! ^2Applicata penalita skill. ^4Livello warning ^1%s ",
 "toohighlevel":"^1Non puoi assegnare livelli superiori al tuo che e' ^4%s",
+"top": "^6%s: ^4%s ^5%s ^6il %s",
 "voteON":"^2Il voto e' ora attivo per ^4%s ^2secondi",
 "warbaseloaded" : "^5Modalita war. ^2Carico %s ...",
 "warloaded": "^5Modalita' WAR. ^2Carico %s ...",

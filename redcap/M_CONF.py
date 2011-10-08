@@ -11,8 +11,9 @@ NomeDB = "Rc_DB.sqlite"          #nome DB (se si cambia rinominare anche il file
 #maxAbsence = 25                 # giorni di assenza prima di essere cancellati dal server
 
 ##LIVELLI COMANDI (Max lev = 100):
+lev_alias = 2                   #mostra gli alias di un player
 lev_admin = 2                   #livello a partire dal quale un player e' considerato admin (riceve piu' info in risposta a certi comandi, ed il fatto che sia presente abilita o disabilita alcune funzionalita del bot)
-lev_balancemode = 2          #inserisce/disinserisce l'autobalance
+lev_balancemode = 2             #inserisce/disinserisce l'autobalance
 lev_balance = 0                 #bilanciare team
 lev_ban = 4                     #ban
 lev_esegui = 4                  #esegue un qualsiasi comando rcon
@@ -37,7 +38,7 @@ lev_skill = 0                   #mostra skill del player
 lev_slap = 2                    #slap
 lev_status = 0                  #status (informazioni varie sul player)
 lev_tmpban = 2                  #ban temporaneo
-#lev_top = 0                    #mostra i top record
+lev_top = 0                     #mostra i top record
 #lev_unreg = 3                  #toglie il passport
 lev_war = 0                     #configurazione per war
 lev_unwar = 0                   #eliminare configurazione war
@@ -162,8 +163,8 @@ SocketPars = {
 2048: Ultima visita
 4096: Warning
 '''
-saluti = 1 + 2048                                                       #informazioni di saluto
-status = 1 + 32 + 128 + 4096 + 2048                                           #informazioni date ai non admin
+saluti = 1 + 2048                                                           #informazioni di saluto
+status = 1 + 32 + 128 + 4096 + 2048                                         #informazioni date ai non admin
 status_adm = 1 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 1024 + 2048 + 4096    #info date agli admin
 
 ##TEMPI
