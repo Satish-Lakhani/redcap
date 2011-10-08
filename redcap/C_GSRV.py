@@ -113,20 +113,20 @@ class Server:
 
     def player_NEW(self, newplayer, id, conntime):
         """crea un nuovo player"""
-        self.PT[id] = newplayer                        #creo il player
-        self.PT[id].slot_id = id                          #assegno la slot
+        self.PT[id] = newplayer                 #assegno il player alla playertable
+        self.PT[id].slot_id = id                #assegno la slot
         self.TeamMembers[0] += 1                #assegno un player al team sconosciuti
         self.PT[id].lastconnect = conntime
 
-    def player_USERINFOCHANGED(self, info):                            #info (0=id, 1=nick, 2=team)
-        if self.PT[info[0]].team <> info[2]:                       #vedo se ha cambiato TEAM
-            self.TeamMembers[self.PT[info[0]].team] -= 1  #lo tolgo dal vecchio team
-            self.TeamMembers[int( info[2])] += 1              #lo metto nel nuovo team
-            self.PT[info[0]].team = int( info[2])                  #gli assegno il nuovo team
-        if self.PT[info[0]].nick <> info[1]:                        #controllo se cambia NICK
+    def player_USERINFOCHANGED(self, info):             #info (0=id, 1=nick, 2=team)
+        if self.PT[info[0]].team <> info[2]:                #vedo se ha cambiato TEAM
+            self.TeamMembers[self.PT[info[0]].team] -= 1    #lo tolgo dal vecchio team
+            self.TeamMembers[int(info[2])] += 1             #lo metto nel nuovo team
+            self.PT[info[0]].team = int( info[2])           #gli assegno il nuovo team
+        if self.PT[info[0]].nick <> info[1]:                #controllo se cambia NICK
             self.PT[info[0]].nick =  info[1]
-            self.PT[info[0]].nickchanges += 1                   #il controllo per i troppi nickchanges si fa da un'altra parte
-            return True                                                     #il player ha cambiato nick
+            self.PT[info[0]].nickchanges += 1               #il controllo per i troppi nickchanges si fa da un'altra parte
+            return True                                     #il player ha cambiato nick
 
     def players_alive(self):
         """mette tutti i player non spect a vivo e gli assegna un round in piu e aggiorna il coefficiente di rapidita' variazione skill"""

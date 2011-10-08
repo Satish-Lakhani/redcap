@@ -19,7 +19,7 @@ lev_esegui = 4                  #esegue un qualsiasi comando rcon
 lev_callvote = 0                #chiama voto
 lev_cycle = 2                   #cyclemap
 lev_force = 2                   #forceteam
-lev_info = 0                   #mostra server IP e versione redcap
+lev_info = 0                    #mostra server IP e versione redcap
 #lev_isk =0                     #mostra instant skill del player
 lev_kick = 2                    #kick
 lev_level = 4                   #assegno level
@@ -31,7 +31,7 @@ lev_ora = 0                     #dice l'ora
 #lev_passport = 3               #attiva/disattiva il passport
 lev_password = 3                #setta una password
 #lev_pause = 3                  #mette il bot in pausa
-#lev_RCrestart = 4              #restart
+lev_RCrestart = 4               #restart
 #lev_reg = 3                    #registrazione in DB ed assegnazione passport
 lev_skill = 0                   #mostra skill del player
 lev_slap = 2                    #slap
@@ -163,8 +163,8 @@ SocketPars = {
 4096: Warning
 '''
 saluti = 1 + 2048                                                       #informazioni di saluto
-status = 1 + 2 + 8 + 32 + 128                                    #informazioni date ai non admin
-status_adm = 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 1024 + 2048 + 4096    #info date agli admin
+status = 1 + 32 + 128 + 4096 + 2048                                           #informazioni date ai non admin
+status_adm = 1 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 1024 + 2048 + 4096    #info date agli admin
 
 ##TEMPI
 CRON1 = 15                      #Frequenza in sec del cron1 (cronometro veloce)

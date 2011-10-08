@@ -47,6 +47,7 @@ RC_outputs = {
 "record_weekly": "^6RECORD SETTIMANALE di ^4%s ^6%s kills",
 "record_daily": "^6RECORD ODIERNO di ^4s% ^6%s kills",
 "record_personal": "^2Record personale di ^4%s ^6%s kills",
+"restart": "^1 Riavvio RedCap...",
 "skill": "^2Skill: ^4%s ^2Instantanea: ^4%s ^2Streak: ^4%s ",
 "space":"^2Slots pieni. Spettatore ^4%s ^kikkato.",
 "startup":"^2RedCap in fase di avvio",

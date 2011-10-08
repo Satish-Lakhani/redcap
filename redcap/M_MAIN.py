@@ -12,8 +12,12 @@
 #TODO fare comando hit che dice le hit eseguite in percentuale
 #TODO verificare tutto quello che c'e' da bloccare quando si e' in modalita' war.
 #TODO verificare come mai status non viene detto tutto (limite lunghezza frase?)
-#TODO togliere clientconnect per aggiungere players ed usare clientuserinfo (verificare anche come fa il vecchio redcap). Ma anche no...
 #TODO fare comando per mettere e togliere righe spam
+#TODO fare comando restart
+#TODO sistemare orario ultima visita
+#TODO mettere decimali a skill e isk
+#TODO Prelevare record da db all'avvio del bot'
+#TODO fare un comando specifico per gli alias
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -41,6 +45,7 @@ CRON2 = M_AUX.Cronometro(M_CONF.CRON2)          #Istanzio il cron2
 def init_jobs():
     """attivita' da fare all'avvio di redcap"""
     M_RC.say("^2RedCap in Avvio", 2)    #DEBUG
+    M_RC.clientlist()          #TODO recupero i client gia presenti sul server
     q3ut4_parse()
     #TODO gserver_is_active() #Controllo che il gameserver sia attivo, se no IL REDCAP SI FERMA QUI IN LOOP finche' il server non torna attivo.
     redcap_main()                               #LANCIO LA PROCEDURA PRINCIPALE
@@ -85,13 +90,13 @@ def redcap_main():
                         M_RC.endMap(frase[0])
                         continue
         if CRON1.is_time():                     #eseguo operazioni a cron1
-            if M_RC.GSRV.Server_mode == 1:  #controlli fatti solo in modalit� normale.
+            if M_RC.GSRV.Server_mode == 1:          #controlli fatti solo in modalit� normale.
                 M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato
                 M_RC.cr_full()                      #controllo se il server e' pieno o vuoto
                 M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotation
                 M_RC.cr_unvote()                    #controllo se c'e' un voto speciale attivo
                 M_RC.cr_warning()                   #controllo se qualcuno ha troppi warning
-            if CRON1.ticks == 240:              #E' passata 1 ora circa
+            if CRON1.ticks == 240:                  #E' passata 1 ora circa
                 q3ut4_parse()
                 CRON1.reset()
         if CRON2.is_time():

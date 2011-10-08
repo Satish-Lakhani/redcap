@@ -13,7 +13,7 @@ class Sock:
         self.server = parametri["ServerIP"]                                                     #IP del gameserver
         self.port = parametri["ServerPort"]                                                     #porta del gameserver
         self.sleeptime = parametri["Tsleep"]                                                    #tempo di attesa tra 2 comandi
-        self.log = parametri["ServerLog"]                                                                        #path del log di RedCap
+        self.log = parametri["ServerLog"]                                                       #path del log di RedCap
         self.s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)                               #creo il socket
         self.s.settimeout(parametri["ServerTimeout"])                                           #timeout del socket
         self.Header = chr(255) + chr(255) + chr(255) + chr(255) + "rcon " + self.rcon + " "     #creo l'header del comando rcon
@@ -26,8 +26,8 @@ class Sock:
 
     def cmd(self,comando):
         """gestisce il lancio comandi al server attraverso la routine protetta __invia"""
-        pass    #DEBUG
-        """self.sv_resp = ""
+        #pass    #DEBUG
+        self.sv_resp = ""
         self.sv_resp = self.__invia(comando)
         time.sleep(self.sleeptime)
         if self.sv_resp == False:                       #se il server non risponde provo a riconnettere il socket e ritento una volta il comando.
@@ -38,7 +38,7 @@ class Sock:
                 self.__cmd_error(comando)
                 return [comando, False]
         else:                                           #se riesco ad eseguire ritorno la risposta piu' il flag True
-            return [self.sv_resp, True]"""
+            return [self.sv_resp, True]
 
     def __invia (self,comando): #metodo protetto
         """invia un comando rcon al gameserver da eseguirsi immediatamente"""

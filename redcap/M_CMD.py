@@ -25,7 +25,7 @@ comandi = [
 #["passport",r": (?P<rich>\d+) .*?: !passport", RCconf.lev_passport],
 ["password",r"!pwd (?P<pwd>\S*)", M_CONF.lev_password],                             #\S = qualsiasi carattere salvo lo spazio.
 #["pause",r": (?P<rich>\d+) .*?: !pause", RCconf.lev_pause],
-#["rcrestart",r": (?P<rich>\d+) .*?: !restart",RCconf.lev_RCrestart],
+["rcrestart",r"!restart",M_CONF.lev_RCrestart],
 #["registra",r": (?P<rich>\d+) .*?: !reg (?P<target>.*)", RCconf.lev_reg],
 ["skill",r"!sk\s*(?P<target>.*)",M_CONF.lev_skill],
 ["slap", r"!s(?P<num>\d*) (?P<target>.*)", M_CONF.lev_slap],
