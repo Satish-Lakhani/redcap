@@ -70,6 +70,9 @@ def redcap_main():
                 elif frase[1] == "Comandi":                   #COMANDI frase[0] (0,0=id, 0,1=comando)
                     M_RC.comandi(frase[0])                    #passo richiedente e parametri alla funzione comandi del modulo M_RC
                     continue
+                elif frase[1] == "InitRound":
+                    M_RC.initRound(frase[0])
+                    continue
                 if M_RC.GSRV.Server_mode == 1:             #ALTRI EVENTI da processare solo a startup finito e non in war
                     if frase[1] == "Hits":
                         M_RC.hits(frase[0])                         #del tipo (['1', '0', '3', '5'], 'Hits') Vittima, Killer, Zona, Arma
@@ -79,9 +82,6 @@ def redcap_main():
                         continue
                     elif frase[1] == "Kills":                           #del tipo (['0', '0', '10'], 'Kills')
                         M_RC.kills(frase[0])
-                        continue
-                    elif frase[1] == "InitRound":
-                        M_RC.initRound(frase[0])    
                         continue
                     elif frase[1] == "EndRound":
                         M_RC.endRound(frase[0])

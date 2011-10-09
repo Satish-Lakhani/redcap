@@ -303,7 +303,6 @@ def initRound(frase):
             nextmap = GSRV.Q3ut4["mapcycle"][indice_nextmap]         #TODO verificare che funzioni
             say(Lang["nextmap"]%nextmap, 1)
     elif GSRV.Server_mode == 0:
-        print "STARTUP %s"%Lang["startup"]      #DEBUG
         say(Lang["startup"], 1)
 
 
@@ -449,18 +448,24 @@ def trovaslotdastringa(richiedente, stringa):
 ## FUNZIONI CHIAMABILI DAL PLAYER  ##
 #####################################
 
-def alias(richiedente, parametri):      #TODO dafinire
+def alias(richiedente, parametri):      #FUNZIONA
     """espone gli alias di un player"""
-    while opzioni:
-        opz = opzioni.pop()
-        frase += Status[opz]%str(stat[opz])
-        i += 1
-        if i == 3:
-            tell(richiedente, frase)
-            frase = ""
-            i = 0
-    if i <> 0:
-            tell(richiedente, frase)
+    target = trovaslotdastringa(richiedente, parametri.group("target"))
+    if target.isdigit():
+        alias = GSRV.PT[target].alias
+        frase = Lang["alias"]%str(GSRV.PT[target].DBnick)
+        i = 0
+        while alias:
+            al = alias.pop()
+            print al #DEBUG
+            frase += str(al[1]) + ", "
+            i += 1
+            if i == 3:
+                tell(richiedente, frase)
+                frase = ""
+                i = 0
+        if i <> 0:
+                tell(richiedente, frase)
 
 def balance(richiedente, parametri):
     """Esegue il bilanciamento dei teams"""
@@ -475,7 +480,7 @@ def balance(richiedente, parametri):
         tell(richiedente, Lang["balanceauto"])
         return
 
-def balancemode(richiedente, parametri):
+def balancemode(richiedente, parametri): #FUNZIONA
     """setta il balancemode"""
     bmode = { 0:"OFF", 1:"Manual", 2:"Auto", }
     if GSRV.BalanceMode == 0:
@@ -507,12 +512,12 @@ def callvote(richiedente, parametri):
     if  past < M_CONF.timeBetweenVote:               #controllo se e' passato tempo sufficiente
         say(Lang["notimetocmd"] %(int(M_CONF.timeBetweenVote - past)), 0)   #se non e' trascorso il tempo informo di aspettare
     else:
-        SCK.cmd(" g_allowVote " + str(M_CONF.voteType))     # abilito il voto
+        SCK.cmd("g_allowVote " + str(M_CONF.voteType))     # abilito il voto
         say(Lang["voteON"] %(M_CONF.voteTime), 0)
         GSRV.LastVote = time.time()                          #aggiorno il time di ultima votazione
         GSRV.VoteMode = True                                       #il voto e' abilitato
 
-def cyclemap(richiedente, parametri):
+def cyclemap(richiedente, parametri):   #FUNZIONA
     """esegue un cyclemap. Non si puo' dare piu spesso di RCconf.Tcyclemap"""
     past = (time.time() - GSRV.LastMapChange)/60
     if  past < M_CONF.Tcyclemap:
@@ -521,12 +526,20 @@ def cyclemap(richiedente, parametri):
         GSRV.LastMapChange = time.time()
         SCK.cmd("cyclemap")
 
-def esegui(richiedente, parametri):
+def dbnick(richiedente, parametri): #FUNZIONA #TODO aggiungere verifica se esistente ed eventuale merge
+    """rende il DBnick uguale al nick corrente"""
+    target = trovaslotdastringa(richiedente, parametri.group("target"))
+    if target.isdigit():
+        GSRV.PT[target].DBnick = GSRV.PT[target].nick
+        tell(richiedente, Lang["dbnick"]%GSRV.PT[target].nick)
+        tell(target, Lang["dbnick"]%GSRV.PT[target].nick)
+
+def esegui(richiedente, parametri):     #FUNZIONA
     """esegue un qualsiasi comando rcon"""
     SCK.cmd(parametri.group("cmd"))
     tell (richiedente, Lang["executed"]%(parametri.group("cmd")))
 
-def forceteam(richiedente, parametri): #param richiedente target colore
+def forceteam(richiedente, parametri):  #FUNZIONA
     """forza il player target in un team o spect"""
     if richiedente == "Redcap":                                 #force richiesto direttamente dal RedCap
         target = parametri[0]
@@ -540,12 +553,12 @@ def forceteam(richiedente, parametri): #param richiedente target colore
 def info(richiedente, parametri):       #TODO finire    #FUNZIONA
     """parametri vari server:IP admin, nextmap,ecc"""
     versione = "^2RedCap ^5%s " %M_CONF.versione
-    autore = "^3by bw|Lebbra! ^2SV IP: ^5"
+    autore = "^3by bw|Lebbra! ^2IP/Port: ^5"
     server = "%s:%s" %(M_CONF.SocketPars["ServerIP"], M_CONF.SocketPars["ServerPort"])
     tell(richiedente, versione + autore + server)
     tell(richiedente, "^2Players:^3U:%s ^1R:%s ^5B:%s ^2S:%s ^3Servermode:^5%s"%(str(GSRV.TeamMembers[0]), str(GSRV.TeamMembers[1]), str(GSRV.TeamMembers[2]), str(GSRV.TeamMembers[3]), str(GSRV.Server_mode)))
 
-def kick(richiedente, parametri, reason = ""):
+def kick(richiedente, parametri, reason = ""):  #FUNZIONA
     """Kikka un player dal server"""
     if richiedente == "Redcap":                                 #kick richiesto direttamente dal RedCap
         target = parametri
@@ -571,12 +584,15 @@ def level (richiedente, parametri):  #FUNZIONA
         tell(richiedente, Lang["levassigned"]%(int(GSRV.PT[target].level), GSRV.PT[target].nick))
         tell(target, Lang["levassigned"]%(int(GSRV.PT[target].level), GSRV.PT[target].nick))
 
-def map(richiedente, parametri):
+def map(richiedente, parametri):    #FUNZIONA
     """carica una mappa"""
     mapname = []
     reqmap = parametri.group("map")
+    print "richiesta %s"%reqmap #DEBUG
+    print "lista"
+    print GSRV.Q3ut4["map"]
     for mappa in GSRV.Q3ut4["map"]:
-        if str.lower(reqmap).find(str.lower(str.strip(mappa))) != -1:   #trovato un file corrispondente
+        if str.lower(str.strip(mappa)).find(str.lower(reqmap)) != -1:   #trovato un file corrispondente
             mapname.append(mappa)
     if len(mapname) == 1:
         SCK.cmd("map " + mapname[0])
@@ -592,7 +608,10 @@ def mute(richiedente, parametri, reason = ""):
     if target.isdigit():                                                   #se ho trovato lo slot
         if reason <> "":
             say(reason, 0)
-        GSRV.PT[target].varie.append("muted")   #TODO togliere a fine mappa e verificare alla connessione
+        if "muted" in GSRV.PT[target].varie:
+            GSRV.PT[target].varie.remove("muted")           #tolgo la tag muted
+        else:
+            GSRV.PT[target].varie.append("muted")   #TODO togliere a fine mappa e verificare alla connessione
         SCK.cmd("mute " + target)                                 #Invio al socket il comando mute
 
 def muteall(richiedente, parametri):
@@ -602,11 +621,14 @@ def muteall(richiedente, parametri):
         return
     for player in GSRV.PT:
         if GSRV.PT[player].level < GSRV.PT[richiedente].level:
-            GSRV.PT[player].varie.append("muted")
+            if "muted" in GSRV.PT[player].varie:
+                GSRV.PT[player].varie.remove("muted")           #tolgo la tag muted
+            else:
+                GSRV.PT[player].varie.append("muted")
             SCK.cmd("mute " + player)
     say(Lang["muteall"], 2)
         
-def nuke(richiedente, parametri):
+def nuke(richiedente, parametri):   #FUNZIONA
     """equivalente a "nuke" da console"""                   
     if richiedente == "Redcap":                                 #mute richiesto direttamente dal RedCap
         lanciatore = "RedCap"
@@ -638,7 +660,7 @@ def rcrestart(richiedente, parametri):
     sleep(1)
     sys.exit()
 
-def skill(richiedente, parametri):
+def skill(richiedente, parametri):  #FUNZIONA
     """Comunica la skill del player"""
     if not parametri.group("target"):           #richiesta propria skill
         tell(richiedente, Lang["skill"]%(round(GSRV.PT[richiedente].skill, 1), round(GSRV.PT[richiedente].skill_var, 2), GSRV.PT[richiedente].ksmax))
@@ -647,7 +669,7 @@ def skill(richiedente, parametri):
     if target.isdigit():                                                   #se ho trovato lo slot
         tell(richiedente, Lang["skill"]%(GSRV.PT[target].skill, GSRV.PT[target].skill_var, GSRV.PT[target].ksmax))                    #Invio al socket il comando kick
 
-def slap(richiedente, parametri, reason=""): #TODO ne da piu di quelli richieti
+def slap(richiedente, parametri, reason=""): #FUNZIONA
     """equivalente a "slap" da console, ma puo' essere chiamato piu' volte di fila"""
     if richiedente == "Redcap":                                 #force richiesto direttamente dal RedCap
         target = parametri[1]
@@ -666,7 +688,7 @@ def slap(richiedente, parametri, reason=""): #TODO ne da piu di quelli richieti
         for i in range(int(volte)): #Invio al buffer il comando un numero "param[1]" di volte
             SCK.cmd("slap " + target)
 
-def status(richiedente, parametri, modo = M_CONF.status):       #corrisponde al comando !z
+def status(richiedente, parametri, modo = M_CONF.status):       #FUNZIONA
     """fornisce informazioni sui giocatori o saluta"""
     if GSRV.Server_mode == 0:                               #comando non disponibile in fase di avvio
         tell(richiedente, Lang["noavailcmd"])
@@ -700,7 +722,7 @@ def status(richiedente, parametri, modo = M_CONF.status):       #corrisponde al 
         if i <> 0:
             tell(richiedente, frase)           
 
-def tempban(richiedente, parametri):   
+def tempban(richiedente, parametri):    #FUNZIONA
     """ban temporaneo"""
     target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():                                                    #se ho trovato lo slot
@@ -716,7 +738,7 @@ def tempban(richiedente, parametri):
         GSRV.PT[target].tempban = time.time() + ore*3600 #data scadenza ban
         SCK.cmd("kick " + target)   #lo kikko (al clientdisconnect si aggiorna il tempban)
 
-def top(richiedente, parametri):
+def top(richiedente, parametri):    #FUNZIONA
     """dice i record"""
     tell(richiedente, Lang["top"]%("Alltime", str(GSRV.TopScores["Alltime"][1]), str(GSRV.TopScores["Alltime"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Alltime"][0]))))
     tell(richiedente, Lang["top"]%("Month", str(GSRV.TopScores["Month"][1]), str(GSRV.TopScores["Month"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Month"][0]))))
