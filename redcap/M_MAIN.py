@@ -17,7 +17,7 @@
 #TODO sistemare orario ultima visita
 #TODO mettere decimali a skill e isk
 #TODO Prelevare record da db all'avvio del bot'
-#TODO finire comando specifico per gli alias
+#TODO non salva i record personali e non segnala i toprecord?
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -45,8 +45,9 @@ CRON2 = M_AUX.Cronometro(M_CONF.CRON2)          #Istanzio il cron2
 def init_jobs():
     """attivita' da fare all'avvio di redcap"""
     M_RC.say("^2RedCap in Avvio", 2)    #DEBUG
-    M_RC.clientlist()          #recupero i client gia presenti sul server
-    M_RC.recordlist()          #recupero i record dal server
+    M_RC.ini_clientlist()          #recupero i client gia presenti sul server
+    M_RC.ini_recordlist()          #recupero i record dal server
+    M_RC.ini_spamlist()
     q3ut4_parse()
     redcap_main()                               #LANCIO LA PROCEDURA PRINCIPALE
 

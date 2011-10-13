@@ -71,23 +71,6 @@ def clientdisconnect(id):
     DB.disconnetti()
     GSRV.player_DEL(id)
 
-def clientlist():
-    """all avvio trova i client gia collegati"""
-    Res = SCK.cmd("clientlist")
-    if Res[1]:
-        list = Res[0].split("\n")   #List = GUID, SLOT, NICK
-        if len(list) > 2:
-            del(list[0])                        #pulisco la risposta
-            list.reverse()
-            del(list[0])
-            for pl in list:                     #aggiungo i nuovi players
-                dati = pl.split()
-                newplayer = C_PLAYER.Player()   #lo creo
-                GSRV.player_NEW(newplayer,dati[1], time.time()) #lo aggiungo alla PlayerTable ed ai TeamMember
-                GSRV.PT[dati[1]].guid = dati[0]
-                GSRV.PT[dati[1]].nick = dati[2]
-                say("^1DBG MSG:^3Find %s"%dati[2], 1)       #DEBUG
-
 def clientuserinfo(info):                       #info (0=slot_id, 1=ip, 2=guid)
     if GSRV.PT[info[0]].justconnected:              #Se e un nuovo player
         GSRV.player_ADDINFO(info)                   #gli aggiungo GUID e IP
@@ -276,6 +259,42 @@ def hits(frase):                                                #del tipo ['1', 
     else:                                                           #hit normale
         GSRV.PT[frase[1]].hits[frase[2]] += 1       #aggiungo una hit
 
+def ini_clientlist():
+    """all avvio trova i client gia collegati"""
+    Res = SCK.cmd("clientlist")
+    if Res[1]:
+        list = Res[0].split("\n")   #List = GUID, SLOT, NICK
+        if len(list) > 2:
+            del(list[0])                        #pulisco la risposta
+            list.reverse()
+            del(list[0])
+            for pl in list:                     #aggiungo i nuovi players
+                dati = pl.split()
+                newplayer = C_PLAYER.Player()   #lo creo
+                GSRV.player_NEW(newplayer,dati[1], time.time()) #lo aggiungo alla PlayerTable ed ai TeamMember
+                GSRV.PT[dati[1]].guid = dati[0]
+                GSRV.PT[dati[1]].nick = dati[2]
+                say("^1DBG MSG:^3Find %s"%dati[2], 1)       #DEBUG
+
+def ini_recordlist():
+    """recupera i record dal db"""
+    DB.connetti()
+    dati = DB.esegui(DB.query["getrecords"]).fetchall()
+    DB.disconnetti()
+    for element in dati:
+        GSRV.TopScores[element[0]][0] = element[2]   #time
+        GSRV.TopScores[element[0]][1] = element[1]   #val
+        GSRV.TopScores[element[0]][2] = element[3]   #owner
+
+def ini_spamlist():
+    """carica la lista spam"""
+    buf = open(M_CONF.SpamFile, "r")
+    spam = buf.read().split("\n")
+    buf.close()
+    GSRV.SpamList = spam
+    #TODO aggiungere i record
+
+
 def initGame(frase):    # frase (0=matchmode, 1=gametype, 2=maxclients, 3=mapname)
     """Operazioni da fare a inizio mappa"""
     GSRV.MatchMode = frase[0]               #recupero le modalita' server
@@ -370,16 +389,6 @@ def option_checker(v):
                 if v == 0:
                     go = False
     return option
-
-def recordlist():
-    """recupera i record dal db"""
-    DB.connetti()
-    dati = DB.esegui(DB.query["getrecords"]).fetchall()
-    DB.disconnetti()
-    for element in dati:
-        GSRV.TopScores[element[0]][0] = element[2]   #time
-        GSRV.TopScores[element[0]][1] = element[1]   #val
-        GSRV.TopScores[element[0]][2] = element[3]   #owner
     
 def saluta(modo, id):
     """si occupa di salutare il player al suo ingresso in game"""
@@ -687,6 +696,30 @@ def slap(richiedente, parametri, reason=""): #FUNZIONA
             say(reason, 0)
         for i in range(int(volte)): #Invio al buffer il comando un numero "param[1]" di volte
             SCK.cmd("slap " + target)
+
+def spam(richiedente, parametri):       #TODO da finire
+    """inserisce/disinserisce frasi di spam)"""
+    if parametri.group("un") == "un":                   #sto cancellando
+        if parametri.group("frase").isdigit():
+            del(GSRV.SpamList[int(parametri.group("frase"))])
+            spam = open("spam.txt", "w")
+            for frase in GSRV.SpamList:
+                spam.write(frase + "\n")
+            spam.close()
+            tell(richiedente, Lang["spamerased"])
+        else:
+            tell(richiedente, Lang["spamnotfound"])
+    else:                                               #sto aggiungendo
+        GSRV.SpamList.append(parametri.group("frase"))
+        spam = open("spam.txt", "a")
+        spam.write(parametri.group("frase") + "\n")
+        spam.close()
+        tell(richiedente, Lang["spamadded"])
+
+def spamlist(richiedente, parametri):
+    """lista tutti gli spam"""
+    for frase in GSRV.SpamList:
+        tell(richiedente, "^4" + str(GSRV.SpamList.index(frase)) + ": ^2" + str(frase))
 
 def status(richiedente, parametri, modo = M_CONF.status):       #FUNZIONA
     """fornisce informazioni sui giocatori o saluta"""

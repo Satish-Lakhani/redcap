@@ -31,6 +31,8 @@ comandi = [
 #["registra",r": (?P<rich>\d+) .*?: !reg (?P<target>.*)", RCconf.lev_reg],
 ["skill",r"!sk\s*(?P<target>.*)",M_CONF.lev_skill],
 ["slap", r"!s(?P<num>\d*) (?P<target>.*)", M_CONF.lev_slap],
+["spam",r"!(?P<un>(un)*)spam (?P<frase>.*)", M_CONF.lev_spam],
+["spamlist", r"!spamlist", M_CONF.lev_spamlist],
 ["status", r"!z\s*(?P<target>.*)", M_CONF.lev_status],
 ["tempban",r"!b(?P<num>\d*) (?P<target>.*)",M_CONF.lev_tmpban],       #!b123 pippo
 ["top",r"!top", M_CONF.lev_top],

@@ -37,6 +37,8 @@ lev_RCrestart = 4               #restart
 #lev_reg = 3                    #registrazione in DB ed assegnazione passport
 lev_skill = 0                   #mostra skill del player
 lev_slap = 2                    #slap
+lev_spam = 2                    #inserisce/disinserisce frasi spam
+lev_spamlist = 0                #lista le frasi spam
 lev_status = 0                  #status (informazioni varie sul player)
 lev_tmpban = 2                  #ban temporaneo
 lev_top = 0                     #mostra i top record
@@ -59,8 +61,9 @@ Notoriety = {
 "dayXpoint": 10             #giorni di anzianita della guid per guadagnare un punto notoriety
 }
 
-## PARSER
+##FILE TESTO
 NomeFileLog = "AUXILIARY/prova.log"   #2011_Sep_01_log.log" #" # DEBUG"../games.log"    #(OBBLIGATORIO!) Percorso relativo del file di log da controllare
+SpamFile = "spam.txt"
 
 ##PLAYER
 KickForSpace = True         #se true kikka uno spect (se c'e') quando il server e' pieno
@@ -92,7 +95,6 @@ ServerPars = {
 "Passport" : False,                 #True=passport attivo gia' all'avvio, False=passport inattivo all'avvio.
 "UrtPath" : "../../../../home/ale/UT/q3ut4",            #path relativo della cartella q3ut4 di urt  #DEBUG
 "MapCycle": "mycycle.txt"           #path del file di cyclemap
-#"UrtPath" : "../../../q3ut4",      #path relativo della cartella q3ut4 di urt
 }
 
 StandardMaps = [                    #mappe standard incluse nello z_pack
@@ -166,7 +168,7 @@ SocketPars = {
 '''
 saluti = 1 + 2048                                                           #informazioni di saluto
 status = 1 + 32 + 128 + 4096 + 2048                                         #informazioni date ai non admin
-status_adm = 1 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 1024 + 2048 + 4096    #info date agli admin
+status_adm = 1 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 2048 + 4096           #info date agli admin
 
 ##TEMPI
 CRON1 = 15                      #Frequenza in sec del cron1 (cronometro veloce)
