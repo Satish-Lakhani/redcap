@@ -70,7 +70,7 @@ KickForSpace = True         #se true kikka uno spect (se c'e') quando il server 
 
 ##RECORD
 MinPlayers = 6              #numero minimo di players per considerare valido un record
-MinNotoriety = 1            #notoriety minima per segnare un record
+MinNotoriety = 0            #notoriety minima per segnare un record
 
 #REDCAP
 botname = "^8RC| "             #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
@@ -162,13 +162,13 @@ SocketPars = {
 128: Nick ufficiale
 256: IP
 512: Level
-1024: Alias
+1024: Warning
 2048: Ultima visita
-4096: Warning
+4096: Alias
 '''
 saluti = 1 + 2048                                                           #informazioni di saluto
 status = 1 + 32 + 128 + 4096 + 2048                                         #informazioni date ai non admin
-status_adm = 1 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 2048 + 4096           #info date agli admin
+status_adm = 1 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 2048 + 1024           #info date agli admin
 
 ##TEMPI
 CRON1 = 15                      #Frequenza in sec del cron1 (cronometro veloce)

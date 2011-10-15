@@ -22,7 +22,9 @@ class Server:
         self.KsNot = sk_pars["Ks_not"]                                  #minima notoriety per segnalazione killstreak
         self.Ks_show = sk_pars["Ks_show"]                               #minima ks per segnalazione in chat
         self.Ks_showbig = sk_pars["Ks_showbig"]                         #minima ks per segnalazione in bigtext
+        self.MapCycle = parametri["MapCycle"]                           #nome file mapcycle
         self.MapName = ""                                               #nome mappa corrente
+        self.MapTime = 0                                                #tempo in secondi da quando e' iniziata la mappa
         self.MatchMode = ""                                             #stato matchmode
         self.MaxClients = ""                                            #Numero massimo player
         self.MaxFlood = parametri["MaxFlood"]                           #massimo numero di say in un tempo fissato
@@ -59,34 +61,52 @@ class Server:
     def is_kstreak(self, K, V, ora):
         """gestisce la killstreak"""
         res = 0
-        self.PT[K].ks += 1                                              #controllo streak del killer
+        self.PT[K].ks += 1                      #aggiorno streak del killer
         if self.PT[K].ks >= self.Ks_showbig:
-            res +=  1                                                   #killstreak: Annuncio in bigtext
+            res +=  1                           #killstreak da annuncio in bigtext
         elif self.PT[K].ks >= self.Ks_show:
-            res += 2                                                    #killstreak: Annuncio in console
+            res += 2                            #killstreak da Annuncio in console
         if self.PT[K].ks > self.PT[K].ksmax:
             self.PT[K].ksmax = self.PT[K].ks
-            res += 4                                                    #killstreak: personal record
-        if self.tot_players(1) >= M_CONF.MinPlayers and self.PT[K].notoriety > M_CONF.MinNotoriety:     #ci sono le condizioni per il record?
-            dati = [ora, self.PT[K].ks, self.PT[K].DBnick]
-            if self.PT[K].ks > self.TopScores[0][1]:
-                self.TopScores = [dati, dati, dati, dati]   #killstreak: alltime record
-                res += 8
-            elif self.PT[K].ks > self.TopScores[1][1]:
-                self.TopScores = [self.TopScores[0], dati, dati, dati]      #killstreak: monthly record
-                res += 16
-            elif self.PT[K].ks > self.TopScores[2][1]:
-                self.TopScores = [self.TopScores[0], self.TopScores[1], dati, dati]         #killstreak: weekly record
-                res += 32
-            elif self.PT[K].ks > self.TopScores[3][1]:
-                self.TopScores[3] = dati                                                                    #killstreak: daily record
-                res += 64
+            res += 4                            #killstreak personal record
         if self.PT[V].ks >= self.Ks_showbig:
-           res += 128                                                   #Stop in bigtext
+           res += 128                           #killstreak stop in bigtext
         elif self.PT[V].ks >= self.Ks_show:
-           res += 256                                                   #Stop in console
-        self.PT[V].ks = 0                                               #metto a zero la ks della vittima
-        return res     
+           res += 256                           #killstreak stop in console
+        self.PT[V].ks = 0                       #metto a zero la ks della vittima
+        dati = [ora, self.PT[K].ks, self.PT[K].DBnick]
+        if self.PT[K].ks > self.TopScores["Day"][1] and self.tot_players(1) < M_CONF.MinPlayers:     #pochi players
+            res += 1024
+        elif self.PT[K].ks > self.TopScores["Day"][1] and self.PT[K].notoriety < M_CONF.MinNotoriety:  #Notoriety troppo bassa
+            res += 512
+        elif self.PT[K].ks > self.TopScores["Alltime"][1]:
+            self.TopScores["Alltime"] = dati    #killstreak: alltime record
+            self.TopScores["Month"] = dati
+            self.TopScores["Week"] = dati
+            self.TopScores["Day"] = dati
+            res += 8
+        elif self.PT[K].ks > self.TopScores["Month"][1]:
+            self.TopScores["Month"] = dati      #killstreak: monthly record
+            self.TopScores["Week"] = dati
+            self.TopScores["Day"] = dati
+            res += 16
+        elif self.PT[K].ks > self.TopScores["Week"][1]:
+            self.TopScores["Week"] = dati       #killstreak: weekly record
+            self.TopScores["Day"] = dati
+            res += 32
+        elif self.PT[K].ks > self.TopScores["Day"][1]:
+            self.TopScores["Day"] = dati        #killstreak: daily record
+            res += 64
+        return res
+
+    def is_OK_to_rec(self, K):
+        """controlla se il player ha i requisiti per il record"""
+        if self.tot_players(1) < M_CONF.MinPlayers:
+            return "pochi"
+        if self.PT[K].notoriety < M_CONF.MinNotoriety:
+            return "notorietylow"
+        else:
+            return [ora, self.PT[K].ks, self.PT[K].DBnick]
 
     def is_thit(self, K, V):
         """verifica se e stato fatto un thit e procede di conseguenza"""

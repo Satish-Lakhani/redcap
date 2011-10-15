@@ -10,7 +10,7 @@ class Parser:
     def __init__(self,pathfile):
         """Inizializzo l'oggetto LogParser"""
         self.NomeFile = pathfile #percorso del file da parsare
-        self.dim = 0  #DEBUG os.path.getsize(pathfile)            #dimensione del file da parsare
+        self.dim = os.path.getsize(pathfile)            #dimensione del file da parsare 0  #DEBUG 
         self.nuovotesto = []                            #quanto di nuovo letto nel log
         self.outputs = []                               #dati di ritorno
 
@@ -80,7 +80,7 @@ class Parser:
             elif x.find("Exit:")!= -1:                                      #trovo gli ENDMAP
                 self.outputs.append((x, "EndMap"))
 
-    def q3ut4_check(self,path,info):
+    def q3ut4_check(self, path, info, cycle):
         """recupero informazioni dalla directory q3ut4"""
         lista = os.listdir(path)
         for element in lista:
@@ -90,14 +90,14 @@ class Parser:
                 mapname = element.rstrip(".pk3")
                 info["map"].append(mapname)     #recupero le mappe disponibili
         tag = False
-        for line in open(path +"/mycycle.txt", "r"):
+        for line in open(path +"/" + cycle, "r"):
             if  "{" in line:
                 tag = True
                 continue
             elif "}" in line:
                 tag = False
                 continue
-            elif not tag:
-                info["mapcycle"].append(line)                      #parso il cyclemap
+            elif not tag and len(line) > 2:     #un nome mappa non puo essere < 2
+                info["mapcycle"].append(line)   #parso il cyclemap
         
 

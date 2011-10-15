@@ -93,6 +93,7 @@ class Player:
     def stats (self):
         aliases = ""
         for al in self.alias:
+            print al #DEBUG
             aliases += al[1] + " "
         aliases = aliases.rstrip()
         X = {

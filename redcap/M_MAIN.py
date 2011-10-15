@@ -16,8 +16,7 @@
 #TODO fare comando restart
 #TODO sistemare orario ultima visita
 #TODO mettere decimali a skill e isk
-#TODO Prelevare record da db all'avvio del bot'
-#TODO non salva i record personali e non segnala i toprecord?
+#TODO fare manutenzioni programmate
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -55,7 +54,7 @@ def q3ut4_parse():
     """parsa la directory q3ut4"""
     M_RC.GSRV.Q3ut4["map"] = M_CONF.StandardMaps                       #carico solo mappe di base
     M_RC.GSRV.Q3ut4["cfg"] = []
-    PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4)   #recupero mappe e cfg.
+    PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4, M_RC.GSRV.MapCycle)   #recupero mappe e cfg.
 
 def redcap_main():
     while 1:
@@ -101,7 +100,7 @@ def redcap_main():
                 q3ut4_parse()
                 CRON1.reset()
         if CRON2.is_time():
-            PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4)       #controllo mappe e cyclemap
+            PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4, M_RC.GSRV.MapCycle)       #controllo mappe e cyclemap
             pass                                #eseguire operazioni giornaliere (pulizia DB, riavvio server, etc)
 
 #AVVIO IL REDCAP

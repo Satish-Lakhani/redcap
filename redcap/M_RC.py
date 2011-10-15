@@ -42,7 +42,7 @@ def censura(frase):
         if re.search(insulto,testo,re.I):                       #ho trovato un insulto
             return True
 
-def clientconnect(id):
+def clientconnect(id):      #TODO non serve se c'è lo stesso in clientuserinfo
     """Gestisce un nuovo client"""
     if id not in GSRV.PT:                           #Se e un nuovo player (nel senso di appena entrato in game)
         newplayer = C_PLAYER.Player()               #lo creo
@@ -72,6 +72,9 @@ def clientdisconnect(id):
     GSRV.player_DEL(id)
 
 def clientuserinfo(info):                       #info (0=slot_id, 1=ip, 2=guid)
+    if info[0] not in GSRV.PT:                           #Se e un nuovo player (nel senso di appena entrato in game)
+        newplayer = C_PLAYER.Player()               #lo creo
+        GSRV.player_NEW(newplayer, info[0], time.time()) #lo aggiungo alla PlayerTable ed ai TeamMember
     if GSRV.PT[info[0]].justconnected:              #Se e un nuovo player
         GSRV.player_ADDINFO(info)                   #gli aggiungo GUID e IP
     elif info[2] <> GSRV.PT[info[0]].guid:          #cambio guid durante il gioco
@@ -94,7 +97,7 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
             kick("Redcap", info[0], Lang["invalidnick"]%info[1])
             return   #inutile andare avanti
     if GSRV.PT[info[0]].justconnected:                                                                  #PLAYER APPENA CONNESSO
-        res = False                                         #non ha cambiato nick, inutile controllare gli alias. TODO da togliere se justconnect sparisce alla disconnessione
+        res = False                                         #non ha cambiato nick, inutile controllare gli alias. #TODO da togliere se justconnect sparisce alla disconnessione
         db_datacontrol(GSRV.PT[info[0]].guid, info[0])      #controllo se il player esiste nel DB e ne recupero i dati (tb DATA) se no lo registro
         if GSRV.Server_mode <> 2:                           #non attivo in warmode
             if GSRV.PT[info[0]].tempban > time.time():                                                  #CONTROLLO BAN
@@ -239,10 +242,10 @@ def endMap(frase):
             p =rank.pop(0)
             say(Lang["mapskill"] %(p[1],round(p[0],2)), 0)   #spammo la classifica
         DB.connetti()
-        DB.esegui(DB.query["saverecords"], (GSRV.TopScores[0][0], GSRV.TopScores[0][1], GSRV.TopScores[0][2], "Alltime"))              #salvo i records che siano cambiati o meno #TODO mettere in un cron?
-        DB.esegui(DB.query["saverecords"], (GSRV.TopScores[1][0], GSRV.TopScores[1][1], GSRV.TopScores[1][2], "Month"))
-        DB.esegui(DB.query["saverecords"], (GSRV.TopScores[2][0], GSRV.TopScores[2][1], GSRV.TopScores[2][2], "Week"))
-        DB.esegui(DB.query["saverecords"], (GSRV.TopScores[3][0], GSRV.TopScores[3][1], GSRV.TopScores[3][2], "Day"))
+        DB.esegui(DB.query["saverecords"], (GSRV.TopScores["Alltime"][0], GSRV.TopScores["Alltime"][1], GSRV.TopScores["Alltime"][2], "Alltime"))              #salvo i records che siano cambiati o meno #TODO mettere in un cron?
+        DB.esegui(DB.query["saverecords"], (GSRV.TopScores["Month"][0], GSRV.TopScores["Month"][1], GSRV.TopScores["Month"][2], "Month"))
+        DB.esegui(DB.query["saverecords"], (GSRV.TopScores["Week"][0], GSRV.TopScores["Week"][1], GSRV.TopScores["Week"][2], "Week"))
+        DB.esegui(DB.query["saverecords"], (GSRV.TopScores["Day"][0], GSRV.TopScores["Day"][1], GSRV.TopScores["Day"][2], "Day"))
         DB.salva()
         DB.disconnetti
     endRound(frase)                                     #richiamo anche le solite operazioni da endround
@@ -301,26 +304,27 @@ def initGame(frase):    # frase (0=matchmode, 1=gametype, 2=maxclients, 3=mapnam
     GSRV.Gametype = frase[1]
     GSRV.MaxClients = frase[2]
     GSRV.MapName = frase[3]
+    GSRV.MapTime = time.time()    #time di inizio mappa
     initRound(frase)                        #richiamo anche le solite operazioni da initround
 
 def initRound(frase):
     """attivita da fare ad inizio round"""
-    if GSRV.Server_mode == 1:                                 #solo in modalita normale. No war e no startup
-        say(str(GSRV.TeamMembers[0]) + "^1" + str(GSRV.TeamMembers[1])  + "^5" + str(GSRV.TeamMembers[2])  + "^2" + str(GSRV.TeamMembers[3]), 1) #DEBUG
-        GSRV.teamskill_eval()                                          #aggiorno le teamskill e il coefficiente di sbilanciamento skill
-        GSRV.players_alive()                                            #setto i player non spect a vivo, gli aggiungo un round e updato il coeff skill.
-        if GSRV.BalanceMode == 2 or GSRV.BalanceRequired:               #eseguo bilanciamento automatico o su richiesta
+    if GSRV.Server_mode == 1:                                       #solo in modalita normale. No war e no startup
+        GSRV.teamskill_eval()                                       #aggiorno le teamskill e il coefficiente di sbilanciamento skill
+        GSRV.players_alive()                                        #setto i player non spect a vivo, gli aggiungo un round e updato il coeff skill.
+        if GSRV.BalanceMode == 2 or GSRV.BalanceRequired:           #eseguo bilanciamento automatico o su richiesta
             if abs(GSRV.TeamMembers[1] - GSRV.TeamMembers[2]) > 1:  #verifico se gli sbilanciamenti richiedono balance
                 moving = GSRV.team_balance()
                 SCK.cmd("forceteam " + moving)
                 GSRV.BalanceRequired = False
                 say(Lang["balancexecuted"], 0)
-        if GSRV.MapName in GSRV.Q3ut4["mapcycle"]:      #verifico qual'e la prossima mappa
-            indice_nextmap = GSRV.Q3ut4["mapcycle"].index(GSRV.MapName) +1
+        if (GSRV.MapName + "\n") in GSRV.Q3ut4["mapcycle"]:         #verifico qual'e la prossima mappa
+            indice_nextmap = GSRV.Q3ut4["mapcycle"].index(GSRV.MapName+ "\n") +1
             if indice_nextmap == len(GSRV.Q3ut4["mapcycle"]):
                 indice_nextmap = 0
             nextmap = GSRV.Q3ut4["mapcycle"][indice_nextmap]         #TODO verificare che funzioni
             say(Lang["nextmap"]%nextmap, 1)
+        say(str(GSRV.TeamMembers[0]) + "^1" + str(GSRV.TeamMembers[1])  + "^5" + str(GSRV.TeamMembers[2])  + "^2" + str(GSRV.TeamMembers[3]), 1) #DEBUG
     elif GSRV.Server_mode == 0:
         say(Lang["startup"], 1)
 
@@ -356,6 +360,10 @@ def kills(frase):                                       #frase del tipo ['0', '1
             say(Lang["record_weekly"]%(GSRV.PT[frase[0]].nick, str(GSRV.PT[frase[0]].ks)), 2)    #spammo weekly record
         elif 64 in res:
             say(Lang["record_daily"]%(GSRV.PT[frase[0]].nick, str(GSRV.PT[frase[0]].ks)), 2)     #spammo daily record
+        elif 512 in res:
+            say(Lang["record_no_not"]%GSRV.PT[frase[0]].nick, 0)     #notoriety bassa
+        elif 1024 in res:
+            say(Lang["record_no_ppl"]%(M_CONF.MinPlayers, GSRV.PT[frase[0]].nick), 0)     #poca gente
         if 128 in res:
             say(Killz[0]%(GSRV.PT[frase[0]].nick, GSRV.PT[frase[1]].nick), 2)               #spammo stop ks in bigtext
         elif 256 in res:
@@ -459,6 +467,9 @@ def trovaslotdastringa(richiedente, stringa):
 
 def alias(richiedente, parametri):      #FUNZIONA
     """espone gli alias di un player"""
+    if GSRV.Server_mode == 0:                               #comando non disponibile in fase di avvio
+        tell(richiedente, Lang["noavailcmd"])
+        return
     target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():
         alias = GSRV.PT[target].alias
@@ -476,7 +487,7 @@ def alias(richiedente, parametri):      #FUNZIONA
         if i <> 0:
                 tell(richiedente, frase)
 
-def balance(richiedente, parametri):
+def balance(richiedente, parametri):    #FUNZIONA
     """Esegue il bilanciamento dei teams"""
     if GSRV.BalanceMode == 0:                                   #balance non attivo
         tell(richiedente, Lang["balanceoff"])
@@ -517,6 +528,9 @@ def ban(richiedente, parametri):
 
 def callvote(richiedente, parametri):
     """Chiama il voto di vario tipo"""
+    if time.time() - GSRV.MapTime < 60:
+        tell(richiedente, Lang["notimefromini"])
+        return
     past = (time.time() - GSRV.LastVote)/60
     if  past < M_CONF.timeBetweenVote:               #controllo se e' passato tempo sufficiente
         say(Lang["notimetocmd"] %(int(M_CONF.timeBetweenVote - past)), 0)   #se non e' trascorso il tempo informo di aspettare
@@ -663,9 +677,15 @@ def password(richiedente, parametri):  #FUNZIONA
 
 def rcrestart(richiedente, parametri):
     """restarta il RedCap"""
+    say(Lang["restart"], 2)
+    tmp = []
+    for pl in GSRV.PT:
+        tmp.append(GSRV.PT[pl].slot_id)
+    for id in tmp:
+        say(Lang["salvoplayer"]%GSRV.PT[id].nick, 1)
+        clientdisconnect(id)
     import sys
     scrivilog("RIAVVIO RedCap", M_CONF.crashlog)
-    say(Lang["restart"], 2)
     sleep(1)
     sys.exit()
 
@@ -697,7 +717,7 @@ def slap(richiedente, parametri, reason=""): #FUNZIONA
         for i in range(int(volte)): #Invio al buffer il comando un numero "param[1]" di volte
             SCK.cmd("slap " + target)
 
-def spam(richiedente, parametri):       #TODO da finire
+def spam(richiedente, parametri):       
     """inserisce/disinserisce frasi di spam)"""
     if parametri.group("un") == "un":                   #sto cancellando
         if parametri.group("frase").isdigit():
@@ -787,7 +807,7 @@ def unwar(richiedente, parametri):   #FUNZIONA
     SCK.cmd("exec %s" %GSRV.Baseconf)                #eseguo la config di base
     GSRV.Server_mode = 1                             #passo in modalita normale
 
-def war(richiedente, parametri):
+def war(richiedente, parametri):    #FUNZIONA
     """setta il server in modalita' war"""
     tmp = []
     if parametri.group('cfg'):                      #e' stata indicata una configurazione
@@ -801,7 +821,6 @@ def war(richiedente, parametri):
             tell(richiedente, Lang["noclearcfg"])
             return
     else:
-        #print GSRV.Basewar  #DEBUG
         say(Lang["warbaseloaded"]%GSRV.Basewar , 2)
         SCK.cmd("exec %s" %GSRV.Basewar)            #eseguo la config richiesta
     SCK.cmd("reload")                               #avvio la cfg
