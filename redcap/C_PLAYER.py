@@ -7,14 +7,13 @@ class Player:
     """rappresenta un singolo player e le sue proprieta'"""
     def __init__(self ):        #la proprieta SLOT devo averla
         self.alias = []         #tutti gli ultimi nick usati dal player
-        #self.camp = 0           #hit/tempo di vita #TODO serve?
+        #self.camp = 0          #hit/tempo di vita #TODO serve?
         self.DBnick = ""        #(string) nick di registrazione in DB
-        self.deaths = 0             #morti subite dal player (non incluso il changeteam)                          
+        self.deaths = 0         #morti subite dal player (non incluso il changeteam)
         self.flood = 0          #numero di say in TempoControllo1
         self.guid = None        #(string) GUID
         self.guidage = 0        #eta della guid che sta usando
-        self.hits = {"0":0, "1":0, "2":0, "3":0, "4":0, "5":0, "6":0, "total":0}   #hit fatte dal player
-        #self.isk = float(0.0)  #Skill istantanea
+        self.hits = {"0":0, "1":0, "2":0, "3":0, "4":0, "5":0, "6":0, "total":0}   #hit fatte dal player (0:head 1:helmet 2:torso 3:kevlar 4:arms 5:legs 6:body)
         self.ip = ""            #(string) IP
         self.isinDB = False     #Player esistente in DB.
         self.kills = {"12":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"24":0,"25":0,"28":0,"30":0,"35":0,"38":0,"40":0}   #kill fatte dal player
@@ -93,7 +92,6 @@ class Player:
     def stats (self):
         aliases = ""
         for al in self.alias:
-            print al #DEBUG
             aliases += al[1] + " "
         aliases = aliases.rstrip()
         X = {

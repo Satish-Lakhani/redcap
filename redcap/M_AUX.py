@@ -3,6 +3,19 @@
 
 import time                     #Funzioni tempo
 
+def cr_riavvia():
+    """restarto RedCap ed eventualmente il server"""
+    import os
+    import sys
+    import M_RC
+    if M_CONF.gameserver_autorestart:
+        M_RC.scrivilog("RIAVVIO PROGRAMMATO REDCAP e GAMESERVER", M_CONF.crashlog)
+        os.system("./S_full_restart.sh")
+        sys.exit()
+    else:
+        M_RC.scrivilog("RIAVVIO PROGRAMMATO REDCAP", M_CONF.crashlog)
+        sys.exit()
+
 class Cronometro:
     """classe per controlli a tempo"""
     def __init__(self, periodo):

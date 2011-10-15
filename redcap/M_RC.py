@@ -113,11 +113,11 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
             if "muted" in GSRV.PT[info[0]].varie:           #lo muto in quanto si e' disconnesso da muto.
                 mute("Redcap",info[0])
                 say(Lang["muted"]%GSRV.PT[info[0]].nick, 0)
-        GSRV.PT[info[0]].lastconnect = time.time()          #aggiorno il lastconnect
         GSRV.PT[info[0]].skill_coeff_update()               #aggiorno il coefficiente skill
         GSRV.PT[info[0]].justconnected = False              #non e piu nuovo
         if GSRV.Server_mode <> 2:                           #non attivo in warmode
             saluta(M_CONF.saluti, info[0])                  #chiamo la funzione che si occupa eventualmente di salutare il player
+        GSRV.PT[info[0]].lastconnect = time.time()          #aggiorno il lastconnect
     if res:                                                 #CONTROLLO ALIAS (solo per player NON nuovi)
         esiste = False
         for alias in GSRV.PT[info[0]].alias:
@@ -183,6 +183,17 @@ def cr_nickrotation():
         else:
             GSRV.PT[PL].nickchanges = 0        #Se non e' kikkato lo rimetto a zero
 
+def cr_spam():
+    """spam periodici"""
+    if len(GSRV.SpamList) == 0:
+        return                                          #spamlist vuota
+    else:
+        say(GSRV.SpamList[GSRV.SpamlistIndex], 0)       #spammo
+    if GSRV.SpamlistIndex == len(GSRV.SpamList) - 1:    #Aumento l'index
+        GSRV.SpamlistIndex = 0
+    else:
+        GSRV.SpamlistIndex += 1
+
 def cr_unvote():
     """verifica (periodica) che il voto non sia rimasto attivo dopo il comando !v"""
     if GSRV.VoteMode and ((time.time() - GSRV.LastVote) > M_CONF.voteTime):
@@ -214,7 +225,7 @@ def db_datacontrol(guid,id):
         DB.esegui(DB.query["newloc"], (GSRV.PT[id].guid, GSRV.PT[id].ip))    #gli salvo il suo primo IP
         DB.salva()
     DB.disconnetti()
-    if guid in M_CONF.AdminGuids:       #se � admin gli do il massimo livello
+    if guid in M_CONF.AdminGuids:       #se e' admin gli do il massimo livello
          GSRV.PT[id].level = 100
          tell(GSRV.PT[id].slot_id, Lang["adminrights"]%GSRV.PT[id].nick)
 
@@ -261,6 +272,11 @@ def hits(frase):                                                #del tipo ['1', 
         return
     else:                                                           #hit normale
         GSRV.PT[frase[1]].hits[frase[2]] += 1       #aggiungo una hit
+        GSRV.PT[frase[1]].hits['total'] += 1        #aggiungo una hit al totale
+        if GSRV.ShowHeadshots and int(frase[2]) < 2:      #se e' un headshot e lo devo spammare
+            hs = GSRV.PT[frase[1]].hits['0'] + GSRV.PT[frase[1]].hits['1']
+            perc = hs*100/GSRV.PT[frase[1]].hits['total']
+            say(Lang["headshot"]%(GSRV.PT[frase[1]].nick, str(hs), str(perc)), 1)
 
 def ini_clientlist():
     """all avvio trova i client gia collegati"""
@@ -274,10 +290,15 @@ def ini_clientlist():
             for pl in list:                     #aggiungo i nuovi players
                 dati = pl.split()
                 newplayer = C_PLAYER.Player()   #lo creo
-                GSRV.player_NEW(newplayer,dati[1], time.time()) #lo aggiungo alla PlayerTable ed ai TeamMember
+                GSRV.player_NEW(newplayer,dati[1], time.time())     #lo aggiungo alla PlayerTable ed ai TeamMember
                 GSRV.PT[dati[1]].guid = dati[0]
                 GSRV.PT[dati[1]].nick = dati[2]
-                say("^1DBG MSG:^3Find %s"%dati[2], 1)       #DEBUG
+                db_datacontrol(dati[0], dati[1])                    #carico i dati se esistono
+                say(Lang["caricoplayer"]%str(GSRV.PT[dati[1]].nick), 1)
+                GSRV.PT[dati[1]].skill_coeff_update()               #aggiorno il coefficiente skill
+                GSRV.PT[dati[1]].justconnected = False             #non e piu nuovo
+                GSRV.PT[dati[1]].lastconnect = time.time()          #aggiorno il lastconnect
+
 
 def ini_recordlist():
     """recupera i record dal db"""
@@ -291,12 +312,16 @@ def ini_recordlist():
 
 def ini_spamlist():
     """carica la lista spam"""
-    buf = open(M_CONF.SpamFile, "r")
-    spam = buf.read().split("\n")
-    buf.close()
-    GSRV.SpamList = spam
-    #TODO aggiungere i record
-
+    if M_CONF.CustomSpam:
+        buf = open(M_CONF.SpamFile, "r")
+        spam = buf.read().split("\n")
+        buf.close()
+        GSRV.SpamList = spam
+    if M_CONF.RecordSpam:
+        GSRV.SpamList.append(Lang["top"]%("Alltime", str(GSRV.TopScores["Alltime"][1]), str(GSRV.TopScores["Alltime"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Alltime"][0]))))
+        GSRV.SpamList.append(Lang["top"]%("Month", str(GSRV.TopScores["Month"][1]), str(GSRV.TopScores["Month"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Month"][0]))))
+        GSRV.SpamList.append(Lang["top"]%("Week", str(GSRV.TopScores["Week"][1]), str(GSRV.TopScores["Week"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Week"][0]))))
+        GSRV.SpamList.append(Lang["top"]%("Day", str(GSRV.TopScores["Day"][1]), str(GSRV.TopScores["Day"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Day"][0]))))
 
 def initGame(frase):    # frase (0=matchmode, 1=gametype, 2=maxclients, 3=mapname)
     """Operazioni da fare a inizio mappa"""
@@ -421,7 +446,6 @@ def say(testo,modo):
     SCK.cmd(modi[modo] + testo + '"')
    
 def says(frase):                 #frase (0=id, 1=testo)
-    #print frase[1] #DEBUG
     if frase[0]not in GSRV.PT:   #potrebbero partire dei say prima del ClientBegin, dando errore "KeyError: '0'
         return
     GSRV.PT[frase[0]].flood += 1
@@ -472,12 +496,13 @@ def alias(richiedente, parametri):      #FUNZIONA
         return
     target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():
+        if GSRV.PT[target].alias == [['']]:
+            GSRV.PT[target].alias = [[str(time.time()), str(GSRV.PT[target].nick)],]  #alias vuoto per errore dovuto a crash
         alias = GSRV.PT[target].alias
-        frase = Lang["alias"]%str(GSRV.PT[target].DBnick)
+        frase = Lang["alias"]%str(GSRV.PT[target].nick)
         i = 0
         while alias:
             al = alias.pop()
-            print al #DEBUG
             frase += str(al[1]) + ", "
             i += 1
             if i == 3:
@@ -611,9 +636,6 @@ def map(richiedente, parametri):    #FUNZIONA
     """carica una mappa"""
     mapname = []
     reqmap = parametri.group("map")
-    print "richiesta %s"%reqmap #DEBUG
-    print "lista"
-    print GSRV.Q3ut4["map"]
     for mappa in GSRV.Q3ut4["map"]:
         if str.lower(str.strip(mappa)).find(str.lower(reqmap)) != -1:   #trovato un file corrispondente
             mapname.append(mappa)
@@ -743,9 +765,9 @@ def spamlist(richiedente, parametri):
 
 def status(richiedente, parametri, modo = M_CONF.status):       #FUNZIONA
     """fornisce informazioni sui giocatori o saluta"""
-    if GSRV.Server_mode == 0:                               #comando non disponibile in fase di avvio
+    '''if GSRV.Server_mode == 0:                               #comando non disponibile in fase di avvio
         tell(richiedente, Lang["noavailcmd"])
-        return
+        return'''
     if not parametri.group("target"):                     #comando status senza target: do nick e slot di tutti
         for player in GSRV.PT:
             tell(richiedente, "^4%s ^%s%s"%(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick))
@@ -799,6 +821,10 @@ def top(richiedente, parametri):    #FUNZIONA
     tell(richiedente, Lang["top"]%("Day", str(GSRV.TopScores["Day"][1]), str(GSRV.TopScores["Day"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Day"][0]))))
     #tell(richiedente, Lang["top"]%("HSkill", str(GSRV.TopScores["HSkill"][1]), str(GSRV.TopScores["HSkill"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["HSkill"][0])))) #TODO HI e LO skill (da fare)
     #tell(richiedente, Lang["top"]%("LSkill", str(GSRV.TopScores["LSkill"][1]), str(GSRV.TopScores["LSkill"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["LSkill"][0]))))
+
+def trust(richiedente, parametri):
+    """aumenta o diminuisce la affidabilita"""
+    pass #TODO
 
 def unwar(richiedente, parametri):   #FUNZIONA
     """resetta il server in modalita' normale"""

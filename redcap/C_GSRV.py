@@ -41,11 +41,13 @@ class Server:
         self.RedCapStatus = 0                                           #stato RedCap (1=paused 0=attivo) #TODO serve o basta server_mode?
         self.Sbil = 1                                                   #coefficiente di sbilanciamento teams
         self.Server_mode = 0                                            #0 = fase avvio 1 = normale 2 = warmode
+        self.ShowHeadshots = parametri["ShowHeadshots"]                                       #Se True mostra gli headshot
         self.Sk_Kpp = sk_pars["Sk_Kpp"]                                 #Sensibilita' skill: numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
         self.Sk_penalty = sk_pars["Sk_penalty"]                         #penalita' per teamkill (espressa come n. di kill da fare per bilanciare una penalty)
         self.Sk_range = sk_pars["Sk_range"]                             #Ampiezza curva skill:piu grande e' il valore, piu' alti sono i valori di skill che si possono raggiungere.
         self.Sk_team_impact = sk_pars["Sk_team_impact"]                 #frazione della skill calcolata sul team avversario, rispetto a quella calcolata sulla vittima
         self.SpamList = []                                              #Lista degli spam (recuperati dal file spam.txt)
+        self.SpamlistIndex = 0                                          #indice della frase da spammare
         self.TopScores = {"Alltime":[0.0, 0, " "],"Month":[0.0, 0, " "],"Week":[0.0, 0, " "],"Day":[0.0, 0, " "], "HSkill":[0.0, 0, " "], "LSkill":[0.0, 0, " "]} #Top scores del server (alltime, month, week, day, Hskill Lskill) (time, valore, DBnick)
         self.TeamSkill = [0,0]                                          #skill media team red e blue
         self.TeamSkillCoeff = 1                                         #coefficiente di bilanciamento per teams squilibrati

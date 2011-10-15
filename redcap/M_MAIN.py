@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #TODO fare controllo armi ammesse per team
-#TODO comando !bonus n per gestire la notoriety
+#TODO comando !trust nick per gestire la notoriety
 #TODO fare anche ban per nick
 #TODO e' effettivamente necessario recuperare gli alias alla connection o si fa su richiesta?
 #TODO eliminare gli alias piu vecchi di n giorni
@@ -10,13 +10,11 @@
 #TODO note per warmode: no kick, warn o richiami per badguid o badnick, tkill o thit o censura (registrare variazione skill?), non registrare ne spammare record. no spam vari.
 #TODO prevedere silentmode.
 #TODO fare comando hit che dice le hit eseguite in percentuale
-#TODO verificare tutto quello che c'e' da bloccare quando si e' in modalita' war.
-#TODO verificare come mai status non viene detto tutto (limite lunghezza frase?)
 #TODO fare comando per mettere e togliere righe spam
-#TODO fare comando restart
 #TODO sistemare orario ultima visita
 #TODO mettere decimali a skill e isk
 #TODO fare manutenzioni programmate
+#TODO evitare che i record vengano salvati nella spamlist
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -44,9 +42,9 @@ CRON2 = M_AUX.Cronometro(M_CONF.CRON2)          #Istanzio il cron2
 def init_jobs():
     """attivita' da fare all'avvio di redcap"""
     M_RC.say("^2RedCap in Avvio", 2)    #DEBUG
-    M_RC.ini_clientlist()          #recupero i client gia presenti sul server
-    M_RC.ini_recordlist()          #recupero i record dal server
-    M_RC.ini_spamlist()
+    M_RC.ini_clientlist()           #recupero i client gia presenti sul server
+    M_RC.ini_recordlist()           #recupero i record dal server
+    M_RC.ini_spamlist()             #carico la spamlist
     q3ut4_parse()
     redcap_main()                               #LANCIO LA PROCEDURA PRINCIPALE
 
@@ -96,12 +94,14 @@ def redcap_main():
                 M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotation
                 M_RC.cr_unvote()                    #controllo se c'e' un voto speciale attivo
                 M_RC.cr_warning()                   #controllo se qualcuno ha troppi warning
+            if int(CRON1.ticks % (M_CONF.Spamtime // M_CONF.CRON1)) == 0:       #modulo
+                M_RC.cr_spam()                      #spammo
             if CRON1.ticks == 240:                  #E' passata 1 ora circa
                 q3ut4_parse()
                 CRON1.reset()
-        if CRON2.is_time():
-            PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4, M_RC.GSRV.MapCycle)       #controllo mappe e cyclemap
-            pass                                #eseguire operazioni giornaliere (pulizia DB, riavvio server, etc)
+        if CRON2.is_time():                     #eseguo operazioni giornaliere (pulizia DB, riavvio server, etc)
+            if int(time.strftime("%H", time.localtime())) == M_CONF.Control_Daily:
+                M_AUX.cr_riavvia()
 
 #AVVIO IL REDCAP
 init_jobs()

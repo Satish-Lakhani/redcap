@@ -22,7 +22,6 @@ lev_dbnick = 3                  #assegna il nick corrente come nick in DB
 lev_esegui = 4                  #esegue un qualsiasi comando rcon
 lev_force = 2                   #forceteam
 lev_info = 0                    #mostra server IP e versione redcap
-#lev_isk =0                     #mostra instant skill del player
 lev_kick = 2                    #kick
 lev_level = 4                   #assegno level
 lev_map = 2                     #cambio mappa
@@ -42,6 +41,7 @@ lev_spamlist = 0                #lista le frasi spam
 lev_status = 0                  #status (informazioni varie sul player)
 lev_tmpban = 2                  #ban temporaneo
 lev_top = 0                     #mostra i top record
+lev_trust = 3                   #aggiunge/leva notoriety ad un player
 #lev_unreg = 3                  #toglie il passport
 lev_war = 0                     #configurazione per war
 lev_unwar = 0                   #eliminare configurazione war
@@ -67,15 +67,20 @@ SpamFile = "spam.txt"
 
 ##PLAYER
 KickForSpace = True         #se true kikka uno spect (se c'e') quando il server e' pieno
+maxSlap = 10                        #massimo numero di slap che posso dare ad un player
 
 ##RECORD
 MinPlayers = 6              #numero minimo di players per considerare valido un record
 MinNotoriety = 0            #notoriety minima per segnare un record
 
+#CONSOLE SPAMS
+RecordSpam = True       #Se True, Redcap spamma periodicamente i record, se False non spamma
+CustomSpam = True       #Se True, Redcap spamma periodicamente le frasi scritte in RT_SPAM.txt, se False non spamma
+Spamtime = 140          #Tempo in secondi tra due spam
+
 #REDCAP
 botname = "^8RC| "             #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
 RC_lang = "ITA"                    #Localizzazione linguaggio ITA #TODO (ENG FRA e altre, da fare)
-maxSlap = 10                        #massimo numero di slap che posso dare ad un player
 AdminGuids = ["0606EE61D6F696AAE452385F765D78CF"]                  #guid automaticamente abilitata al max liv di autorizzazione
 
 ##SERVER
@@ -93,6 +98,7 @@ ServerPars = {
 "MinNotoriety": -999,               #valore notoriety per giocare nel server. La notoriety di un nuovo player e' 0
 "minNick":3,                        #Lunghezza minima nick
 "Passport" : False,                 #True=passport attivo gia' all'avvio, False=passport inattivo all'avvio.
+"ShowHeadshots": True,              #Se True mostra gli headshot
 "UrtPath" : "../../../../home/ale/UT/q3ut4",            #path relativo della cartella q3ut4 di urt  #DEBUG
 "MapCycle": "mycycle.txt"           #path del file di cyclemap
 }
@@ -171,11 +177,12 @@ status = 1 + 32 + 128 + 4096 + 2048                                         #inf
 status_adm = 1 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 2048 + 1024           #info date agli admin
 
 ##TEMPI
-CRON1 = 15                      #Frequenza in sec del cron1 (cronometro veloce)
-CRON2 = 3600                    #Frequenza in sec del cron1 (cronometro lento)
-Tcyclemap = 12                  #tempo in minuti che deve intercorrere tra due cyclemap
-TempoCiclo = 0.5                #Frequenza in sec del controllo del log
-Ttempban = 96                   #durata massima tempban
+Control_Daily = 6       #ora alla quale vengono eseguite le operazioni periodiche giornaliere
+CRON1 = 15              #Frequenza in sec del cron1 (cronometro veloce)
+CRON2 = 3600            #Frequenza in sec del cron1 (cronometro lento)
+Tcyclemap = 12          #tempo in minuti che deve intercorrere tra due cyclemap
+TempoCiclo = 0.5        #Frequenza in sec del controllo del log
+Ttempban = 96           #durata massima tempban
 
 ##VOTO
 voteTime = 30,                        #tempo di abilitazione del voto
@@ -200,9 +207,6 @@ sv_WarnPars = {
 
 
 banned = -5                     #Valore di notoriety per essere bannato
-#CONSOLE SPAMS
-RecordSpam = True               #Se True, Redcap spamma periodicamente i record, se False non spamma
-CustomSpam = True               #Se True, Redcap spamma periodicamente le frasi scritte in RT_SPAM.txt, se False non spamma
 #SERVIZIO
 GameServerDown = 20             #Secondi di attesa prima di ritentare, quando RedCap trova il gameserver down
 
@@ -220,7 +224,6 @@ tabella = "skilltable.htm"      #tabella skills
 dialoghi = "dialoghi.htm"       #file dialoghi
 
 ## CRON e TEMPI
-DailyControl = 6                #ora alla quale vengono eseguite le operazioni periodiche giornaliere
 WeekControl = 1                 #giorno della settimana per operazioni settimanali (0=Domenica, 1=lunedi, ecc.)
 MonthControl = 28               #giorno del mese (da 1 a 28) per operazioni mensili (cancellazione record mensile)
 
