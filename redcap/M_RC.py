@@ -342,13 +342,14 @@ def initRound(frase):
                 SCK.cmd("forceteam " + moving)
                 GSRV.BalanceRequired = False
                 say(Lang["balancexecuted"], 0)
+            else:
+                say(str(GSRV.TeamMembers[0]) + "^1" + str(GSRV.TeamMembers[1])  + "^5" + str(GSRV.TeamMembers[2])  + "^2" + str(GSRV.TeamMembers[3]), 1)
         if (GSRV.MapName + "\n") in GSRV.Q3ut4["mapcycle"]:         #verifico qual'e la prossima mappa
             indice_nextmap = GSRV.Q3ut4["mapcycle"].index(GSRV.MapName+ "\n") +1
             if indice_nextmap == len(GSRV.Q3ut4["mapcycle"]):
                 indice_nextmap = 0
             nextmap = GSRV.Q3ut4["mapcycle"][indice_nextmap]         #TODO verificare che funzioni
             say(Lang["nextmap"]%nextmap, 1)
-        say(str(GSRV.TeamMembers[0]) + "^1" + str(GSRV.TeamMembers[1])  + "^5" + str(GSRV.TeamMembers[2])  + "^2" + str(GSRV.TeamMembers[3]), 1) #DEBUG
     elif GSRV.Server_mode == 0:
         say(Lang["startup"], 1)
 

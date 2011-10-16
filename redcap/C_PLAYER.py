@@ -91,7 +91,9 @@ class Player:
 
     def stats (self):
         aliases = ""
-        for al in self.alias:
+        if self.alias == [['']]:
+            self.alias = [['1318098208.58', self.nick],]  #alias vuoto per errore dovuto a crash
+        for al in self.alias:          
             aliases += al[1] + " "
         aliases = aliases.rstrip()
         X = {
