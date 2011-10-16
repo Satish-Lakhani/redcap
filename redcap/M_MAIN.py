@@ -41,7 +41,8 @@ CRON2 = M_AUX.Cronometro(M_CONF.CRON2)          #Istanzio il cron2
 
 def init_jobs():
     """attivita' da fare all'avvio di redcap"""
-    M_RC.say("^2RedCap in Avvio", 2)    #DEBUG
+    M_RC.say("^2RedCap in Avvio", 2)
+    Ticks = M_AUX.ini_gen()         #inizializzazioni generali
     M_RC.ini_clientlist()           #recupero i client gia presenti sul server
     M_RC.ini_recordlist()           #recupero i record dal server
     M_RC.ini_spamlist()             #carico la spamlist
@@ -88,7 +89,7 @@ def redcap_main():
                         M_RC.endMap(frase[0])
                         continue
         if CRON1.is_time():                     #eseguo operazioni a cron1
-            if M_RC.GSRV.Server_mode == 1:          #controlli fatti solo in modalit� normale.
+            if M_RC.GSRV.Server_mode == 1:          #controlli fatti solo in modalita' normale.
                 M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato
                 M_RC.cr_full()                      #controllo se il server e' pieno o vuoto
                 M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotation
@@ -99,9 +100,21 @@ def redcap_main():
             if CRON1.ticks == 240:                  #E' passata 1 ora circa
                 q3ut4_parse()
                 CRON1.reset()
-        if CRON2.is_time():                     #eseguo operazioni giornaliere (pulizia DB, riavvio server, etc)
-            if int(time.strftime("%H", time.localtime())) == M_CONF.Control_Daily:
-                M_AUX.cr_riavvia()
+        if CRON2.is_time():                                 
+            if CRON2.get_time["Ora"] == M_CONF.Control_Daily:   #all'ora prefissata eseguo operazioni giornaliere (pulizia DB, riavvio server, etc)
+                M_RC.scrivilog("Daily Cleaning START", M_CONF.crashlog)
+                if CRON2.get_time["Day"] <> Tick["Day"]:        #e' passato un giorno
+                    Tick["Day"] = CRON2.get_time["Day"]
+                    M_RC.recordErase("Day")                     #pulizia record giornaliero
+                if CRON2.get_time["Week"] <> Tick["Week"]:      #e' passato una settimana
+                    Tick["Week"] = CRON2.get_time["Week"]
+                    M_RC.recordErase("Week")                    #pulizia record settimanale
+                if CRON2.get_time["Month"] <> Tick["Month"]:    #e' passato un mese
+                    Tick["Month"] = CRON2.get_time["Month"]
+                    M_RC.recordErase("Month")                   #pulizia record mensile
+                M_AUX.cr_riavvia()                          #Riavvio del server
+                # -= Non puo' leggere istruzioni qui (riavvio server!) =-
+
 
 #AVVIO IL REDCAP
 init_jobs()

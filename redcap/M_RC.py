@@ -299,7 +299,6 @@ def ini_clientlist():
                 GSRV.PT[dati[1]].justconnected = False             #non e piu nuovo
                 GSRV.PT[dati[1]].lastconnect = time.time()          #aggiorno il lastconnect
 
-
 def ini_recordlist():
     """recupera i record dal db"""
     DB.connetti()
@@ -422,6 +421,10 @@ def option_checker(v):
                 if v == 0:
                     go = False
     return option
+
+def recordErase(tipo):
+    """cancella il o i record specificati"""
+    GSRV.TopScores[tipo] = [0.0, 0, " "]
     
 def saluta(modo, id):
     """si occupa di salutare il player al suo ingresso in game"""
