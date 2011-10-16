@@ -341,7 +341,7 @@ def initRound(frase):
                 moving = GSRV.team_balance()
                 SCK.cmd("forceteam " + moving)
                 GSRV.BalanceRequired = False
-                say(Lang["balancexecuted"], 0)
+                say(Lang["balancexecuted"], 1)
             else:
                 say(str(GSRV.TeamMembers[0]) + "^1" + str(GSRV.TeamMembers[1])  + "^5" + str(GSRV.TeamMembers[2])  + "^2" + str(GSRV.TeamMembers[3]), 1)
         if (GSRV.MapName + "\n") in GSRV.Q3ut4["mapcycle"]:         #verifico qual'e la prossima mappa
@@ -648,6 +648,21 @@ def map(richiedente, parametri):    #FUNZIONA
     else:
         tell(richiedente, Lang["noclearmap"])
 
+def maplist(richiedente, parametri):
+    """lista le mappe del server"""
+    frase = "^6Map list: "
+    i = 0
+    for mappa in GSRV.Q3ut4["map"]:
+        scrivilog(mappa, M_CONF.crashlog)
+        i += 1
+        frase += ("^" + str(i) + str(mappa) + " ")
+        if i == 5:
+            tell(richiedente, frase)
+            frase = ""
+            i = 0
+    if i <> 0:
+        tell(richiedente, frase)     
+
 def mute(richiedente, parametri, reason = ""):
     """Muta/smuta un player"""
     if richiedente == "Redcap":                                 #mute richiesto direttamente dal RedCap
@@ -777,12 +792,12 @@ def spamlist(richiedente, parametri):
 
 def status(richiedente, parametri, modo = M_CONF.status):       #FUNZIONA
     """fornisce informazioni sui giocatori o saluta"""
-    '''if GSRV.Server_mode == 0:                               #comando non disponibile in fase di avvio
-        tell(richiedente, Lang["noavailcmd"])
-        return'''
     if not parametri.group("target"):                     #comando status senza target: do nick e slot di tutti
         for player in GSRV.PT:
-            tell(richiedente, "^4%s ^%s%s"%(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick))
+            if GSRV.PT[player].level >= lev_admin:
+                tell(richiedente, "^4%s ^%s%s ^4Lev.%s"%(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick, str(GSRV.PT[player].level)))
+            else:
+                tell(richiedente, "^4%s ^%s%s"%(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick))
         return
     elif GSRV.PT[richiedente].level >= M_CONF.lev_admin:
         modo = M_CONF.status_adm

@@ -20,6 +20,7 @@ comandi = [
 ["kick",r"!k (?P<target>.*)", M_CONF.lev_kick],
 ["level",r"!lev(?P<num>\d*) (?P<target>.*)",M_CONF.lev_level],
 ["map", r"!map (?P<map>.*)", M_CONF.lev_map],
+["maplist", r"!maplist", M_CONF.lev_maplist],
 ["mute",r"!m (?P<target>.*)",M_CONF.lev_mute],
 ["muteall",r"!mall", M_CONF.lev_muteall],
 ["nuke",r"!n (?P<target>.*)",M_CONF.lev_nuke],

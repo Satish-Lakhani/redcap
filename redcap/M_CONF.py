@@ -25,6 +25,7 @@ lev_info = 0                    #mostra server IP e versione redcap
 lev_kick = 2                    #kick
 lev_level = 4                   #assegno level
 lev_map = 2                     #cambio mappa
+lev_maplist = 0                 #lista mappe
 lev_mute = 1                    #mute
 lev_muteall = 2                 #mute all
 lev_nuke = 0                    #nuke #DEBUG

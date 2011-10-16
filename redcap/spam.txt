@@ -1,3 +1,5 @@
-io mi chiamo uz
-ciao sono ale
-non ho capito
+Frase0
+Frase1
+Frase2
+Frase3
+Frase4

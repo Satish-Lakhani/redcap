@@ -42,7 +42,6 @@ CRON2 = M_AUX.Cronometro(M_CONF.CRON2)          #Istanzio il cron2
 def init_jobs():
     """attivita' da fare all'avvio di redcap"""
     M_RC.say("^2RedCap in Avvio", 2)
-    Ticks = M_AUX.ini_gen()         #inizializzazioni generali
     M_RC.ini_clientlist()           #recupero i client gia presenti sul server
     M_RC.ini_recordlist()           #recupero i record dal server
     M_RC.ini_spamlist()             #carico la spamlist
@@ -56,6 +55,7 @@ def q3ut4_parse():
     PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4, M_RC.GSRV.MapCycle)   #recupero mappe e cfg.
 
 def redcap_main():
+    Tick = M_AUX.ini_gen()          #inizializzazioni generali
     while 1:
         M_RC.sleep(M_CONF.TempoCiclo)             #wait for a cycletime
         if PARSER.novita():                                           #log check
