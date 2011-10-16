@@ -747,10 +747,18 @@ def spam(richiedente, parametri):
     """inserisce/disinserisce frasi di spam)"""
     if parametri.group("un") == "un":                   #sto cancellando
         if parametri.group("frase").isdigit():
+            if GSRV.SpamList[int(parametri.group("frase"))].endswith("#"):  #non posso cancellare un record
+                tell(richiedente, Lang["norecorderase"])
+                return
             del(GSRV.SpamList[int(parametri.group("frase"))])
             spam = open("spam.txt", "w")
             for frase in GSRV.SpamList:
-                spam.write(frase + "\n")
+                if frase.endswith("#"):
+                    pass
+                else:
+                    spam.write(frase + "\n")
+            spam.seek(-1, 2)
+            spam.truncate() #tolgo l'ultimo a capo
             spam.close()
             tell(richiedente, Lang["spamerased"])
         else:
@@ -758,7 +766,7 @@ def spam(richiedente, parametri):
     else:                                               #sto aggiungendo
         GSRV.SpamList.append(parametri.group("frase"))
         spam = open("spam.txt", "a")
-        spam.write(parametri.group("frase") + "\n")
+        spam.write("\n" + parametri.group("frase"))
         spam.close()
         tell(richiedente, Lang["spamadded"])
 
