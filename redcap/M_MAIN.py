@@ -10,11 +10,10 @@
 #TODO note per warmode: no kick, warn o richiami per badguid o badnick, tkill o thit o censura (registrare variazione skill?), non registrare ne spammare record. no spam vari.
 #TODO prevedere silentmode.
 #TODO fare comando hit che dice le hit eseguite in percentuale
-#TODO fare comando per mettere e togliere righe spam
-#TODO sistemare orario ultima visita
-#TODO mettere decimali a skill e isk
 #TODO fare manutenzioni programmate
-#TODO evitare che i record vengano salvati nella spamlist
+#TODO evitare che un crash durante cw cancelli la config war
+#TODO fare comando shuffle
+#TODO fare bilanciamento immediato in modalita CTF
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -103,16 +102,16 @@ def redcap_main():
         if CRON2.is_time():                                 
             if CRON2.get_time("Ora") == M_CONF.Control_Daily:   #all'ora prefissata eseguo operazioni giornaliere (pulizia DB, riavvio server, etc)
                 M_RC.scrivilog("Daily Cleaning START", M_CONF.crashlog)
-                if CRON2.get_time("Day") <> Tick["Day"]:        #e' passato un giorno
-                    Tick["Day"] = CRON2.get_time["Day"]
+                if CRON2.get_time("Day") <> Tick["Day"]:        #e' passato un giorno #TODO Spostare in M_AUX se si puo'
+                    Tick["Day"] = CRON2.get_time("Day")
                     M_RC.recordErase("Day")                     #pulizia record giornaliero
-                if CRON2.get_time("Week") <> Tick["Week"]:      #e' passato una settimana
-                    Tick["Week"] = CRON2.get_time["Week"]
+                if CRON2.get_time("Week") <> Tick["Week"]:      #e' passato una settimana #TODO Spostare in M_AUX se si puo'
+                    Tick["Week"] = CRON2.get_time("Week")
                     M_RC.recordErase("Week")                    #pulizia record settimanale
-                if CRON2.get_time("Month") <> Tick["Month"]:    #e' passato un mese
-                    Tick["Month"] = CRON2.get_time["Month"]
+                if CRON2.get_time("Month") <> Tick["Month"]:    #e' passato un mese #TODO Spostare in M_AUX se si puo'
+                    Tick["Month"] = CRON2.get_time("Month")
                     M_RC.recordErase("Month")                   #pulizia record mensile
-                M_AUX.cr_riavvia()                          #Riavvio del server
+                M_AUX.cr_riavvia(M_CONF.gameserver_autorestart)                          #Riavvio del server
                 # -= Non puo' leggere istruzioni qui (riavvio server!) =-
 
 

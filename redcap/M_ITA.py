@@ -32,7 +32,7 @@ RC_outputs = {
 "invalidguid": "^2%s ^1kikkato per GUID non regolare",
 "invalidnick": "^2%s ^1kikkato per NICK non regolare",
 "levassigned":"^2Assegnato livello ^4%s ^2a ^4%s.",
-"lownotoriety": "^2%s ^1kikkato per affidabilita troppo bassa: ^4%s2 ^2contro ^4%s3 ^2richiesta",
+"lownotoriety": "^2%s ^1affidabilita troppo bassa o QKEY nuova: ^4%s2 ^2contro ^4%s3 ^2richiesta",
 "muteall": "^1Muto/Smuto ^2tutti!",
 "muted":"^4%s ^2mutato in quanto era mutato all'ultima disconnessione",
 "nextmap": "^2Prossima mappa: ^4%s",

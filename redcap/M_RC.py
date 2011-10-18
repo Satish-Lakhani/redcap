@@ -188,7 +188,7 @@ def cr_spam():
     if len(GSRV.SpamList) == 0:
         return                                          #spamlist vuota
     else:
-        say(GSRV.SpamList[GSRV.SpamlistIndex], 0)       #spammo
+        say(str(GSRV.SpamlistIndex) + ": " + GSRV.SpamList[GSRV.SpamlistIndex], 0)       #spammo
     if GSRV.SpamlistIndex == len(GSRV.SpamList) - 1:    #Aumento l'index
         GSRV.SpamlistIndex = 0
     else:
@@ -262,7 +262,13 @@ def endMap(frase):
     endRound(frase)                                     #richiamo anche le solite operazioni da endround
 
 def endRound(frase):
-    pass        #TODO
+    if GSRV.Server_mode == 1:                                       #solo in modalita normale. No war e no startup
+        if GSRV.BalanceMode == 2 or GSRV.BalanceRequired:           #eseguo bilanciamento automatico o su richiesta
+            if abs(GSRV.TeamMembers[1] - GSRV.TeamMembers[2]) > 1:  #verifico se gli sbilanciamenti richiedono balance
+                moving = GSRV.team_balance()
+                SCK.cmd("forceteam " + moving)
+                GSRV.BalanceRequired = False
+                say(Lang["balancexecuted"], 1)
 
 def hits(frase):                                                #del tipo ['1', '0', '3', '5'] Vittima, Killer, Zona, Arma (per il momento arma non e' utilizzato)
     if frase[0] not in GSRV.PT:                         #in rari casi il player puo' essere hittato dopo clientdisconnect
@@ -336,14 +342,7 @@ def initRound(frase):
     if GSRV.Server_mode == 1:                                       #solo in modalita normale. No war e no startup
         GSRV.teamskill_eval()                                       #aggiorno le teamskill e il coefficiente di sbilanciamento skill
         GSRV.players_alive()                                        #setto i player non spect a vivo, gli aggiungo un round e updato il coeff skill.
-        if GSRV.BalanceMode == 2 or GSRV.BalanceRequired:           #eseguo bilanciamento automatico o su richiesta
-            if abs(GSRV.TeamMembers[1] - GSRV.TeamMembers[2]) > 1:  #verifico se gli sbilanciamenti richiedono balance
-                moving = GSRV.team_balance()
-                SCK.cmd("forceteam " + moving)
-                GSRV.BalanceRequired = False
-                say(Lang["balancexecuted"], 1)
-            else:
-                say(str(GSRV.TeamMembers[0]) + "^1" + str(GSRV.TeamMembers[1])  + "^5" + str(GSRV.TeamMembers[2])  + "^2" + str(GSRV.TeamMembers[3]), 1)
+        say(str(GSRV.TeamMembers[0]) + "^1" + str(GSRV.TeamMembers[1])  + "^5" + str(GSRV.TeamMembers[2])  + "^2" + str(GSRV.TeamMembers[3]), 1)
         if (GSRV.MapName + "\n") in GSRV.Q3ut4["mapcycle"]:         #verifico qual'e la prossima mappa
             indice_nextmap = GSRV.Q3ut4["mapcycle"].index(GSRV.MapName+ "\n") +1
             if indice_nextmap == len(GSRV.Q3ut4["mapcycle"]):
@@ -737,7 +736,7 @@ def skill(richiedente, parametri):  #FUNZIONA
         return
     target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():                                                   #se ho trovato lo slot
-        tell(richiedente, Lang["skill"]%(GSRV.PT[target].skill, GSRV.PT[target].skill_var, GSRV.PT[target].ksmax))                    #Invio al socket il comando kick
+        tell(richiedente, Lang["skill"]%(round(GSRV.PT[target].skill,1), round(GSRV.PT[target].skill_var,1), GSRV.PT[target].ksmax))                    #Invio al socket il comando kick
 
 def slap(richiedente, parametri, reason=""): #FUNZIONA
     """equivalente a "slap" da console, ma puo' essere chiamato piu' volte di fila"""
@@ -794,10 +793,10 @@ def status(richiedente, parametri, modo = M_CONF.status):       #FUNZIONA
     """fornisce informazioni sui giocatori o saluta"""
     if not parametri.group("target"):                     #comando status senza target: do nick e slot di tutti
         for player in GSRV.PT:
-            if GSRV.PT[player].level >= lev_admin:
-                tell(richiedente, "^4%s ^%s%s ^4Lev.%s"%(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick, str(GSRV.PT[player].level)))
+            if GSRV.PT[richiedente].level >= M_CONF.lev_admin:
+                tell(richiedente, "^4%s ^%s%s ^7Not.%s ^4Lev.%s"%(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick, str(round(GSRV.PT[player].notoriety, 1)), str(GSRV.PT[player].level)))
             else:
-                tell(richiedente, "^4%s ^%s%s"%(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick))
+                tell(richiedente, "^4%s ^%s%s ^7Not.%s"%(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick, str(round(GSRV.PT[player].notoriety, 1))))
         return
     elif GSRV.PT[richiedente].level >= M_CONF.lev_admin:
         modo = M_CONF.status_adm

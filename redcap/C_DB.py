@@ -13,6 +13,7 @@ class Database:
         self.query = {
         "cercadati":"""SELECT * FROM DATI WHERE GUID = ?""",                    #cerca nella tab DATI in base alla GUID
         "cercaloc":"""SELECT * FROM LOC WHERE GUID = ?""",                      #cerca nella tab LOC in base alla GUID
+        "getallorderedbyguid": """SELECT * FROM %s ORDER BY GUID DESC""", #recupera una tabella ordinata per guid
         "getrecords":"SELECT * FROM REC""",                                     #recupera la tabella records
         "newdati" : """INSERT INTO DATI VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",    #inserisce un player  (guid, DBnick, skill, rounds, lastconnect, level, tempban, notoriety, firstconn, streak, alias, varie)
         "newdeath": """INSERT INTO DEATH (GUID) VALUES (?)""",
