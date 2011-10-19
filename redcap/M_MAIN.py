@@ -14,6 +14,9 @@
 #TODO evitare che un crash durante cw cancelli la config war
 #TODO fare comando shuffle
 #TODO fare bilanciamento immediato in modalita CTF
+#non kikka a server pieno
+#eliminare penalita per autokill con nade
+#aggiungere spazio in spam di streak
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser

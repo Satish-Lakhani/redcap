@@ -1,10 +1,26 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-import time                     #Funzioni tempo
+import time          #Funzioni tempo
+import C_DB         #Classe che rappresenta il DB
+import M_CONF
+
+DB = C_DB.Database(M_CONF.NomeDB)
 '''
 def web_rank():
     """crea la classifica in formato tabella a partire dal DB e la invia ad un altro server"""
+
+    def add(x,y):
+        return x+y
+
+    def cella(contenuto, toltip="", st=""):          #sottofunzione che crea le celle
+        return "<td><a href='#'>%(contenuto)s<span>%(tooltip)s</span></a></td>" %{"contenuto": contenuto, "tooltip": toltip}
+
+    def striphtml(testo):   #strippo l'html
+        testo = testo.replace("<", "&lt;") 
+        testo = testo.replace(">", "&gt;")
+        return testo
+
     DB.connetti()
     dati1 = DB.esegui(DB.query["getallorderedbyguid"]%"DATI").fetchall()
     dati2 = DB.esegui(DB.query["getallorderedbyguid"]%"HIT").fetchall()
@@ -16,40 +32,31 @@ def web_rank():
     while i < cicli:
         tmp.append(dati1[i] + dati2[i][1:len(dati2[i])] + dati3[i][1:len(dati3[i])] + dati4[i][1:len(dati4[i])])
         i+=1
-    DBdump = sorted(tmp, key=lambda dato: dato[2], reverse=True)    #record ordinati per skill decrescente
-    # 0: GUID
-    # 1: Nick
-    # 2: Skill
-    # 3: Round
-    # 4: Lastconnection
-    # 5: Level
-    # 6: Tempban
-    # 7: Reputation
-    # 8: Firstconnect
-    # 9: streak
-    # 10: alias
-    # 11: varie
-    # 12: head
-    # 13: torso
-    # 14: arms
-    # 15: legs
-    # 16: body
-    # 17: IP
-    # 18: provider
-    # 19: location
-    # 20: oldguids
-    # 21-39: kills
+    Dump = sorted(tmp, key=lambda dato: dato[2], reverse=True)    #record ordinati per skill decrescente
+    #DATI: #0: GUID    # 1: Nick    # 2: Skill    # 3: Round    # 4: Lastconnection    # 5: Level    # 6: Tempban    # 7: Reputation    # 8: Firstconnect    # 9: streak    # 10: alias    # 11: varie
+    #HIT: #12: head    # 13: torso    # 14: arms    # 15: legs    # 16: body    #LOC: #17: IP    # 18: provider    # 19: location    # 20: oldguids    #KILL: #21-39: kills
+    corpo = "<tr><th>NICK</th><th>SKILL</th><th>STREAK</th><th>ROUNDS</th><th>HITS</th><th>IP</th><th>LAST VISIT</th></tr>"
+    for guid in Dump:                                         #CREO RIGA
+        riga = ""
+        #nick = striphtml(str(guid[1]))                                     #NICK
+        aliases = guid[10].split("  ")                      #TOOLTIP ALIAS    # "<a href='#'>testo <span>Testo tooltip</span></a>"
+        tooltip_nick = ""
+        for al in aliases:
+            al=al.split(" ")
+            if len(al) == 2:
+                tooltip_nick += (striphtml (str(al[1]) )+ "<br />")
+        riga += cella(striphtml(str(guid[1])), tooltip_nick)               #Aggiungo cella NICK
+        streak_nick = sum(guid[21,39])
+        riga += cella(striphtml(str(round(guid[2]),1), streak_nick))               #Aggiungo cella STREAK
 
-    #creo la tabella
-    def cella(c_stile, contenuto):
-        return "<td style='%s'>%s</td>"%(c_stile, contenuto)
-    
-    def tablerow(r_stile, riga):
-        return "<tr style='%s'>%s</tr>"%(r_stile, riga)
 
-   # "<a href='#'>testo <span>Testo tooltip</span></a>"
-    
-    table = "<table class=\"sortable\"><tbody><tr><th>POS.</th><th>NICK</th><th>ROUNDS</th><th>SKILL</th><th>STREAK</th><th>ULTIMA VISITA</th></tr>%s</tbody></table>"%corpo
+        riga = "<tr>%s</tr>"%(riga)
+
+        corpo += riga
+    return "<table class=\"sortable\"><tbody>%s</tbody></table>" %corpo
+
+table = web_rank()
+print table
 
     res = DB.esegui(DB.statement["classifica"]) #eseguo il select da DB
     row = res.fetchall()
@@ -72,6 +79,7 @@ def web_rank():
     #trasferisco in remoto
     if RCconf.Website_ON:
         trasferisci(RCconf.NomeArchivi + "/" + RCconf.tabella, RCconf.tabella)
+
 '''
 
 def cr_riavvia(autorestart):

@@ -68,21 +68,22 @@ SpamFile = "spam.txt"
 
 ##PLAYER
 KickForSpace = True         #se true kikka uno spect (se c'e') quando il server e' pieno
-maxSlap = 10                        #massimo numero di slap che posso dare ad un player
+maxSlap = 10                #massimo numero di slap che posso dare ad un player
 
 ##RECORD
 MinPlayers = 6              #numero minimo di players per considerare valido un record
 MinNotoriety = 0            #notoriety minima per segnare un record
 
 #CONSOLE SPAMS
-RecordSpam = True       #Se True, Redcap spamma periodicamente i record, se False non spamma
-CustomSpam = True       #Se True, Redcap spamma periodicamente le frasi scritte in RT_SPAM.txt, se False non spamma
-Spamtime = 140          #Tempo in secondi tra due spam
+RecordSpam = True           #Se True, Redcap spamma periodicamente i record, se False non spamma
+CustomSpam = True           #Se True, Redcap spamma periodicamente le frasi scritte in RT_SPAM.txt, se False non spamma
+Spamtime = 140              #Tempo in secondi tra due spam
 
 #REDCAP
-botname = "^8RC| "             #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
-RC_lang = "ITA"                    #Localizzazione linguaggio ITA #TODO (ENG FRA e altre, da fare)
-AdminGuids = ["0606EE61D6F696AAE452385F765D78CF"]                  #guid automaticamente abilitata al max liv di autorizzazione
+botname = "^8RC| "                  #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
+RC_lang = "ITA"                     #Localizzazione linguaggio ITA #TODO (ENG FRA e altre, da fare)
+AdminGuids = ["0606EE61D6F696AAE452385F765D78CF"]   #guid automaticamente abilitata al max liv di autorizzazione
+gameserver_autorestart = True       #Se true, al riavvio giornaliero riavvia anche il gameserver
 
 ##SERVER
 ServerPars = {
