@@ -17,6 +17,8 @@
 #non kikka a server pieno
 #eliminare penalita per autokill con nade
 #aggiungere spazio in spam di streak
+#fare archiviazione log, dialoghi e db
+#TODO in caso di penalita abbassare reputation, non notoriety (e ricalcolare la notoriety)
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser

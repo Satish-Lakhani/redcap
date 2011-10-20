@@ -89,7 +89,7 @@ RC_kills = {        #messaggi di killstreak
 5 : '^4%s^2 si sta scaldando: ^15 ^2kills!',
 6 : '^2 ci sono sei nuove vedove grazie a ^4%s ',
 7 : '^4%s^2 7 kill? Non male!',
-8 : '^2Ottava kill per^4%s, ^2stara\' camperando?',
+8 : '^2Ottava kill per ^4%s, ^2stara\' camperando?',
 9 : '^4%s^2 9 kills. Record in vista?',
 10 : '^4%s^2 1^40 ^3K^4I^5L^6L^8S^9!! ',
 11 : '^4%s^2 11 kills! Non sei un noob...',

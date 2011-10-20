@@ -61,7 +61,7 @@ class Player:
         self.tempban = dati[6]
         self.guidage = (time - dati[8])/87400      #eta' della guid in giorni
         self.reputation = dati[7]
-        self.notoriety = round(dati[3] / N1 + self.guidage / N2 + dati[7], 1)    #calcolo della notoriety (basata su round, guid age, e bonus/malus) - arrotondo a 1
+        self.notoriety = self.notoriety_upd(dati[3], N1, N2, dati[7])    #calcolo della notoriety (basata su round, guid age, e bonus/malus) - arrotondo a 1
         self.ksmax = dati[9]
         aliases = dati[10].split("  ")                                            #formatto gli alias in maniera leggibile
         for al in aliases:
@@ -86,8 +86,12 @@ class Player:
         else:
             return True
 
+    def notoriety_upd(self, rounds, roundXpoint, dayXpoint, reputation):
+        """calcola la notoriety"""
+        return round(rounds / roundXpoint + self.guidage / dayXpoint + reputation, 1)   #calcolo della notoriety (basata su round, guid age, e bonus/malus) - arrotondo a 1
+
     def skill_coeff_update(self):
-        self.skill_coeff = 1 + (1000/(self.rounds**1.2 + 60))          #coefficiente skill che dipende dal n. di round giocati
+        self.skill_coeff = 1 + (1000/(self.rounds**1.2 + 60))           #coefficiente skill che dipende dal n. di round giocati
 
     def stats (self):
         aliases = ""

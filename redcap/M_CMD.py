@@ -8,7 +8,6 @@ comandi = [
 ["balancemode", r"!ab", M_CONF.lev_balancemode],
 ["ban", r"!ban (?P<target>.*)", M_CONF.lev_ban],
 ["balance",r"!tm", M_CONF.lev_balance],
-["trust",r"!(?P<un>(un)*)trust (?P<target>.*)", M_CONF.lev_trust],
 ["callvote",r"!v$",M_CONF.lev_callvote],
 ["cyclemap",r"!cy", M_CONF.lev_cycle],
 ["dbnick",r"!dbnick (?P<target>.*)", M_CONF.lev_dbnick],
@@ -38,6 +37,7 @@ comandi = [
 ["status", r"!z\s*(?P<target>.*)", M_CONF.lev_status],
 ["tempban",r"!b(?P<num>\d*) (?P<target>.*)",M_CONF.lev_tmpban],       #!b123 pippo
 ["top",r"!top", M_CONF.lev_top],
+["trust",r"!(?P<un>(un)*)trust (?P<target>.*)", M_CONF.lev_trust],
 ["unwar",r"!unwar", M_CONF.lev_unwar],
 ["war",r"!war\s*(?P<cfg>.*)", M_CONF.lev_war],
 ]

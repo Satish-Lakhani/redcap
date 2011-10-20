@@ -160,10 +160,13 @@ def cr_full():
     if GSRV.Server_mode <> 0:
         clients = (GSRV.TeamMembers[0] + GSRV.TeamMembers[1] + GSRV.TeamMembers[2] + GSRV.TeamMembers[3])
         if clients == GSRV.MaxClients:              # faccio operazioni da server pieno
+            scrivilog("DEBUG: QUI SI 01", M_CONF.crashlog)  #DEBUG
             GSRV.Full = 2                           
-            if M_CONF.KickForSpace and GSRV.Server_mode <> 2:
+            if M_CONF.KickForSpace and GSRV.Server_mode == 1:
+                scrivilog("DEBUG: QUI SI 02", M_CONF.crashlog)  #DEBUG
                 for PL in GSRV.PT:
                     if GSRV.PT[PL].team == 3:
+                        scrivilog("DEBUG: QUI SI 03", M_CONF.crashlog)  #DEBUG
                         kick("Redcap", GSRV.PT[PL].slot_id, Lang["space"]%GSRV.PT[PL].nick)
         elif clients == 0:                          # faccio operazioni da server vuoto
             GSRV.Full = 0
@@ -185,6 +188,8 @@ def cr_nickrotation():
 
 def cr_spam():
     """spam periodici"""
+    if GSRV.Server_mode == 2:
+        return                                          #no spam in warmode
     if len(GSRV.SpamList) == 0:
         return                                          #spamlist vuota
     else:
@@ -794,9 +799,9 @@ def status(richiedente, parametri, modo = M_CONF.status):       #FUNZIONA
     if not parametri.group("target"):                     #comando status senza target: do nick e slot di tutti
         for player in GSRV.PT:
             if GSRV.PT[richiedente].level >= M_CONF.lev_admin:
-                tell(richiedente, "^4%s ^%s%s ^7Not.%s ^4Lev.%s"%(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick, str(round(GSRV.PT[player].notoriety, 1)), str(GSRV.PT[player].level)))
+                tell(richiedente, "^4%s ^%s%s ^7Not.%s ^4Lev.%s" %(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick, str(round(GSRV.PT[player].notoriety, 1)), str(GSRV.PT[player].level)))
             else:
-                tell(richiedente, "^4%s ^%s%s ^7Not.%s"%(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick, str(round(GSRV.PT[player].notoriety, 1))))
+                tell(richiedente, "^4%s ^%s%s ^7Not.%s" %(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick, str(round(GSRV.PT[player].notoriety, 1))))
         return
     elif GSRV.PT[richiedente].level >= M_CONF.lev_admin:
         modo = M_CONF.status_adm
@@ -845,12 +850,20 @@ def top(richiedente, parametri):    #FUNZIONA
     tell(richiedente, Lang["top"]%("Month", str(GSRV.TopScores["Month"][1]), str(GSRV.TopScores["Month"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Month"][0]))))
     tell(richiedente, Lang["top"]%("Week", str(GSRV.TopScores["Week"][1]), str(GSRV.TopScores["Week"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Week"][0]))))
     tell(richiedente, Lang["top"]%("Day", str(GSRV.TopScores["Day"][1]), str(GSRV.TopScores["Day"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["Day"][0]))))
-    #tell(richiedente, Lang["top"]%("HSkill", str(GSRV.TopScores["HSkill"][1]), str(GSRV.TopScores["HSkill"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["HSkill"][0])))) #TODO HI e LO skill (da fare)
+    #TODO tell(richiedente, Lang["top"]%("HSkill", str(GSRV.TopScores["HSkill"][1]), str(GSRV.TopScores["HSkill"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["HSkill"][0])))) #TODO HI e LO skill (da fare)
     #tell(richiedente, Lang["top"]%("LSkill", str(GSRV.TopScores["LSkill"][1]), str(GSRV.TopScores["LSkill"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(GSRV.TopScores["LSkill"][0]))))
 
 def trust(richiedente, parametri):
-    """aumenta o diminuisce la affidabilita"""
-    pass #TODO
+    """aumenta o diminuisce la reputation"""
+    target = trovaslotdastringa(richiedente, parametri.group("target"))
+    if target.isdigit():
+        repu_var = M_CONF.Notoriety["dayXpoint"] * M_CONF.Notoriety["guidminage"]   #unita di variazione di reputazione
+        if parametri.group("un") == "un":                                           #diminuisco l'affidabilita
+            GSRV.PT[target].reputation -= repu_var
+        else:
+            GSRV.PT[target].reputation += repu_var
+        GSRV.PT[target].notoriety = GSRV.PT[target].notoriety_upd(GSRV.PT[target].rounds, M_CONF.Notoriety["roundXpoint"], M_CONF.Notoriety["dayXpoint"], GSRV.PT[target].reputation)
+        #TODO finire
 
 def unwar(richiedente, parametri):   #FUNZIONA
     """resetta il server in modalita' normale"""

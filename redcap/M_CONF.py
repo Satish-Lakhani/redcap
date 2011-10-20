@@ -56,10 +56,11 @@ commandlogMinLevel = 0              #livello minimo del comando affinche sia reg
 ##NOTORIETY
 # valore di notoriety aggiunto a quella del player in caso di alcuni avvenimenti. Quando la notoriety scende al di sotto di ServerPars["MinNotoriety"] il player non puo' piu accedere al server.
 Notoriety = {
-"guidchange" : -5,          #penalizzazione punti per cambio guid al volo (probabile cheat)
 "badguid" : -20,            #penalizzazione punti per guid non corretta (probabile cheat)
+"dayXpoint": 10,            #giorni di anzianita della guid per guadagnare un punto notoriety
+"guidchange" : -5,          #penalizzazione punti per cambio guid al volo (probabile cheat)
+"guidminage": 5,            #anzianita in giorni della guid per poter giocare sul server
 "roundXpoint": 100,         #num. di round da giocare per guadagnare un punto notoriety
-"dayXpoint": 10             #giorni di anzianita della guid per guadagnare un punto notoriety
 }
 
 ##FILE TESTO
@@ -67,7 +68,7 @@ NomeFileLog = "AUXILIARY/prova.log"   #2011_Sep_01_log.log" #" # DEBUG"../games.
 SpamFile = "spam.txt"
 
 ##PLAYER
-KickForSpace = True         #se true kikka uno spect (se c'e') quando il server e' pieno
+KickForSpace = True         #se true kikka uno spect (se c'e') quando il server e' pieno 
 maxSlap = 10                #massimo numero di slap che posso dare ad un player
 
 ##RECORD
