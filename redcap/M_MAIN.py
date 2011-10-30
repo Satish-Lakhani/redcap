@@ -19,6 +19,7 @@
 #aggiungere spazio in spam di streak
 #fare archiviazione log, dialoghi e db
 #TODO in caso di penalita abbassare reputation, non notoriety (e ricalcolare la notoriety)
+#TODO azzerare la tabella skill (o tutta il db?)
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -106,18 +107,20 @@ def redcap_main():
                 CRON1.reset()
         if CRON2.is_time():                                 
             if CRON2.get_time("Ora") == M_CONF.Control_Daily:   #all'ora prefissata eseguo operazioni giornaliere (pulizia DB, riavvio server, etc)
-                M_RC.scrivilog("Daily Cleaning START", M_CONF.crashlog)
                 if CRON2.get_time("Day") <> Tick["Day"]:        #e' passato un giorno #TODO Spostare in M_AUX se si puo'
                     Tick["Day"] = CRON2.get_time("Day")
                     M_RC.recordErase("Day")                     #pulizia record giornaliero
+                    M_RC.scrivilog("Daily Cleaning START", M_CONF.crashlog)
                 if CRON2.get_time("Week") <> Tick["Week"]:      #e' passato una settimana #TODO Spostare in M_AUX se si puo'
                     Tick["Week"] = CRON2.get_time("Week")
                     M_RC.recordErase("Week")                    #pulizia record settimanale
+                    M_RC.scrivilog("Weekly Cleaning START", M_CONF.crashlog)
                 if CRON2.get_time("Month") <> Tick["Month"]:    #e' passato un mese #TODO Spostare in M_AUX se si puo'
                     Tick["Month"] = CRON2.get_time("Month")
                     M_RC.recordErase("Month")                   #pulizia record mensile
+                    M_RC.scrivilog("Monthly Cleaning START", M_CONF.crashlog)
                 M_AUX.cr_riavvia(M_CONF.gameserver_autorestart)                          #Riavvio del server
-                # -= Non puo' leggere istruzioni qui (riavvio server!) =-
+                # -= Non puo' leggere istruzioni oltre qui (riavvio server!) =-
 
 
 #AVVIO IL REDCAP

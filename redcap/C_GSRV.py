@@ -77,26 +77,26 @@ class Server:
            res += 256                           #killstreak stop in console
         self.PT[V].ks = 0                       #metto a zero la ks della vittima
         dati = [ora, self.PT[K].ks, self.PT[K].DBnick]
-        if self.PT[K].ks > self.TopScores["Day"][1] and self.tot_players(1) < M_CONF.MinPlayers:     #pochi players
+        if self.PT[K].ks > int(self.TopScores["Day"][1]) and self.tot_players(1) < M_CONF.MinPlayers:     #pochi players
             res += 1024
-        elif self.PT[K].ks > self.TopScores["Day"][1] and self.PT[K].notoriety < M_CONF.MinNotoriety:  #Notoriety troppo bassa
+        elif self.PT[K].ks > int(self.TopScores["Day"][1]) and self.PT[K].notoriety < M_CONF.MinNotoriety:  #Notoriety troppo bassa
             res += 512
-        elif self.PT[K].ks > self.TopScores["Alltime"][1]:
+        elif self.PT[K].ks > int(self.TopScores["Alltime"][1]):
             self.TopScores["Alltime"] = dati    #killstreak: alltime record
             self.TopScores["Month"] = dati
             self.TopScores["Week"] = dati
             self.TopScores["Day"] = dati
             res += 8
-        elif self.PT[K].ks > self.TopScores["Month"][1]:
+        elif self.PT[K].ks > int(self.TopScores["Month"][1]):
             self.TopScores["Month"] = dati      #killstreak: monthly record
             self.TopScores["Week"] = dati
             self.TopScores["Day"] = dati
             res += 16
-        elif self.PT[K].ks > self.TopScores["Week"][1]:
+        elif self.PT[K].ks > int(self.TopScores["Week"][1]):
             self.TopScores["Week"] = dati       #killstreak: weekly record
             self.TopScores["Day"] = dati
             res += 32
-        elif self.PT[K].ks > self.TopScores["Day"][1]:
+        elif self.PT[K].ks > int(self.TopScores["Day"][1]):
             self.TopScores["Day"] = dati        #killstreak: daily record
             res += 64
         return res

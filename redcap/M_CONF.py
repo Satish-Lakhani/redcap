@@ -57,7 +57,7 @@ commandlogMinLevel = 0              #livello minimo del comando affinche sia reg
 # valore di notoriety aggiunto a quella del player in caso di alcuni avvenimenti. Quando la notoriety scende al di sotto di ServerPars["MinNotoriety"] il player non puo' piu accedere al server.
 Notoriety = {
 "badguid" : -20,            #penalizzazione punti per guid non corretta (probabile cheat)
-"dayXpoint": 10,            #giorni di anzianita della guid per guadagnare un punto notoriety
+"dayXpoint": 5,            #giorni di anzianita della guid per guadagnare un punto notoriety
 "guidchange" : -5,          #penalizzazione punti per cambio guid al volo (probabile cheat)
 "guidminage": 5,            #anzianita in giorni della guid per poter giocare sul server
 "roundXpoint": 100,         #num. di round da giocare per guadagnare un punto notoriety
@@ -66,6 +66,7 @@ Notoriety = {
 ##FILE TESTO
 NomeFileLog = "AUXILIARY/prova.log"   #2011_Sep_01_log.log" #" # DEBUG"../games.log"    #(OBBLIGATORIO!) Percorso relativo del file di log da controllare
 SpamFile = "spam.txt"
+NomeArchivi = "Archivi"     #cartella per archiviazione vecchi log
 
 ##PLAYER
 KickForSpace = True         #se true kikka uno spect (se c'e') quando il server e' pieno 
@@ -215,7 +216,7 @@ GameServerDown = 20             #Secondi di attesa prima di ritentare, quando Re
 
 ##VARIE
 Website_ON = True               #(OBBLIGATORIO!) True se esiste un website di appoggio, se no  False
-NomeArchivi = "Archivi"         #cartella per archiviazione vecchi log
+
 joinmessage = "^4-= Welcome on ^2BW ^4UrT Server =-"
 
 ##SERVER remoto (parte facoltativa da specificare se Website_ON = True)
