@@ -54,13 +54,15 @@ commandlog = "command.log"          #comandi bot inviati dai giocatori
 commandlogMinLevel = 0              #livello minimo del comando affinche sia registrato nel log (settare piu alto del piu alto dei livelli di comando se non si vuole registrare nulla)
 
 ##NOTORIETY
-# valore di notoriety aggiunto a quella del player in caso di alcuni avvenimenti. Quando la notoriety scende al di sotto di ServerPars["MinNotoriety"] il player non puo' piu accedere al server.
+# valore di notoriety aggiunto a quella del player in caso di alcuni avvenimenti. Quando la notoriety scende al di sotto di ServerPars["MinNot_toplay"] il player non puo' piu accedere al server.
 Notoriety = {
 "badguid" : -20,            #penalizzazione punti per guid non corretta (probabile cheat)
-"dayXpoint": 5,            #giorni di anzianita della guid per guadagnare un punto notoriety
+"dayXpoint": 5,             #giorni di anzianita della guid per guadagnare un punto notoriety (5 = 0.2 punti/giorno)
+"floodpenalty": -0.1,       #penalita per flood
 "guidchange" : -5,          #penalizzazione punti per cambio guid al volo (probabile cheat)
 "guidminage": 5,            #anzianita in giorni della guid per poter giocare sul server
-"roundXpoint": 100,         #num. di round da giocare per guadagnare un punto notoriety
+"roundXpoint": 100,         #num. di round da giocare per guadagnare un punto notoriety (100 = 0.01 punti/round)
+"warnpenalty":-0.2,         #penalita sulla reputation per un kick da somma di warning
 }
 
 ##FILE TESTO
@@ -74,7 +76,7 @@ maxSlap = 10                #massimo numero di slap che posso dare ad un player
 
 ##RECORD
 MinPlayers = 6              #numero minimo di players per considerare valido un record
-MinNotoriety = 0.5            #notoriety minima per segnare un record
+MinNotoriety = 0.5          #notoriety minima per segnare un record
 
 #CONSOLE SPAMS
 RecordSpam = True           #Se True, Redcap spamma periodicamente i record, se False non spamma
@@ -84,7 +86,7 @@ Spamtime = 140              #Tempo in secondi tra due spam
 #REDCAP
 botname = "^8RC| "                  #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
 RC_lang = "ITA"                     #Localizzazione linguaggio ITA #TODO (ENG FRA e altre, da fare)
-AdminGuids = ["0606EE61D6F696AAE452385F765D78CF"]   #guid automaticamente abilitata al max liv di autorizzazione
+AdminGuids = ["0606EED6F696AAE45235F765D78CF"]   #guid automaticamente abilitata al max liv di autorizzazione
 gameserver_autorestart = True       #Se true, al riavvio giornaliero riavvia anche il gameserver
 
 ##SERVER
@@ -99,7 +101,7 @@ ServerPars = {
 "Logfolder": "logs",                #cartella di registrazione dei log
 "MaxFlood" : 6,                     #massimo numero di say in un tempo fissato (CRON1)
 "MaxNickChanges" : 3,               #massimi change nick in un tempo fissato (CRON1)
-"MinNotoriety": -999,                  #valore notoriety per giocare nel server. La notoriety di un nuovo player e' 0
+"MinNot_toplay": -999,               #valore notoriety per giocare nel server. La notoriety di un nuovo player e' 0
 "minNick":3,                        #Lunghezza minima nick
 "Passport" : False,                 #True=passport attivo gia' all'avvio, False=passport inattivo all'avvio.
 "ShowHeadshots": True,              #Se True mostra gli headshot
@@ -177,7 +179,7 @@ SocketPars = {
 4096: Alias
 '''
 saluti = 1 + 2048                                                           #informazioni di saluto
-status = 1 + 32 + 128 + 4096 + 2048                                         #informazioni date ai non admin
+status = 1 + 32 + 128 + 1024 + 2048                                         #informazioni date ai non admin
 status_adm = 1 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 2048 + 1024           #info date agli admin
 
 ##TEMPI
