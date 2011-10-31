@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #TODO fare controllo armi ammesse per team
-#TODO comando !trust nick per gestire la notoriety
+#TODO completare comando !trust nick per gestire la notoriety
 #TODO fare anche ban per nick
 #TODO e' effettivamente necessario recuperare gli alias alla connection o si fa su richiesta?
 #TODO eliminare gli alias piu vecchi di n giorni
@@ -20,6 +20,9 @@
 #fare archiviazione log, dialoghi e db
 #TODO in caso di penalita abbassare reputation, non notoriety (e ricalcolare la notoriety)
 #TODO azzerare la tabella skill (o tutta il db?)
+#TODO completare classifica e fare funzione di trasferimento
+#TODO fare comando DBban e DBunban
+#TODO FARE COMANDO PER VARIAZIONE NOTORIETY AL VOLO (CON RIMESSA A VLAORE BASE A SERVER VUOTO)
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -95,11 +98,13 @@ def redcap_main():
                         continue
         if CRON1.is_time():                     #eseguo operazioni a cron1
             if M_RC.GSRV.Server_mode == 1:          #controlli fatti solo in modalita' normale.
+                M_RC.cr_tbkicked()                  #da fare sempre per primo
                 M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato
                 M_RC.cr_full()                      #controllo se il server e' pieno o vuoto
-                M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotation
+                M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotati           
                 M_RC.cr_unvote()                    #controllo se c'e' un voto speciale attivo
                 M_RC.cr_warning()                   #controllo se qualcuno ha troppi warning
+                M_RC.cr_notorietycheck()            #controllo notoriety bassa da fare per ultimo
             if int(CRON1.ticks % (M_CONF.Spamtime // M_CONF.CRON1)) == 0:       #modulo
                 M_RC.cr_spam()                      #spammo
             if CRON1.ticks == 240:                  #E' passata 1 ora circa

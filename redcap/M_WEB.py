@@ -10,12 +10,12 @@ DB = C_DB.Database(M_CONF.NomeDB)
 def web_rank():
     """crea la classifica in formato tabella a partire dal DB e la invia ad un altro server"""
 
-    def add(x,y):
-        return x+y
+    #def add(x,y):
+        #return x+y
 
-    def cella(contenuto, toltip = "", st = ""):          #sottofunzione che crea le celle
+    def cella(contenuto, toltip = "", cls = ""):          #sottofunzione che crea le celle
         #return "<td><a href='#'>%(contenuto)s<span>%(tooltip)s</span></a></td>" %{"contenuto": contenuto, "tooltip": toltip}
-        return "<td title='%s' style='%s'>%s</td>" %(toltip, st, contenuto)
+        return "<td title='%s' class='%s'>%s</td>" %(toltip, st, contenuto)
 
     def striphtml(testo):   #strippo l'html
         testo = testo.replace("<", "&lt;")
@@ -40,7 +40,7 @@ def web_rank():
     #HIT: #12: head    # 13: torso    # 14: arms    # 15: legs    # 16: body    #LOC: #17: IP    # 18: provider    # 19: location    # 20: oldguids    #KILL: #21-38: kills #39: deaths
 
     table_ini = "<script type='text/javascript' src='wz_tooltip.js'></script><table class=\"sortable\"><tbody>" #parte iniziale della table
-    header = "<tr><th>SKILL</th><th>NICK</th><th>STREAK</th><th>ROUNDS</th><th title='Headshots'>HS</th><th>IP</th><th>LAST VISIT</th></tr>" #Header (SKILL, NICK, ROUNDS, HIT, IP, LASTVISIT
+    header = "<tr><th>SKILL</th><th>NICK</th><th>STREAK</th><th>ROUNDS</th><th title='Headshots'>HS</th><th>IP</th><th>LAST VISIT</th></tr>" #Header (SKILL, NICK, STREAK, ROUNDS, HIT, IP, LASTVISIT)
     table_end = "</tbody></table>"                  #parte finale della table
     TABLE = table_ini + header                  #contenuto della table
 
@@ -75,17 +75,31 @@ def web_rank():
         #_________ CELLA 
         id = "span1%s" %guid[0]
         txt = '<span onmouseover="TagToTip(\'%s\')" onmouseout="UnTip()">%s</span>' %(id ,  striphtml(str(guid[1])))
-        stile = ""
+        cls = ""
         if guid[5] >= M_CONF.lev_admin:
-            stile = "color:green;"
+            cls = "rc_cNICK_g"
         elif aff < M_CONF.MinNotoriety:
-            stile = "color:red;"
-        NICK = cella(txt, "", stile)
+            cls = "rc_cNICK_r"
+        NICK = cella(txt, "", cls)
         NICK_SPAN = "<span id='%s'>%s</span>"%(id, NICK_tooltip)
-
+        #TODO aggiungere colonna 3 (IP's)
+        #*** Cella STREAK ************
+        STREAK = cella(str(guid[9]), "", "")
+        #*** Cella ROUNDS ************
+        ROUNDS = cella(str(guid[3]), "", "")
+        #*** Cella HSHOTS ************
+        HSHOTS = "TO DO"
+        #TODO
+        #*** Cella IP ****************
+        IP = "TO DO"
+        #TODO
+        #*** Cella LAST VISIT ********
+        LASTVISIT = "TO DO"
+        #TODO
         #*** CREO LA RIGA ************
-        riga_txt = SKILL + NICK
+        riga_txt = SKILL + NICK + STREAK + ROUNDS + HSHOTS + IP + LASTVISIT
         riga = "<tr>%s</tr>" %riga_txt
+        #_________ AGGIUNGO I TOOLTIPS
         riga += NICK_SPAN
 
         #*** AGGIUNGO LA RIGA ALLA TABELLA ************

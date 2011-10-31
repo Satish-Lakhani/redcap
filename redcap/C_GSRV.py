@@ -26,10 +26,10 @@ class Server:
         self.MapName = ""                                               #nome mappa corrente
         self.MapTime = 0                                                #tempo in secondi da quando e' iniziata la mappa
         self.MatchMode = ""                                             #stato matchmode
-        self.MaxClients = ""                                            #Numero massimo player
+        self.MaxClients = "99"                                          #Numero massimo player
         self.MaxFlood = parametri["MaxFlood"]                           #massimo numero di say in un tempo fissato
         self.MaxNickChanges = parametri["MaxNickChanges"]               #massimi change nick in un tempo fissato
-        self.MinNotoriety = parametri["MinNotoriety"]                   #Notoriety minima per entrare nel server
+        self.MinNot_toplay = parametri["MinNot_toplay"]                  #Notoriety minima per entrare nel server
         self.Nick_is_good = parametri["goodNick"]                       #Nick ben formato
         self.Nick_is_length = parametri["minNick"]                      #Lunghezza minima nick
         self.LastMapChange = 0                                          #Time al quale e' stato chiesto un cambio mappa

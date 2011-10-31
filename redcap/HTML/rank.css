@@ -6,6 +6,8 @@ table.sortable {
 .rc_al{
     color:orange;
 }
+.rc_cNICK_r{color:red;}
+.rc_cNICK_g{color:green;}
 .rc_tip{
     width:800px;
     float:left;
@@ -17,9 +19,7 @@ table.sortable {
         float:left;
         margin:2px;
 }
-.rc_col1, .rc_col2{
-    border-right: 1px dotted orange;
-}
+.rc_col1, .rc_col2{border-right: 1px dotted orange;}
 .rc_nick{
     font-size:1.5em;
     font-weight:bold;

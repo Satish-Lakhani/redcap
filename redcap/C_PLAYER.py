@@ -22,11 +22,13 @@ class Player:
         self.lastconnect = 0    #data dell'ultimo connect
         #self.lastdisconnect = None                                         #data dell'ultimo disconnect
         self.level = 0          #livello di autorizzazione all'uso del RedCap
+        self.location = ""      #locazione geografica del player
         self.justconnected = True                                           #e' appena entrato
         self.nick = ""          #nick (stringa)
         self.nickchanges = 0    #cambi nick in TempoControllo1
         self.notoriety = 0      #livello di reputazione (sale con anzianita guid, rounds, bonus admin, scende con warning, tempban, tk, malus admin). Calcolata alla connessione
-        self.oldIP =[]          #IP usati precedentemente
+        self.oldIP = ""         #IP usati precedentemente
+        self.provider = ""      #provider
         self.reputation = 0     #reputazione assegnata dagli altri players (salvata in DB)
         self.rounds = 0         #round giocati
         #self.rusher =0         #tempo totale di vita sul gameserver / tempo totale (da un'idea della bravura e camperosita)
@@ -36,6 +38,7 @@ class Player:
         self.slot_id = None     #(string) slot id
         self.team = 0           #(string) 0=Sconosciuto 1=red, 2=blue, 3=spect
         self.tempban = 0        #data dell'ultimo tempban
+        self.tobekicked = False #player da kikkare al prossimo controllo
         #self.totalplayedtime = 0                                           #tempo totale di gioco
         self.varie = []         #varie
         self.vivo = 0           #0=Sconosciuto 1=vivo, 2=morto #TODO mi interessa saperlo?
@@ -43,6 +46,8 @@ class Player:
 
     def alias_to_DB(self):
         """prepara gli alias per scrittura in db"""
+        if self.alias == [[u'']]:
+            return "0.0 unknown"
         joiner1 = " "
         joiner2 = "  "
         alias = ""
@@ -51,23 +56,34 @@ class Player:
             alias += al
         return alias.rstrip()           #tolgo gli spazi finali
 
-    def dati_load(self,dati,N1,N2,time):
+    def load_dati(self, dati, N1, N2, time):
         """Aggiorna il player con i dati presi dal database tabella DATI"""
-        self.DBnick = dati[1]                                         #dati = (guid, DBnick, skill, rounds, lastconn, level, tempban, notoriety, firstconn, streak, alias, varie)
+        self.DBnick = dati[1]                   #dati = (guid, DBnick, skill, rounds, lastconn, level, tempban, notoriety, firstconn, streak, alias, varie)
         self.skill = dati[2]
         self.rounds = dati[3]
-        self.lastconnect = dati[4]                                 #data dell'ultima connessione
+        self.lastconnect = dati[4]              #data dell'ultima connessione
         self.level = dati[5]
         self.tempban = dati[6]
-        self.guidage = (time - dati[8])/87400      #eta' della guid in giorni
+        self.guidage = (time - dati[8])/87400   #eta' della guid in giorni
         self.reputation = dati[7]
-        self.notoriety = self.notoriety_upd(dati[3], N1, N2, dati[7])    #calcolo della notoriety (basata su round, guid age, e bonus/malus) - arrotondo a 1
+        self.notoriety = self.notoriety_upd(N1, N2)    #calcolo della notoriety (basata su round, guid age, e bonus/malus) - arrotondo a 1
         self.ksmax = dati[9]
-        aliases = dati[10].split("  ")                                            #formatto gli alias in maniera leggibile
+        aliases = dati[10].split("  ")          #formatto gli alias in maniera leggibile
         for al in aliases:
             al=al.split(" ")
             self.alias.append(al)
         self.varie = dati[11].split()
+
+    def load_loc(self, loc):                    #loc = (guid, IP, provider, location, old_ip)
+        """aggiorna i dati presi dalla tabella loc"""
+        if not loc[4]:                              #campo vuoto
+            self.oldIP = self.ip
+            return
+        else:
+            self.oldIP = loc[4]                     #carico i vecchi IP
+            if self.oldIP.find(self.ip) == -1:      #se non c'e l'IP lo aggiungo
+                self.oldIP += " "
+                self.oldIP += self.ip
 
     def invalid_guid(self):
         """verifica se la guid del player NON e' corretta"""
@@ -86,9 +102,9 @@ class Player:
         else:
             return True
 
-    def notoriety_upd(self, rounds, roundXpoint, dayXpoint, reputation):
+    def notoriety_upd(self, roundXpoint, dayXpoint):
         """calcola la notoriety"""
-        return round(rounds / roundXpoint + self.guidage / dayXpoint + reputation, 1)   #calcolo della notoriety (basata su round, guid age, e bonus/malus) - arrotondo a 1
+        return round(self.rounds / roundXpoint + self.guidage / dayXpoint + self.reputation, 1)   #calcolo della notoriety (basata su round, guid age, e bonus/malus) - arrotondo a 1
 
     def skill_coeff_update(self):
         self.skill_coeff = 1 + (1000/(self.rounds**1.2 + 60))           #coefficiente skill che dipende dal n. di round giocati
