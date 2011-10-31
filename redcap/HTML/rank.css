@@ -1,18 +1,27 @@
-table.sortable a span { display:none; }
-table.sortable a:hover { position: relative; }
-table.sortable a:hover span {
-background: #000000;
-color: #ffff00;
-text-decoration:none;
-border: 1px solid #cc0000;
-padding: 5px;
-display:block;
-position: absolute;
-top: 1.5em;
-z-index: 1;
-}
-.sortable {
-    width: 200px;
+table.sortable {
+    width: 800px;
     height: 200px;
     border:solid red;
+}
+.rc_al{
+    color:orange;
+}
+.rc_tip{
+    width:800px;
+    float:left;
+    background-color:black;
+    color:white;
+}
+.rc_col1, .rc_col2, .rc_col3{
+        width:32%;
+        float:left;
+        margin:2px;
+}
+.rc_col1, .rc_col2{
+    border-right: 1px dotted orange;
+}
+.rc_nick{
+    font-size:1.5em;
+    font-weight:bold;
+    color:orange;
 }

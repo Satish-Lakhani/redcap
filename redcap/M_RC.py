@@ -385,12 +385,16 @@ def kills(frase):                                       #frase del tipo ['0', '1
             say(Lang["record_personal"]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[0]].ks)), 0)  #spammo personal record in console
         if 8 in res:
             say(Lang["record_alltime"]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[0]].ks)), 2)   #spammo alltime record
+            ini_spamlist()                              #aggiorno la lista spam
         elif 16 in res:
             say(Lang["record_monthly"]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[0]].ks)), 2)   #spammo monthly record
+            ini_spamlist()                              #aggiorno la lista spam
         elif 32 in res:
             say(Lang["record_weekly"]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[0]].ks)), 2)    #spammo weekly record
+            ini_spamlist()                              #aggiorno la lista spam
         elif 64 in res:
             say(Lang["record_daily"]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[0]].ks)), 2)     #spammo daily record
+            ini_spamlist()                              #aggiorno la lista spam
         elif 512 in res:
             say(Lang["record_no_not"]%str(GSRV.PT[frase[0]].nick), 0)     #notoriety bassa
         elif 1024 in res:
@@ -868,7 +872,7 @@ def trust(richiedente, parametri):
         else:
             GSRV.PT[target].reputation += repu_var
         GSRV.PT[target].notoriety = GSRV.PT[target].notoriety_upd(GSRV.PT[target].rounds, M_CONF.Notoriety["roundXpoint"], M_CONF.Notoriety["dayXpoint"], GSRV.PT[target].reputation)
-        #TODO finire
+        #TODO finire fare controllo notoriety per vedere se kikkare
 
 def unwar(richiedente, parametri):   #FUNZIONA
     """resetta il server in modalita' normale"""

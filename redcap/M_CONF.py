@@ -6,13 +6,13 @@ versione = "1.00 Alpha"         #RedCap Version. !!! PLEASE ADD "-MOD by YOURNAM
 '''########## (OBBLIGATORIO!) = CONFIGURAZIONE OBBLIGATORIA ###########'''
 
 ##DATABASE
-NomeDB = "Rc_DB.sqlite"          #nome DB (se si cambia rinominare anche il file corrispondente)
-#minRounds = 60                  #numero minimo di round giocati per apparire nelle statistiche
-#maxAbsence = 25                 # giorni di assenza prima di essere cancellati dal server
+NomeDB = "Rc_DB.sqlite"         #nome DB (se si cambia rinominare anche il file corrispondente)
+minRounds = 30                  #numero minimo di round giocati per apparire nelle statistiche
+#maxAbsence = 25                # giorni di assenza prima di essere cancellati dal server
 
 ##LIVELLI COMANDI (Max lev = 100):
 lev_alias = 2                   #mostra gli alias di un player
-lev_admin = 2                   #livello a partire dal quale un player e' considerato admin (riceve piu' info in risposta a certi comandi, ed il fatto che sia presente abilita o disabilita alcune funzionalita del bot)
+lev_admin = 1                   #livello a partire dal quale un player e' considerato admin (riceve piu' info in risposta a certi comandi, ed il fatto che sia presente abilita o disabilita alcune funzionalita del bot)
 lev_balancemode = 2             #inserisce/disinserisce l'autobalance
 lev_balance = 0                 #bilanciare team
 lev_ban = 4                     #ban
@@ -74,7 +74,7 @@ maxSlap = 10                #massimo numero di slap che posso dare ad un player
 
 ##RECORD
 MinPlayers = 6              #numero minimo di players per considerare valido un record
-MinNotoriety = 0            #notoriety minima per segnare un record
+MinNotoriety = 0.5            #notoriety minima per segnare un record
 
 #CONSOLE SPAMS
 RecordSpam = True           #Se True, Redcap spamma periodicamente i record, se False non spamma
@@ -99,7 +99,7 @@ ServerPars = {
 "Logfolder": "logs",                #cartella di registrazione dei log
 "MaxFlood" : 6,                     #massimo numero di say in un tempo fissato (CRON1)
 "MaxNickChanges" : 3,               #massimi change nick in un tempo fissato (CRON1)
-"MinNotoriety": -999,               #valore notoriety per giocare nel server. La notoriety di un nuovo player e' 0
+"MinNotoriety": -999,                  #valore notoriety per giocare nel server. La notoriety di un nuovo player e' 0
 "minNick":3,                        #Lunghezza minima nick
 "Passport" : False,                 #True=passport attivo gia' all'avvio, False=passport inattivo all'avvio.
 "ShowHeadshots": True,              #Se True mostra gli headshot
