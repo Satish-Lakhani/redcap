@@ -6,16 +6,16 @@ import C_DB         #Classe che rappresenta il DB
 import M_CONF
 
 DB = C_DB.Database(M_CONF.NomeDB)
-#'''
+
 def web_rank():
     """crea la classifica in formato tabella a partire dal DB e la invia ad un altro server"""
 
     #def add(x,y):
         #return x+y
 
-    def cella(contenuto, toltip = "", cls = ""):          #sottofunzione che crea le celle
+    def cella(contenuto,  toltip = "",  cls = "",  st = ""):          #sottofunzione che crea le celle
         #return "<td><a href='#'>%(contenuto)s<span>%(tooltip)s</span></a></td>" %{"contenuto": contenuto, "tooltip": toltip}
-        return "<td title='%s' class='%s'>%s</td>" %(toltip, st, contenuto)
+        return "<td title='%s' class='%s' style='%s'>%s</td>" %(toltip, cls, st, contenuto)
 
     def striphtml(testo):   #strippo l'html
         testo = testo.replace("<", "&lt;")
@@ -39,7 +39,7 @@ def web_rank():
     #DATI: #0: GUID    # 1: Nick    # 2: Skill    # 3: Round    # 4: Lastconnection    # 5: Level    # 6: Tempban    # 7: Reputation    # 8: Firstconnect    # 9: streak    # 10: alias    # 11: varie
     #HIT: #12: head    # 13: torso    # 14: arms    # 15: legs    # 16: body    #LOC: #17: IP    # 18: provider    # 19: location    # 20: oldguids    #KILL: #21-38: kills #39: deaths
 
-    table_ini = "<script type='text/javascript' src='wz_tooltip.js'></script><table class=\"sortable\"><tbody>" #parte iniziale della table
+    table_ini = "<script type='text/javascript' src='%s/wz_tooltip.js'></script><table class=\"sortable\"><tbody>" %(M_CONF.webdata["w_url"] + "/serverstats") #parte iniziale della table #@TODO sostituire serverstats con variabile appropriata
     header = "<tr><th>SKILL</th><th>NICK</th><th>STREAK</th><th>ROUNDS</th><th title='Headshots'>HS</th><th>IP</th><th>LAST VISIT</th></tr>" #Header (SKILL, NICK, STREAK, ROUNDS, HIT, IP, LASTVISIT)
     table_end = "</tbody></table>"                  #parte finale della table
     TABLE = table_ini + header                  #contenuto della table
@@ -80,21 +80,21 @@ def web_rank():
             cls = "rc_cNICK_g"
         elif aff < M_CONF.MinNotoriety:
             cls = "rc_cNICK_r"
-        NICK = cella(txt, "", cls)
-        NICK_SPAN = "<span id='%s'>%s</span>"%(id, NICK_tooltip)
+        NICK = cella(txt, "", cls, "")
+        NICK_SPAN = "<span id='%s'>%s</span>" %(id, NICK_tooltip)
         #TODO aggiungere colonna 3 (IP's)
         #*** Cella STREAK ************
-        STREAK = cella(str(guid[9]), "", "")
+        STREAK = cella(str(guid[9]), "", "", "")
         #*** Cella ROUNDS ************
-        ROUNDS = cella(str(guid[3]), "", "")
+        ROUNDS = cella(str(guid[3]), "", "", "")
         #*** Cella HSHOTS ************
-        HSHOTS = "TO DO"
+        HSHOTS = cella("TO DO", "", "", "")
         #TODO
         #*** Cella IP ****************
-        IP = "TO DO"
+        IP = cella("TO DO", "", "", "")
         #TODO
         #*** Cella LAST VISIT ********
-        LASTVISIT = "TO DO"
+        LASTVISIT = cella("TO DO", "", "", "")
         #TODO
         #*** CREO LA RIGA ************
         riga_txt = SKILL + NICK + STREAK + ROUNDS + HSHOTS + IP + LASTVISIT
@@ -104,58 +104,28 @@ def web_rank():
 
         #*** AGGIUNGO LA RIGA ALLA TABELLA ************
         TABLE += riga
-    TABLE += table_end
-    return TABLE
-'''
-        tooltip_SKILL = "K" + str(sum(guid[21:38])) + "&nbsp;D" + str(guid[39])
-        if guid[39] <> 0:   #evito divisione per 0
-            tooltip_SKILL += "&nbsp;K/D"+ str(round(sum(guid[21:38]) / float(guid[39]),2))
-        riga += cella(striphtml(str(round(guid[2],1))), tooltip_SKILL)                      #Aggiungo cella SKILL
-        riga += cella(striphtml(str(guid[9])))                                              #Aggiungo cella STREAK
-        riga += cella(striphtml(str(guid[3])))                                              #Aggiungo cella ROUND
-        if (guid[12] + guid[13] + guid[14] + guid[15] + guid[16]) <> 0:
-            tot_hits = 100.0 / (guid[12] + guid[13] + guid[14] + guid[15] + guid[16])
-            hits = "H:%s&nbsp;T:%s&nbsp;A:%s&nbsp;L:%s&nbsp;B:%s" %(str(round(guid[12] * tot_hits , 1)), str(round(guid[13] * tot_hits , 1)), str(round(guid[14] * tot_hits , 1)), str(round(guid[15] * tot_hits , 1)), str(round(guid[16] * tot_hits , 1)))
-        else:
-            hits = "N.D."
-        riga += cella(striphtml(hits))                                                      #Aggiungo cella HITS
-        ip = str(guid[17])
-        try:
-            b = ip.split(".")
-            masked_IP = ".".join([b[0],b[1],b[2],"***"])
-        except:
-            masked_IP = "unknown"
-        riga += cella(masked_IP)                                                            #Aggiungo cella IP
-        last = time.strftime("%y/%m/%d %H:%M",time.localtime(guid[4]))
-        riga += cella(last)                                                                 #Aggiungo cella lastseen
-        riga = "<tr>%s</tr>"%(riga)
 
-        corpo += riga
-    return "<table class=\"sortable\"><tbody>%s</tbody></table>" %corpo
-'''
-table = web_rank()
-print table
-'''
-    res = DB.esegui(DB.statement["classifica"]) #eseguo il select da DB
-    row = res.fetchall()
-    i=0
-    for riga in row:
-        i+=1
-        last = time.strftime("%y/%m/%d %H:%M",time.localtime(riga[5])) #trasformo il lastseen in data
-        riga0 = str(riga[0]).replace("<", "&lt;") #strippo l'html
-        riga0 = riga0.replace(">", "&gt;") #strippo l'html
-        if riga[2]<0:
-            colore ="<td style='color:#f00'>"
-        else:
-            colore ="<td style='color:#0f0'>"
-        table += "<tr><td>" + str(i) + "</td><td>" + riga0 + "</td><td>" + str(riga[1]) + "</td>"  + colore + str(round(riga[2]*100, 1))  + "</td><td>" + str(riga[3]) + "</td><td>" + last + "</td></tr>" #RIGHE
-    table += "</tbody></table>"
-    #salvo in locale
-    htmlfile = open(RCconf.NomeArchivi + "/" + RCconf.tabella, "w")
-    htmlfile.write(table)
+    TABLE += table_end  #Completo la table
+    #Salvo in locale
+    htmlfile = open("HTML" + "/" + M_CONF.webdata["w_tabella"], "w")
+    htmlfile.write(TABLE)
     htmlfile.close()
-    #trasferisco in remoto
-    if RCconf.Website_ON:
-        trasferisci(RCconf.NomeArchivi + "/" + RCconf.tabella, RCconf.tabella)
 
-'''
+def trasferisci(filefrom, fileto):
+    """trasferisce un file sul webserver"""
+    from ftplib import FTP
+    htmlfile = open(filefrom, "rb")
+    try:
+        connessione = FTP(M_CONF.webdata["w_url"])
+        connessione.login(M_CONF.webdata["w_login"], M_CONF.webdata["w_password"])   # connect to host, default port
+        connessione.cwd(M_CONF.webdata["w_directory"])
+        connessione.storbinary('STOR ' + fileto, htmlfile)
+        connessione.quit()
+    except:
+        return False
+    finally:
+        htmlfile.close()
+        return True
+
+#web_rank()
+

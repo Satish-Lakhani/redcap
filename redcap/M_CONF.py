@@ -1,13 +1,13 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-versione = "1.00 Alpha"         #RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING OF THE SCRIPT OUTSIDE OF THIS CONFIGURATION FILE. !!!
+versione = "1.00 Beta"         #RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING OF THE SCRIPT OUTSIDE OF THIS CONFIGURATION FILE. !!!
 
 '''########## (OBBLIGATORIO!) = CONFIGURAZIONE OBBLIGATORIA ###########'''
 
 ##DATABASE
 NomeDB = "Rc_DB.sqlite"         #nome DB (se si cambia rinominare anche il file corrispondente)
-minRounds = 30                  #numero minimo di round giocati per apparire nelle statistiche
+minRounds = 60                  #numero minimo di round giocati per apparire nelle statistiche
 #maxAbsence = 25                # giorni di assenza prima di essere cancellati dal server
 
 ##LIVELLI COMANDI (Max lev = 100):
@@ -28,13 +28,12 @@ lev_map = 2                     #cambio mappa
 lev_maplist = 0                 #lista mappe
 lev_mute = 1                    #mute
 lev_muteall = 2                 #mute all
+lev_notoriety = 2               #cambia livello notoriety minima per giocare sul server
 lev_nuke = 0                    #nuke #DEBUG
 lev_ora = 0                     #dice l'ora
-#lev_passport = 3               #attiva/disattiva il passport
 lev_password = 3                #setta una password
 #lev_pause = 3                  #mette il bot in pausa
 lev_RCrestart = 4               #restart
-#lev_reg = 3                    #registrazione in DB ed assegnazione passport
 lev_skill = 0                   #mostra skill del player
 lev_slap = 2                    #slap
 lev_spam = 2                    #inserisce/disinserisce frasi spam
@@ -43,7 +42,6 @@ lev_status = 0                  #status (informazioni varie sul player)
 lev_tmpban = 2                  #ban temporaneo
 lev_top = 0                     #mostra i top record
 lev_trust = 3                   #aggiunge/leva notoriety ad un player
-#lev_unreg = 3                  #toglie il passport
 lev_war = 0                     #configurazione per war
 lev_unwar = 0                   #eliminare configurazione war
 
@@ -71,7 +69,7 @@ SpamFile = "spam.txt"
 NomeArchivi = "Archivi"     #cartella per archiviazione vecchi log
 
 ##PLAYER
-KickForSpace = True         #se true kikka uno spect (se c'e') quando il server e' pieno 
+KickForSpace = True         #se true kikka gli spect (se ci sono e non sono admins) quando il server e' pieno
 maxSlap = 10                #massimo numero di slap che posso dare ad un player
 
 ##RECORD
@@ -87,7 +85,7 @@ Spamtime = 140              #Tempo in secondi tra due spam
 botname = "^8RC| "                  #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
 RC_lang = "ITA"                     #Localizzazione linguaggio ITA #TODO (ENG FRA e altre, da fare)
 AdminGuids = ["0606EED6F696AAE45235F765D78CF"]   #guid automaticamente abilitata al max liv di autorizzazione
-gameserver_autorestart = True       #Se true, al riavvio giornaliero riavvia anche il gameserver
+gameserver_autorestart = 2          #0: non riavvia 1: riavvio giornaliero 2: riavvia tutte le volte che è vuoto
 
 ##SERVER
 ServerPars = {
@@ -101,7 +99,7 @@ ServerPars = {
 "Logfolder": "logs",                #cartella di registrazione dei log
 "MaxFlood" : 6,                     #massimo numero di say in un tempo fissato (CRON1)
 "MaxNickChanges" : 3,               #massimi change nick in un tempo fissato (CRON1)
-"MinNot_toplay": -999,               #valore notoriety per giocare nel server. La notoriety di un nuovo player e' 0
+"MinNot_toplay": -999,              #valore notoriety per giocare nel server. La notoriety di un nuovo player e' 0
 "minNick":3,                        #Lunghezza minima nick
 "Passport" : False,                 #True=passport attivo gia' all'avvio, False=passport inattivo all'avvio.
 "ShowHeadshots": True,              #Se True mostra gli headshot
@@ -126,7 +124,7 @@ StandardMaps = [                    #mappe standard incluse nello z_pack
 "ut4_prague",
 "ut4_ramelle",
 "ut4_riyadh",
-"ut4_sanctuary",
+"ut4_sanc",
 "ut4_suburbs",
 "ut4_subway",
 "ut4_swim",
@@ -191,17 +189,28 @@ TempoCiclo = 0.5        #Frequenza in sec del controllo del log
 Ttempban = 96           #durata massima tempban
 
 ##VOTO
-voteTime = 30,                        #tempo di abilitazione del voto
-voteType =536870986            #modalita' di voto temporanea (see http://www.urbanterror.info/docs/texts/123/#2.2)
-unvoteType = 0                       #modalita' di voto permanente (0 esclude qualsiasi tipo di voto)
-timeBetweenVote = 3            #tempo in minuti che deve intercorrere tra due voti
+voteTime = 30,          #tempo di abilitazione del voto
+voteType =536870986     #modalita' di voto temporanea (see http://www.urbanterror.info/docs/texts/123/#2.2)
+unvoteType = 0          #modalita' di voto permanente (0 esclude qualsiasi tipo di voto)
+timeBetweenVote = 3     #tempo in minuti che deve intercorrere tra due voti
 
 ##WARNING
 sv_WarnPars = {
-"max_warns" : 5.0,                   #valore di warning dopo di che vieni kikkato  (si azzerano al reconnect). Uno slap dati da Redcap o un tk o un hit comportano automaticamente un warning.
-"adm_warn" : 1.0,                    #valore di uno warn dato da un admin
-"tk_warn" : 1.0,                     #valore di uno warn causato da un tk (in realta' un tk vale circa tk_warn + 3 hit_warn
-"hit_warn" : 0.3,                    #valore di uno warn dato da un team hit
+"max_warns" : 5.0,      #valore di warning dopo di che vieni kikkato  (si azzerano al reconnect). Uno slap dati da Redcap o un tk o un hit comportano automaticamente un warning.
+"adm_warn" : 1.0,       #valore di uno warn dato da un admin
+"tk_warn" : 1.0,        #valore di uno warn causato da un tk (in realta' un tk vale circa tk_warn + 3 hit_warn
+"hit_warn" : 0.3,       #valore di uno warn dato da un team hit
+}
+
+##WEBSTUFFS
+Website_ON = True               #(OBBLIGATORIO!) True se esiste un website di appoggio, se no  False
+webdata = {
+"w_url" : 'www.bravewarriors.eu',    #URL FTP
+"w_login" : 'xxxxxx',                #FTP login
+"w_password" : 'xxxxxx',             #FTP password
+"w_directory" : '/httpdocs/serverstats', #directory FTP utilizzata da RedCap
+"w_tabella" : "skilltable.htm",      #tabella skills
+"w_dialoghi" : "dialoghi.htm",       #file dialoghi
 }
 
 
@@ -211,50 +220,9 @@ sv_WarnPars = {
 
 
 
-
-banned = -5                     #Valore di notoriety per essere bannato
 #SERVIZIO
 GameServerDown = 20             #Secondi di attesa prima di ritentare, quando RedCap trova il gameserver down
-
-##VARIE
-Website_ON = True               #(OBBLIGATORIO!) True se esiste un website di appoggio, se no  False
-
-joinmessage = "^4-= Welcome on ^2BW ^4UrT Server =-"
-
-##SERVER remoto (parte facoltativa da specificare se Website_ON = True)
-url = 'www.bravewarriors.eu'    #URL FTP
-login = 'xxxxxx'             #FTP login
-password = 'xxxxxx'          #FTP password
-directory = '/httpdocs/serverstats' #directory FTP utilizzata da RedCap
-tabella = "skilltable.htm"      #tabella skills
-dialoghi = "dialoghi.htm"       #file dialoghi
 
 ## CRON e TEMPI
 WeekControl = 1                 #giorno della settimana per operazioni settimanali (0=Domenica, 1=lunedi, ecc.)
 MonthControl = 28               #giorno del mese (da 1 a 28) per operazioni mensili (cancellazione record mensile)
-
-##KILLSTREAK
-reg_only = True                 #If True only trusted player can save a record
-
-##MESSAGGI
-#messaggi
-SP01 = " ^2To be registered as trusted player ^1always use the same nick"
-SP02 = " ^2RedCap ^1faq ^2at : ^4www.bravewarriors.eu/index.php/redcap"
-SP03 = " ^2Rule#1: ^1get under Lebbra's skin leads to a rapid kick"
-SP04 = " ^2Only ^1trusted players ^2can play with With Passport ON, registration is needed."
-SP05 = " ^1RedCap " + versione + " ^2bot is testing here. Weird behaviour may happen!"
-SP06 = " ^2Go spect if you are ^1afk"
-SP07 = " ^2Server BW 1: ^1195.43.185.235^3:27961"
-SP08 = " ^2Join BW on IRC: ^6#bravewarriors"
-SP09 = " ^2Camping not allowed if you are the ^1last one ^2of your team"
-SP10 = " ^2Skill level classification at: ^6www.bravewarriors.eu"
-SP11 = " ^2Server rules at: ^4www.bravewarriors.eu/index.php/regolamento-server"
-SP12 = " ^2flood = kick"
-SP13 = " ^2Write ^1!tm ^2to balance the teams"
-SP14 = " ^2Write ^1!isk ^2to know your instant skill level"
-SP15 = " ^2Write ^1!!sk ^2to know your global skill level"
-SP16 = " ^2Write ^1!ora ^2to know the time"
-SP17 = " ^2Write ^1!top ^2to know the records"
-SP18 = " ^2To be registered as trusted player ^1put your clan tag"
-
-        

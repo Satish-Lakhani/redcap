@@ -42,7 +42,6 @@ def balance_do():
         say(Lang["balancexecuted"], 1)
         return True
 
-
 def censura(frase):
     """controlla se nella frase ci sono parole non ammesse"""
     testo=frase.replace(".","") #tolgo i punti dei furbetti.
@@ -115,7 +114,7 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
                 kick("Redcap", info[0], Lang["stillban"]%(GSRV.PT[info[0]].nick, ban))
                 return
             #if GSRV.PT[info[0]].notoriety < GSRV.MinNot_toplay:                                          #CONTROLLO NOTORIETY (TODO non dovrebbe servire perche gia periodico)
-                #GSRV.PT[info[0]].tobekicked = True          #da kikkare (gli do il tempo di sapere perche
+                #GSRV.PT[info[0]].tobekicked = 1          #da kikkare (gli do il tempo di sapere perche
                 #say(Lang["lownotoriety"]%(info[1],GSRV.PT[info[0]].notoriety, GSRV.MinNot_toplay), 0)   #todo trasformare in tell
                 #time_to_wait = (GSRV.MinNot_toplay - GSRV.PT[info[0]].notoriety) * M_CONF.Notoriety["dayXpoint"]
                 #say(Lang["lownotoriety2"]%str(time_to_wait), 0)
@@ -172,22 +171,30 @@ def cr_full():
     """verifica se il server e' pieno o vuoto"""
     clients = (GSRV.TeamMembers[0] + GSRV.TeamMembers[1] + GSRV.TeamMembers[2] + GSRV.TeamMembers[3])
     if clients == int(GSRV.MaxClients):              # faccio operazioni da server pieno
-        scrivilog("DEBUG: server pieno", M_CONF.crashlog)  #DEBUG
         GSRV.Full = 2
         if M_CONF.KickForSpace and GSRV.Server_mode == 1:
-            scrivilog("DEBUG: mi preparo a kikkare", M_CONF.crashlog)  #DEBUG
             for PL in GSRV.PT:
-                if GSRV.PT[PL].team == 3:
-                    scrivilog("DEBUG: kikko per server full", M_CONF.crashlog)  #DEBUG
-                    kick("Redcap", GSRV.PT[PL].slot_id, Lang["space"]%GSRV.PT[PL].nick)
+                if GSRV.PT[PL].team == 3 and GSRV.PT[PL].level < M_CONF.lev_admin:
+                    GSRV.PT[PL].tobekicked = 2
+                    tell(PL, Lang["space"]%GSRV.PT[PL].nick)
+                    GSRV.Full = 1               
     elif clients == 0:                          # faccio operazioni da server vuoto
         GSRV.Full = 0
+        GSRV.MinNot_toplay = M_CONF.ServerPars["MinNot_toplay"] #rimetto la MinNot_toplay al valore base.
+        if M_CONF.gameserver_autorestart == 2 and GSRV.Restart_when_empty:
+            import os
+            import sys
+            scrivilog("REDCAP and GAMESERVER RESTART FOR EMPTY.", M_CONF.crashlog)
+            os.system("./S_full_restart.sh")
+            sleep(10)    #aspetto che il server abbia restartato
+            sys.exit()
         if GSRV.Server_mode == 2:               #tolgo la configurazione war
             SCK.cmd("g_password ''")            #tolgo la password
             SCK.cmd("exec " + GSRV.Baseconf)    #carico la config di base
             GSRV.Server_mode = 1
     else:
         GSRV.Full = 1
+        GSRV.Restart_when_empty = True          #restartera' appena vuoto
 
 def cr_nickrotation():
     """verifica (periodica) che nessun player abbia fatto nickrotation"""
@@ -198,12 +205,13 @@ def cr_nickrotation():
             GSRV.PT[PL].nickchanges = 0        #Se non e' kikkato lo rimetto a zero
 
 def cr_notorietycheck():
+    """controllo notoriety"""
     for PL in GSRV.PT:
-        if GSRV.PT[PL].notoriety < GSRV.MinNot_toplay and GSRV.PT[PL].tobekicked == False:  #false per evitare di spammare 2 volte
+        if GSRV.PT[PL].notoriety < GSRV.MinNot_toplay and GSRV.PT[PL].tobekicked == 0:  #false per evitare di spammare 2 volte
             say(Lang["lownotoriety"]%(GSRV.PT[PL].nick, GSRV.PT[PL].notoriety, GSRV.MinNot_toplay), 0)   #TODO trasformare in tell
             time_to_wait = (GSRV.MinNot_toplay - GSRV.PT[PL].notoriety) * M_CONF.Notoriety["dayXpoint"]
             say(Lang["lownotoriety2"]%str(time_to_wait), 0)
-            GSRV.PT[PL].tobekicked = True
+            GSRV.PT[PL].tobekicked = 1
 
 def cr_spam():
     """spam periodici"""
@@ -221,9 +229,15 @@ def cr_spam():
 def cr_tbkicked():
     """verifica se ce qualcuno da kikkare"""
     for PL in GSRV.PT:
-        if GSRV.PT[PL].tobekicked == True:          #controllo tobekicked
+        if GSRV.PT[PL].tobekicked == 1:         #controllo tobekicked
             kick("Redcap", GSRV.PT[PL].slot_id)
             say(Lang["tbkicked"] %GSRV.PT[PL].nick, 0)
+        elif GSRV.PT[PL].tobekicked == 2:       #controllo kick per slot pieni
+            if GSRV.PT[PL].team == 3:           #se e ancora spect lo kikko
+                kick("Redcap", GSRV.PT[PL].slot_id)
+                say(Lang["spacekicked"] %GSRV.PT[PL].nick, 0)
+            else:
+                GSRV.PT[PL].tobekicked = 0      #e entrato in game                
 
 def cr_unvote():
     """verifica (periodica) che il voto non sia rimasto attivo dopo il comando !v"""
@@ -315,6 +329,12 @@ def hits(frase):                                                #del tipo ['1', 
 def ini_clientlist():
     """all avvio trova i client gia collegati"""
     Res = SCK.cmd("clientlist")
+    if not Res:         #DEBUG verifico se il server risponde
+        sleep(20)
+        scrivilog("NO ANSWER FROM GAMESERVER", M_CONF.crashlog)
+        print Res
+        ini_clientlist()
+        return
     if Res[1]:
         list = Res[0].split("\n")   #List = GUID, SLOT, NICK
         if len(list) > 2:
@@ -530,9 +550,6 @@ def trovaslotdastringa(richiedente, stringa):
 
 def alias(richiedente, parametri):      #FUNZIONA
     """espone gli alias di un player"""
-    #if GSRV.Server_mode == 0:                               #comando non disponibile in fase di avvio #DEBUG
-        #tell(richiedente, Lang["noavailcmd"])
-        #return
     target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():
         if GSRV.PT[target].alias == [[u'']]:
@@ -738,6 +755,14 @@ def nuke(richiedente, parametri):   #FUNZIONA
          lanciatore = GSRV.PT[richiedente].nick
          say(Lang["nuked"]%(GSRV.PT[target].nick, lanciatore),0)
 
+def notlev(richiedente, parametri):
+    """cambia temporaneamente la notoriety necessaria per giocare sul server"""
+    if parametri.group("num").isdigit():
+        GSRV.MinNot_toplay = parametri.group("num")
+    else:
+        GSRV.MinNot_toplay = M_CONF.ServerPars["MinNot_toplay"]
+    say(Lang["not_changed"] %str(GSRV.MinNot_toplay), 2)
+
 def nukeall():
     pass #TODO da fare
 
@@ -889,11 +914,13 @@ def trust(richiedente, parametri):
     target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():
         repu_var = M_CONF.Notoriety["guidminage"] / M_CONF.Notoriety["dayXpoint"]   #unita di variazione di reputazione
+        if parametri.group("num").isdigit():
+            repu_var = repu_var * int(parametri.group("num"))
         if parametri.group("un") == "un":                                           #diminuisco l'affidabilita
             GSRV.PT[target].reputation -= repu_var  #vario la reputation (va in DB)
         else:
             GSRV.PT[target].reputation += repu_var
-            GSRV.PT[target].tobekicked = False      #se c era un tobekicked lo sospendo
+            GSRV.PT[target].tobekicked = 0          #se c era un tobekicked lo sospendo
         GSRV.PT[target].notoriety = GSRV.PT[target].notoriety_upd(M_CONF.Notoriety["roundXpoint"], M_CONF.Notoriety["dayXpoint"])   #aggiorno la notoriety
         tell(richiedente, Lang["not_update"] %(str(GSRV.PT[target].nick), str(GSRV.PT[target].notoriety)))
         tell(target, Lang["not_update"] %(str(GSRV.PT[target].nick), str(GSRV.PT[target].notoriety)))

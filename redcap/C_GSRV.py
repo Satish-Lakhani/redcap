@@ -35,10 +35,10 @@ class Server:
         self.LastMapChange = 0                                          #Time al quale e' stato chiesto un cambio mappa
         self.LastVote = 0                                               #Time al quale e' stato chiesto l'ultimo voto
         self.Logfolder = parametri["Logfolder"]                         #cartella dei logs
-        #self.Passport = parametri["Passport"]                          #1=passport attivo 0=passport inattivo.
         self.PT = {}                                                    #PlayerTable: dizionario che rappresenta i players presenti sul server e le loro caratteristiche
         self.Q3ut4 = {"cfg":[], "map":[], "mapcycle":[]}                #elenco mappe, cfg e mapcycle
         self.RedCapStatus = 0                                           #stato RedCap (1=paused 0=attivo) #TODO serve o basta server_mode?
+        self.Restart_when_empty = False                                 #se true riavvia il server quando vuoto.
         self.Sbil = 1                                                   #coefficiente di sbilanciamento teams
         self.Server_mode = 0                                            #0 = fase avvio 1 = normale 2 = warmode
         self.ShowHeadshots = parametri["ShowHeadshots"]                                       #Se True mostra gli headshot

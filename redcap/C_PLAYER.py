@@ -38,7 +38,7 @@ class Player:
         self.slot_id = None     #(string) slot id
         self.team = 0           #(string) 0=Sconosciuto 1=red, 2=blue, 3=spect
         self.tempban = 0        #data dell'ultimo tempban
-        self.tobekicked = False #player da kikkare al prossimo controllo
+        self.tobekicked = 0     #player da kikkare al prossimo controllo
         #self.totalplayedtime = 0                                           #tempo totale di gioco
         self.varie = []         #varie
         self.vivo = 0           #0=Sconosciuto 1=vivo, 2=morto #TODO mi interessa saperlo?

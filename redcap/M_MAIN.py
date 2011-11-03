@@ -14,21 +14,21 @@
 #TODO evitare che un crash durante cw cancelli la config war
 #TODO fare comando shuffle
 #TODO fare bilanciamento immediato in modalita CTF
-#non kikka a server pieno
 #eliminare penalita per autokill con nade
-#aggiungere spazio in spam di streak
 #fare archiviazione log, dialoghi e db
-#TODO in caso di penalita abbassare reputation, non notoriety (e ricalcolare la notoriety)
 #TODO azzerare la tabella skill (o tutta il db?)
 #TODO completare classifica e fare funzione di trasferimento
 #TODO fare comando DBban e DBunban
-#TODO FARE COMANDO PER VARIAZIONE NOTORIETY AL VOLO (CON RIMESSA A VLAORE BASE A SERVER VUOTO)
+#TODO FARE COMANDO PER VARIAZIONE NOTORIETY AL VOLO (CON RIMESSA A VALORE BASE A SERVER VUOTO)
+#fare autorestart a server vuoto
+#TODO sistemare voto che rimane sempre attivo.
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
 import M_AUX            #Modulo funzioni ausiliarie
 import M_CONF           #Modulo configurazioni programma
 import M_RC             #Modulo che gestisce le azioni del Redcap
+import M_WEB            #modulo che gestisce le funzioni web
 
 def crashlog(t, v, tra):
     """gestisce i crash del programma, scrivendo l'errore nel file di log"""
@@ -110,12 +110,21 @@ def redcap_main():
             if CRON1.ticks == 240:                  #E' passata 1 ora circa
                 q3ut4_parse()
                 CRON1.reset()
-        if CRON2.is_time():                                 
+        if CRON2.is_time():
             if CRON2.get_time("Ora") == M_CONF.Control_Daily:   #all'ora prefissata eseguo operazioni giornaliere (pulizia DB, riavvio server, etc)
                 if CRON2.get_time("Day") <> Tick["Day"]:        #e' passato un giorno #TODO Spostare in M_AUX se si puo'
                     Tick["Day"] = CRON2.get_time("Day")
                     M_RC.recordErase("Day")                     #pulizia record giornaliero
                     M_RC.scrivilog("Daily Cleaning START", M_CONF.crashlog)
+                    #**************************************************************************
+                    if M_CONF.Website_ON:                   #eseguo OPERAZIONI WEB GIORNALIERE
+                        M_WEB.web_rank()                    #creo la classifica aggiornata
+                        res = M_WEB.trasferisci("HTML" + "/" + M_CONF.webdata["w_tabella"], M_CONF.webdata["w_tabella"])
+                        if res:
+                            M_RC.scrivilog("WEBRANK TRANSFER OK", M_CONF.crashlog)
+                        else:
+                            M_RC.scrivilog("WEBRANK TRANSFER FAILED", M_CONF.crashlog)
+                    #**************************************************************************
                 if CRON2.get_time("Week") <> Tick["Week"]:      #e' passato una settimana #TODO Spostare in M_AUX se si puo'
                     Tick["Week"] = CRON2.get_time("Week")
                     M_RC.recordErase("Week")                    #pulizia record settimanale

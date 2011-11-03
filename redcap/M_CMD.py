@@ -22,6 +22,7 @@ comandi = [
 ["maplist", r"!maplist", M_CONF.lev_maplist],
 ["mute",r"!m (?P<target>.*)",M_CONF.lev_mute],
 ["muteall",r"!mall", M_CONF.lev_muteall],
+["notlev",r"!notoriety(?P<num>\d*)",M_CONF.lev_notoriety],
 ["nuke",r"!n (?P<target>.*)",M_CONF.lev_nuke],
 #["nukeall",r": (?P<rich>\d+) .*?: !nall", RCconf.lev_nukeall],
 ["ora",r"!ora$",M_CONF.lev_ora],
@@ -37,7 +38,7 @@ comandi = [
 ["status", r"!z\s*(?P<target>.*)", M_CONF.lev_status],
 ["tempban",r"!b(?P<num>\d*) (?P<target>.*)",M_CONF.lev_tmpban],       #!b123 pippo
 ["top",r"!top", M_CONF.lev_top],
-["trust",r"!(?P<un>(un)*)trust (?P<target>.*)", M_CONF.lev_trust],
+["trust",r"!(?P<un>(un)*)trust(?P<num>\d*) (?P<target>.*)", M_CONF.lev_trust],
 ["unwar",r"!unwar", M_CONF.lev_unwar],
 ["war",r"!war\s*(?P<cfg>.*)", M_CONF.lev_war],
 ]
