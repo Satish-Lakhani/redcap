@@ -3,6 +3,38 @@
 
 import time          #Funzioni tempo
 import M_CONF
+import C_DB         #Classe che rappresenta il DB
+
+DB = C_DB.Database(M_CONF.NomeDB)
+
+StandardMaps = [                    #mappe standard incluse nello z_pack
+"ut4_abbey",
+"ut4_algiers",
+"ut4_ambush",
+"ut4_austria",
+"ut4_casa",
+"ut4_crossing",
+"ut4_eagle",
+"ut4_elgin",
+"ut4_harbortown",
+"ut4_kingdom",
+"ut4_mandolin",
+"ut4_maya",
+"ut4_oildepot",
+"ut4_prague",
+"ut4_ramelle",
+"ut4_riyadh",
+"ut4_sanc",
+"ut4_suburbs",
+"ut4_subway",
+"ut4_swim",
+"ut4_thingley",
+"ut4_tombs",
+"ut4_toxic",
+"ut4_tunis",
+"ut4_turnpike",
+"ut4_uptown",
+]
 
 def cr_riavvia(autorestart):
     """restarto RedCap ed eventualmente il server"""
@@ -21,20 +53,8 @@ def cr_riavvia(autorestart):
         M_RC.scrivilog("REDCAP DAILY RESTART.", M_CONF.crashlog)
         sys.exit()
 
-def ini_gen():  #Tempi di controllo del server
-    """inizializzazioni generali"""
-    Ticks = {
-    "Sec": int(time.strftime("%S", time.localtime())),
-    "Min": int(time.strftime("%M", time.localtime())),
-    "Ora": int(time.strftime("%H", time.localtime())),
-    "Day": int(time.strftime("%j", time.localtime())),
-    "Week": int(time.strftime("%U", time.localtime())),
-    "Month": int(time.strftime("%m", time.localtime())),
-    }
-    return Ticks
-
 def log_backup():
-    """Esegue funzioni di backup sul file di log"""
+    """Esegue funzioni di backup sul file di log. Utilizzata da cr_riavvia()"""
     import shutil
     import re
     #leggo il log
@@ -48,7 +68,194 @@ def log_backup():
     logfile.close()
     #Copio il DB in Archivi
     shutil.copy2(M_CONF.NomeDB, M_CONF.NomeArchivi + "/" + time.strftime("%Y_%b_%d", time.localtime()) + "_" + M_CONF.NomeDB)
+    #Estraggo i dialoghi
+    logfile = open(M_CONF.NomeFileLog, "r")
+    contenuto = logfile.read()
+    logfile.close()
+    testo = testo.replace("<", "&lt;")
+    testo = testo.replace(">", "&gt;")
+    says=re.findall(r"say: (?P<colore>\d+) (?P<nick>.*): (?P<frase>.*)",testo)
+    #TODO da finire
     return True
+
+
+    #creo il file dei dialoghi
+    logfile = open(RCconf.NomeFileLog, "r")
+    testo=logfile.read()
+    logfile.close()
+    testo = testo.replace("<", "&lt;")
+    testo = testo.replace(">", "&gt;")
+    says=re.findall(r"say: (?P<colore>\d+) (?P<nick>.*): (?P<frase>.*)",testo)
+    html = "<table class='dialoghi'>" #preparo la tabella e inserisco i dialoghi
+    for say in says:
+        if say[2].find("!!sk") != -1 or say[2].find("!!z") != -1:
+            continue #elimino !!sk e !!z
+        html +="<tr><td>"
+        html += "<span style='color:" + RCwords.colori[say[0]] + "'>" +say[1] + "</span></td><td style='color:#bbbbbb'>" + say[2]
+        html +="</td></tr>\n"
+    html +="</table>"
+    #salvo il tutto in un file
+    saylog = time.strftime("%Y_%b_%d", time.localtime()) + "_saylog.log"
+    logfile = open(RCconf.NomeArchivi + "/" + saylog, "w")
+    logfile.write(html)
+    logfile.close()
+
+
+
+def web_rank():
+    """crea la classifica in formato tabella a partire dal DB"""
+
+    def cella(contenuto,  toltip = "",  cls = "",  st = ""):          #sottofunzione che crea le celle
+        return "<td title='%s' class='%s' style='%s'>%s</td>" %(toltip, cls, st, contenuto)
+
+    def striphtml(testo):   #strippo l'html
+        testo = testo.replace("<", "&lt;")
+        testo = testo.replace(">", "&gt;")
+        return testo
+
+    DB.connetti()
+    dati1 = DB.esegui(DB.query["getallorderedbyguid"]%"DATI").fetchall()
+    dati2 = DB.esegui(DB.query["getallorderedbyguid"]%"HIT").fetchall()
+    dati3 = DB.esegui(DB.query["getallorderedbyguid"]%"LOC").fetchall()
+    dati4 = DB.esegui(DB.query["getallorderedbyguid"]%"KILL").fetchall()
+    i=0
+    cicli = len(dati1)
+    tmp = []
+    while i < cicli:
+        if dati1[i][3] > M_CONF.minRounds:
+            tmp.append(dati1[i] + dati2[i][1:len(dati2[i])] + dati3[i][1:len(dati3[i])] + dati4[i][1:len(dati4[i])])
+        i+=1
+    Dump = sorted(tmp, key=lambda dato: dato[2], reverse=True)    #record ordinati per skill decrescente
+
+    #DATI: #0: GUID    # 1: Nick    # 2: Skill    # 3: Round    # 4: Lastconnection    # 5: Level    # 6: Tempban    # 7: Reputation    # 8: Firstconnect    # 9: streak    # 10: alias    # 11: varie
+    #HIT: #12: head    # 13: torso    # 14: arms    # 15: legs    # 16: body    #LOC: #17: IP    # 18: provider    # 19: location    # 20: oldip    #KILL: #21-38: kills #39: deaths
+
+    table_ini = "<script type='text/javascript' src='http://%s/wz_tooltip.js'></script><table class=\"sortable\"><tbody>" %(M_CONF.webdata["w_url"] + M_CONF.webdata["w_directory"]) #parte iniziale della table
+    header = "<tr><th>NICK</th><th>SKILL</th><th>STREAK</th><th>ROUNDS</th><th title='Headshots'>HS</th><th>LAST IP</th><th>LAST VISIT</th></tr>" #Header (SKILL, NICK, STREAK, ROUNDS, HIT, IP, LASTVISIT)
+    table_end = "</tbody></table>"              #parte finale della table
+    TABLE = table_ini + header                  #contenuto della table
+
+    for guid in Dump:                           #CREO LA RIGA ed i suoi span. RIGHE CON TOOLTIP: <a href="#" onmouseover="TagToTip('Span2')" onmouseout="UnTip()">Homepage </a>
+        #*** Cella SKILL ************
+        if guid[39] <> 0:   #evito divisione per 0
+            tooltip_SKILL = "K/D:"+ str(round(sum(guid[21:38]) / float(guid[39]),2))
+        if guid[2] < 0:
+            colore = "color:red"
+        else:
+            colore = "color:green"
+        SKILL = cella(str(round(guid[2],1)), tooltip_SKILL, "", colore)
+        #*** Cella NICK ************
+        #_________ TOOLTIP
+        rc_nick = "<div class='rc_nick'>%s</div>" %striphtml(str(guid[1]))  #nick
+        masked_guid = guid[0][0:6] + "***"
+        aff = round(guid[3] / M_CONF.Notoriety["roundXpoint"] + ((guid[4]-guid[8])/87400) / M_CONF.Notoriety["dayXpoint"] + guid[7], 1)
+        affid = aff
+        if affid < M_CONF.MinNotoriety:
+            giorni = (M_CONF.MinNotoriety - affid) * M_CONF.Notoriety["dayXpoint"]
+            affid = str(affid) + " <span style='color:red;'>Non affidabile per %s giorni</span>" %str(giorni)
+        f_conn = time.strftime("%d/%m/%Y&nbsp;%H:%M",time.localtime(guid[8]))
+        rc_col1_txt = "Guid: <b>%s</b><br />Level: <b>%s</b><br />Affidabilit&agrave;: <b>%s</b><br />First Visit: <b>%s</b>" %(masked_guid, str(guid[5]), str(affid), f_conn)
+        rc_col1 = "<div class='rc_col1'>%s</div>" %rc_col1_txt
+        aliases = guid[10].split("  ")
+        rc_col2_txt = "<b>ALIAS:</b><br />"
+        for al in aliases:
+            al=al.split(" ")
+            if len(al) == 2:
+                rc_col2_txt += (time.strftime("%d/%m/%Y&nbsp;%H:%M",time.localtime(float(al[0]))) + "&nbsp;<span class=rc_al>" + striphtml (str(al[1]) )+ "</span><br />")
+        rc_col2 = "<div class='rc_col2'>%s</div>" %rc_col2_txt
+
+        rc_col3_txt = "<b>IP:</b><br />"
+        if guid[20]:
+            ips = guid[20].split(" ")
+            for ip in ips:
+                b = ip.split(".")
+                masked_ip = ".".join([b[0],b[1],b[2],"***"])
+                rc_col3_txt += (masked_ip + "<br />")
+        else:
+            rc_col3_txt += ("UNKNOWN<br />")
+
+
+        rc_col3 = "<div class='rc_col3'>%s</div>" %rc_col3_txt
+        rc_tip = rc_nick + rc_col1 + rc_col2 + rc_col3
+        NICK_tooltip ="<div class='rc_tip'>%s</div>" %rc_tip
+        #_________ CELLA
+        id = "sp%s" %guid[0][0:8]
+        txt = '<span onmouseover="TagToTip(\'%s\')" onmouseout="UnTip()">%s</span>' %(id , striphtml(str(guid[1])))
+        cls = ""
+        if guid[5] >= M_CONF.lev_admin:
+            cls = "rc_cNICK_g"
+        elif aff < M_CONF.MinNotoriety:
+            cls = "rc_cNICK_r"
+        NICK = cella(txt, "", cls, "")
+        NICK_SPAN = "<span id='%s'>%s</span>" %(id, NICK_tooltip)
+        #*** Cella STREAK ************
+        STREAK = cella(str(guid[9]), "", "", "")
+        #*** Cella ROUNDS ************
+        ROUNDS = cella(str(guid[3]), "", "", "")
+        #*** Cella HSHOTS ************
+        hits = float(guid[12] + guid[13] +guid[14] + guid[15] + guid[16])
+        hs = round((guid[12]/hits)*100, 1)
+        tr = round((guid[13]/hits)*100, 1)
+        ar = round((guid[14]/hits)*100, 1)
+        lg = round((guid[15]/hits)*100, 1)
+        bo = round((guid[16]/hits)*100, 1)
+        tooltip_HS = "Torso:%s Arms:%s Legs:%s Body:%s" %(str(tr), str(ar), str(lg), str(bo))
+        hs1 = "%s&#37;" %str(hs)
+        if hs > 16:
+            colore = "color:red"
+        else:
+            colore = ""
+        HSHOTS = cella(hs1, tooltip_HS, "", colore)
+        #*** Cella IP ****************
+        if guid[17]:
+            b = guid[17].split(".")
+            masked_ip = ".".join([b[0],b[1],b[2],"***"])
+        else:
+            masked_ip = "UNKNOWN"
+        IP = cella(masked_ip, "", "", "")
+        #*** Cella LAST VISIT ********
+        hrs = (int(time.time() - guid[4]) // 60) // 60
+        day = hrs // 24
+        l_conn = "%d giorni e %d ore" % (day, hrs % 24)
+        LASTVISIT = cella(l_conn, "", "", "")
+        #*** CREO LA RIGA ************
+        riga_txt = NICK + SKILL + STREAK + ROUNDS + HSHOTS + IP + LASTVISIT
+        riga = "<tr>%s</tr>" %riga_txt
+        #_________ AGGIUNGO I TOOLTIPS
+        riga += NICK_SPAN
+
+        #*** AGGIUNGO LA RIGA ALLA TABELLA ************
+        TABLE += riga
+
+    TABLE += table_end  #Completo la table
+    #Salvo in locale
+    htmlfile = open("HTML" + "/" + M_CONF.webdata["w_tabella"], "w")
+    htmlfile.write(TABLE)
+    htmlfile.close()
+    #trasferisco
+    if web_FTPtransfer("HTML" + "/" + M_CONF.webdata["w_tabella"], M_CONF.webdata["w_tabella"]):
+        return "WEBRANK TRANSFER OK"
+    else:
+        return "WEBRANK TRANSFER FAILED"
+
+#web_rank()
+
+def web_FTPtransfer(filefrom, fileto):
+    """trasferisce un file sul webserver ausiliario"""
+    from ftplib import FTP
+    htmlfile = open(filefrom, "rb")
+    try:
+        connessione = FTP(M_CONF.webdata["w_url"])
+        connessione.login(M_CONF.webdata["w_login"], M_CONF.webdata["w_password"])   # connect to host, default port
+        connessione.cwd(M_CONF.webdata["ftp_directory"])
+        connessione.storbinary('STOR ' + fileto, htmlfile)
+        connessione.quit()
+    except:
+        htmlfile.close()
+        return False
+    finally:
+        htmlfile.close()
+        return True
 
 class Cronometro:
     """classe per controlli a tempo"""

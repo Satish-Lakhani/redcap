@@ -87,7 +87,7 @@ def clientuserinfo(info):                       #info (0=slot_id, 1=ip, 2=guid)
     elif info[2] <> GSRV.PT[info[0]].guid:          #cambio guid durante il gioco #TODO vedere se possibile, se no eliminare
         if GSRV.Server_mode <> 2:                   #non attivo in warmode
             GSRV.PT[info[0]].notoriety += M_CONF.Notoriety["guidchange"]    #gli abbasso la notoriety in proporzione
-            scrivilog(GSRV.PT[info[0]].guid + "CAMBIO GUID A: " + info[2], "crash.log")
+            scrivilog(str(GSRV.PT[info[0]].ip) + " " + GSRV.PT[info[0]].guid + " GUID CHANGE TO: " + info[2], "crash.log")
             kick("Redcap", info[0], Lang["guidchange"]%info[1])
 
 def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
@@ -107,18 +107,12 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
     if GSRV.PT[info[0]].justconnected:                      #PLAYER APPENA CONNESSO
         db_datacontrol(GSRV.PT[info[0]].guid, info[0])      #controllo se il player esiste nel DB e ne recupero i dati (tb DATA) se no lo registro
         if GSRV.PT[info[0]].isinDB:                         #se il player gia esisteva nel DB
-            db_loccontrol(GSRV.PT[info[0]].guid, info[0])            #controllo la tabella LOC       #TODO caricare i dati anche dalle altre tables?
+            db_loccontrol(GSRV.PT[info[0]].guid, info[0])   #controllo la tabella LOC       #TODO caricare i dati anche dalle altre tables?
         if GSRV.Server_mode <> 2:                           #non attivo in warmode
             if GSRV.PT[info[0]].tempban > time.time():                                                  #CONTROLLO BAN
                 ban = time.strftime("%d.%b.%Y %H.%M", time.localtime(GSRV.PT[info[0]].tempban))
                 kick("Redcap", info[0], Lang["stillban"]%(GSRV.PT[info[0]].nick, ban))
                 return
-            #if GSRV.PT[info[0]].notoriety < GSRV.MinNot_toplay:                                          #CONTROLLO NOTORIETY (TODO non dovrebbe servire perche gia periodico)
-                #GSRV.PT[info[0]].tobekicked = 1          #da kikkare (gli do il tempo di sapere perche
-                #say(Lang["lownotoriety"]%(info[1],GSRV.PT[info[0]].notoriety, GSRV.MinNot_toplay), 0)   #todo trasformare in tell
-                #time_to_wait = (GSRV.MinNot_toplay - GSRV.PT[info[0]].notoriety) * M_CONF.Notoriety["dayXpoint"]
-                #say(Lang["lownotoriety2"]%str(time_to_wait), 0)
-                #return
             if (time.time() -  GSRV.PT[info[0]].lastconnect) < GSRV.AntiReconInterval:                  #CONTROLLO RECONNECT
                 kick("Redcap", info[0], Lang["antirecon"]%(GSRV.PT[info[0]].nick, str( GSRV.AntiReconInterval)))
                 return
@@ -135,10 +129,10 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
         for alias in GSRV.PT[info[0]].alias:
             if info[1] in alias:
                 esiste = True
-                alias[0] = str(time.time())                                     #se esiste aggiorno la data di ultimo utilizzo
+                alias[0] = str(time.time())                 #se esiste aggiorno la data di ultimo utilizzo
         if not esiste:
             new_al = GSRV.PT[info[0]].alias
-            new_al.append([str(time.time()), info[1]])          #se non esiste lo aggiungo
+            new_al.append([str(time.time()), info[1]])      #se non esiste lo aggiungo
 
 def comandi (frase):                            #frase [id, testo] (es: "2:31 say: 3 Nero: !slap Cobr4" diventa: ["3", "!slap Cobr4"]
     """processo il comando prima di inviarlo alla finzione specializzata"""
@@ -170,17 +164,21 @@ def cr_floodcontrol():
 def cr_full():
     """verifica se il server e' pieno o vuoto"""
     clients = (GSRV.TeamMembers[0] + GSRV.TeamMembers[1] + GSRV.TeamMembers[2] + GSRV.TeamMembers[3])
-    if clients == int(GSRV.MaxClients):              # faccio operazioni da server pieno
+    if clients == int(GSRV.MaxClients):              # faccio operazioni da SERVER PIENO
         GSRV.Full = 2
         if M_CONF.KickForSpace and GSRV.Server_mode == 1:
             for PL in GSRV.PT:
                 if GSRV.PT[PL].team == 3 and GSRV.PT[PL].level < M_CONF.lev_admin:
-                    GSRV.PT[PL].tobekicked = 2
+                    GSRV.PT[PL].tobekicked = 4
                     tell(PL, Lang["space"]%GSRV.PT[PL].nick)
-                    GSRV.Full = 1               
-    elif clients == 0:                          # faccio operazioni da server vuoto
+                    GSRV.Full = 1     
+    elif clients == 0:                          # faccio operazioni da SERVER VUOTO
         GSRV.Full = 0
         GSRV.MinNot_toplay = M_CONF.ServerPars["MinNot_toplay"] #rimetto la MinNot_toplay al valore base.
+        if GSRV.Server_mode == 2:               #tolgo la configurazione war
+            SCK.cmd("g_password ''")            #tolgo la password
+            SCK.cmd("exec " + GSRV.Baseconf)    #carico la config di base
+            GSRV.Server_mode = 1
         if M_CONF.gameserver_autorestart == 2 and GSRV.Restart_when_empty:
             import os
             import sys
@@ -188,10 +186,6 @@ def cr_full():
             os.system("./S_full_restart.sh")
             sleep(10)    #aspetto che il server abbia restartato
             sys.exit()
-        if GSRV.Server_mode == 2:               #tolgo la configurazione war
-            SCK.cmd("g_password ''")            #tolgo la password
-            SCK.cmd("exec " + GSRV.Baseconf)    #carico la config di base
-            GSRV.Server_mode = 1
     else:
         GSRV.Full = 1
         GSRV.Restart_when_empty = True          #restartera' appena vuoto
@@ -213,6 +207,24 @@ def cr_notorietycheck():
             say(Lang["lownotoriety2"]%str(time_to_wait), 0)
             GSRV.PT[PL].tobekicked = 1
 
+def cr_recordErase():
+    """cancella il o i record specificati se fuori periodo"""
+    DB.connetti()
+    if int(time.strftime("%j", time.localtime(GSRV.TopScores["Day"][0]))) <> int(time.strftime("%j", time.localtime())):     #il daily record e piu vecchio di un giorno
+        GSRV.TopScores["Day"] = [0.0, 0, " "]
+        DB.esegui(DB.query["saverecords"], ("0.0", "0", " ", "Day"))
+        scrivilog("Daily record cleaned", M_CONF.crashlog)
+    if int(time.strftime("%U", time.localtime(GSRV.TopScores["Week"][0]))) <> int(time.strftime("%U", time.localtime())):     #il weekly record e piu vecchio di una settimana
+        GSRV.TopScores["Week"] = [0.0, 0, " "]
+        DB.esegui(DB.query["saverecords"], ("0.0", "0", " ", "Week"))
+        scrivilog("Weekly record cleaned", M_CONF.crashlog)
+    if int(time.strftime("%m", time.localtime(GSRV.TopScores["Month"][0]))) <> int(time.strftime("%m", time.localtime())):     #il monthly record e piu vecchio di un mese
+        GSRV.TopScores["Month"] = [0.0, 0, " "]
+        DB.esegui(DB.query["saverecords"], ("0.0", "0", " ", "Month"))
+        scrivilog("Monthly record cleaned", M_CONF.crashlog)
+    DB.salva()
+    DB.disconnetti()
+
 def cr_spam():
     """spam periodici"""
     if GSRV.Server_mode == 2:
@@ -229,15 +241,19 @@ def cr_spam():
 def cr_tbkicked():
     """verifica se ce qualcuno da kikkare"""
     for PL in GSRV.PT:
+        if GSRV.PT[PL].tobekicked == 0:
+            continue
         if GSRV.PT[PL].tobekicked == 1:         #controllo tobekicked
             kick("Redcap", GSRV.PT[PL].slot_id)
             say(Lang["tbkicked"] %GSRV.PT[PL].nick, 0)
-        elif GSRV.PT[PL].tobekicked == 2:       #controllo kick per slot pieni
+        elif GSRV.PT[PL].tobekicked == 2:       #kick per slot pieni
             if GSRV.PT[PL].team == 3:           #se e ancora spect lo kikko
                 kick("Redcap", GSRV.PT[PL].slot_id)
                 say(Lang["spacekicked"] %GSRV.PT[PL].nick, 0)
             else:
-                GSRV.PT[PL].tobekicked = 0      #e entrato in game                
+                GSRV.PT[PL].tobekicked = 0      #e entrato in game
+        elif GSRV.PT[PL].tobekicked <= 4:       # kick per slot pieni aspetto 2 tick
+            GSRV.PT[PL].tobekicked -= 1         #diminuisco di un tick
 
 def cr_unvote():
     """verifica (periodica) che il voto non sia rimasto attivo dopo il comando !v"""
@@ -275,7 +291,7 @@ def db_datacontrol(guid,id):
          GSRV.PT[id].level = 100
          tell(GSRV.PT[id].slot_id, Lang["adminrights"]%GSRV.PT[id].nick)
 
-def db_loccontrol(guid, id):    #TODO unused
+def db_loccontrol(guid, id):    
     DB.connetti()
     loc = DB.esegui(DB.query["cercaloc"], (guid,)).fetchone()           # esiste in db (guid, IP, provider, location, old_ip)
     GSRV.PT[id].load_loc(loc)
@@ -332,7 +348,6 @@ def ini_clientlist():
     if not Res:         #DEBUG verifico se il server risponde
         sleep(20)
         scrivilog("NO ANSWER FROM GAMESERVER", M_CONF.crashlog)
-        print Res
         ini_clientlist()
         return
     if Res[1]:
@@ -358,7 +373,7 @@ def ini_recordlist():
     DB.connetti()
     dati = DB.esegui(DB.query["getrecords"]).fetchall()
     DB.disconnetti()
-    for element in dati:
+    for element in dati:    #TIPO VAL TIME OWNER
         GSRV.TopScores[element[0]][0] = element[2]   #time
         GSRV.TopScores[element[0]][1] = element[1]   #val
         GSRV.TopScores[element[0]][2] = element[3]   #owner
@@ -390,13 +405,13 @@ def initRound(frase):
     if GSRV.Server_mode == 1:                                       #solo in modalita normale. No war e no startup
         GSRV.teamskill_eval()                                       #aggiorno le teamskill e il coefficiente di sbilanciamento skill
         GSRV.players_alive()                                        #setto i player non spect a vivo, gli aggiungo un round e updato il coeff skill.
-        say(str(GSRV.TeamMembers[0]) + "^1" + str(GSRV.TeamMembers[1])  + "^5" + str(GSRV.TeamMembers[2])  + "^2" + str(GSRV.TeamMembers[3]), 1)
         if (GSRV.MapName + "\n") in GSRV.Q3ut4["mapcycle"]:         #verifico qual'e la prossima mappa
             indice_nextmap = GSRV.Q3ut4["mapcycle"].index(GSRV.MapName+ "\n") +1
             if indice_nextmap == len(GSRV.Q3ut4["mapcycle"]):
                 indice_nextmap = 0
-            nextmap = GSRV.Q3ut4["mapcycle"][indice_nextmap]         #TODO verificare che funzioni
-            say(Lang["nextmap"]%nextmap, 1)
+            nextmap = GSRV.Q3ut4["mapcycle"][indice_nextmap]
+            ini_say = "^1%s^4%s^2%s^8%s ^3Sk:^1%s^7-^4%s ^3- Nextmap: ^7%s" %(str(GSRV.TeamMembers[1]), str(GSRV.TeamMembers[2]), str(GSRV.TeamMembers[3]), str(GSRV.TeamMembers[0]), str(int(GSRV.TeamSkill[0])), str(int(GSRV.TeamSkill[1])), nextmap)
+            say(ini_say, 1)
     elif GSRV.Server_mode == 0:
         say(Lang["startup"], 1)
 
@@ -473,14 +488,6 @@ def option_checker(v):
                 if v == 0:
                     go = False
     return option
-
-def recordErase(tipo):
-    """cancella il o i record specificati"""
-    GSRV.TopScores[tipo] = [0.0, 0, " "]
-    DB.connetti()
-    DB.esegui(DB.query["saverecords"], ("0.0", "0", " ", tipo))
-    DB.salva()
-    DB.disconnetti()
     
 def saluta(modo, id):
     """si occupa di salutare il player al suo ingresso in game"""
@@ -828,7 +835,7 @@ def spam(richiedente, parametri):
             GSRV.SpamlistIndex -= 1 #per ovviare che se stava leggendo l'ultimo spam vada fuori lista
             spam = open("spam.txt", "w")
             for frase in GSRV.SpamList:
-                if frase.endswith("#"):
+                if frase.endswith("#"):     #evito di scrivere i record che sono marcati da # e devono stare in DB, non in spam.txt
                     pass
                 else:
                     spam.write(frase + "\n")

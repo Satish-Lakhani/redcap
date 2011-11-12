@@ -2,33 +2,28 @@
 # -*- coding: utf-8 -*-
 
 #TODO fare controllo armi ammesse per team
-#TODO completare comando !trust nick per gestire la notoriety
 #TODO fare anche ban per nick
 #TODO e' effettivamente necessario recuperare gli alias alla connection o si fa su richiesta?
 #TODO eliminare gli alias piu vecchi di n giorni
-#TODO alla connessione di un player mandargli un tell con le sue info
 #TODO note per warmode: no kick, warn o richiami per badguid o badnick, tkill o thit o censura (registrare variazione skill?), non registrare ne spammare record. no spam vari.
-#TODO prevedere silentmode.
 #TODO fare comando hit che dice le hit eseguite in percentuale
 #TODO fare manutenzioni programmate
 #TODO evitare che un crash durante cw cancelli la config war
 #TODO fare comando shuffle
 #TODO fare bilanciamento immediato in modalita CTF
 #eliminare penalita per autokill con nade
-#fare archiviazione log, dialoghi e db
+#fare archiviazione dialoghi
 #TODO azzerare la tabella skill (o tutta il db?)
-#TODO completare classifica e fare funzione di trasferimento
+#TODO completare classifica 
 #TODO fare comando DBban e DBunban
-#TODO FARE COMANDO PER VARIAZIONE NOTORIETY AL VOLO (CON RIMESSA A VALORE BASE A SERVER VUOTO)
-#fare autorestart a server vuoto
 #TODO sistemare voto che rimane sempre attivo.
+#TODO bannare guid originale per cambio guid in game
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
 import M_AUX            #Modulo funzioni ausiliarie
 import M_CONF           #Modulo configurazioni programma
 import M_RC             #Modulo che gestisce le azioni del Redcap
-import M_WEB            #modulo che gestisce le funzioni web
 
 def crashlog(t, v, tra):
     """gestisce i crash del programma, scrivendo l'errore nel file di log"""
@@ -49,21 +44,25 @@ CRON2 = M_AUX.Cronometro(M_CONF.CRON2)          #Istanzio il cron2
 
 def init_jobs():
     """attivita' da fare all'avvio di redcap"""
-    M_RC.say("^2RedCap in Avvio", 2)
+    M_RC.say("^2Starting RedCap...", 2)
     M_RC.ini_clientlist()           #recupero i client gia presenti sul server
     M_RC.ini_recordlist()           #recupero i record dal server
     M_RC.ini_spamlist()             #carico la spamlist
+    if M_CONF.Website_ON:           #Se esiste un website di appoggio aggiorno la classifica, la trasferisco al server remoto e salvo il risultato dell'operazione nel log
+        M_RC.say("^4Webrank updating...", 2)
+        M_RC.scrivilog(M_AUX.web_rank(), M_CONF.crashlog)
+    M_RC.say("^4Q3ut4 parsing...", 2)
     q3ut4_parse()
-    redcap_main()                               #LANCIO LA PROCEDURA PRINCIPALE
+    M_RC.say("^2Main routine started. Wait for players identification...", 2)
+    redcap_main()                   #LANCIO LA PROCEDURA PRINCIPALE
 
 def q3ut4_parse():
     """parsa la directory q3ut4"""
-    M_RC.GSRV.Q3ut4["map"] = M_CONF.StandardMaps                       #carico solo mappe di base
+    M_RC.GSRV.Q3ut4["map"] = M_AUX.StandardMaps                       #carico solo mappe di base
     M_RC.GSRV.Q3ut4["cfg"] = []
     PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4, M_RC.GSRV.MapCycle)   #recupero mappe e cfg.
 
 def redcap_main():
-    Tick = M_AUX.ini_gen()          #inizializzazioni generali
     while 1:
         M_RC.sleep(M_CONF.TempoCiclo)             #wait for a cycletime
         if PARSER.novita():                                           #log check
@@ -96,7 +95,7 @@ def redcap_main():
                     elif frase[1] == "EndMap":                    
                         M_RC.endMap(frase[0])
                         continue
-        if CRON1.is_time():                     #eseguo operazioni a cron1
+        if CRON1.is_time():                     #ESEGUO OPERAZIONI A CRON1
             if M_RC.GSRV.Server_mode == 1:          #controlli fatti solo in modalita' normale.
                 M_RC.cr_tbkicked()                  #da fare sempre per primo
                 M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato
@@ -110,32 +109,11 @@ def redcap_main():
             if CRON1.ticks == 240:                  #E' passata 1 ora circa
                 q3ut4_parse()
                 CRON1.reset()
-        if CRON2.is_time():
+        if CRON2.is_time():                     #ESEGUO OPERAZIONI A CRON1
             if CRON2.get_time("Ora") == M_CONF.Control_Daily:   #all'ora prefissata eseguo operazioni giornaliere (pulizia DB, riavvio server, etc)
-                if CRON2.get_time("Day") <> Tick["Day"]:        #e' passato un giorno #TODO Spostare in M_AUX se si puo'
-                    Tick["Day"] = CRON2.get_time("Day")
-                    M_RC.recordErase("Day")                     #pulizia record giornaliero
-                    M_RC.scrivilog("Daily Cleaning START", M_CONF.crashlog)
-                    #**************************************************************************
-                    if M_CONF.Website_ON:                   #eseguo OPERAZIONI WEB GIORNALIERE
-                        M_WEB.web_rank()                    #creo la classifica aggiornata
-                        res = M_WEB.trasferisci("HTML" + "/" + M_CONF.webdata["w_tabella"], M_CONF.webdata["w_tabella"])
-                        if res:
-                            M_RC.scrivilog("WEBRANK TRANSFER OK", M_CONF.crashlog)
-                        else:
-                            M_RC.scrivilog("WEBRANK TRANSFER FAILED", M_CONF.crashlog)
-                    #**************************************************************************
-                if CRON2.get_time("Week") <> Tick["Week"]:      #e' passato una settimana #TODO Spostare in M_AUX se si puo'
-                    Tick["Week"] = CRON2.get_time("Week")
-                    M_RC.recordErase("Week")                    #pulizia record settimanale
-                    M_RC.scrivilog("Weekly Cleaning START", M_CONF.crashlog)
-                if CRON2.get_time("Month") <> Tick["Month"]:    #e' passato un mese #TODO Spostare in M_AUX se si puo'
-                    Tick["Month"] = CRON2.get_time("Month")
-                    M_RC.recordErase("Month")                   #pulizia record mensile
-                    M_RC.scrivilog("Monthly Cleaning START", M_CONF.crashlog)
-                M_AUX.cr_riavvia(M_CONF.gameserver_autorestart)                          #Riavvio del server
+                M_RC.cr_recordErase()                                       #Pulisco i record se del giorno (settimana, mese) prima.
+                M_AUX.cr_riavvia(M_CONF.gameserver_autorestart)             #Riavvio del server
                 # -= Non puo' leggere istruzioni oltre qui (riavvio server!) =-
-
 
 #AVVIO IL REDCAP
 init_jobs()

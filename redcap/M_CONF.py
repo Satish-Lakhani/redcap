@@ -57,10 +57,10 @@ Notoriety = {
 "badguid" : -20,            #penalizzazione punti per guid non corretta (probabile cheat)
 "dayXpoint": 5,             #giorni di anzianita della guid per guadagnare un punto notoriety (5 = 0.2 punti/giorno)
 "floodpenalty": -0.1,       #penalita per flood
-"guidchange" : -5,          #penalizzazione punti per cambio guid al volo (probabile cheat)
-"guidminage": 5,            #anzianita in giorni della guid per poter giocare sul server
-"roundXpoint": 100,         #num. di round da giocare per guadagnare un punto notoriety (100 = 0.01 punti/round)
-"warnpenalty":-0.2,         #penalita sulla reputation per un kick da somma di warning
+"guidchange" : -50,         #penalizzazione punti per cambio guid al volo (probabile cheat)
+"guidminage": 7,            #anzianita in giorni della guid per poter giocare sul server
+"roundXpoint": 200,         #num. di round da giocare per guadagnare un punto notoriety (100 = 0.01 punti/round)
+"warnpenalty":-1,           #penalita sulla reputation per un kick da somma di warning
 }
 
 ##FILE TESTO
@@ -85,11 +85,11 @@ Spamtime = 140              #Tempo in secondi tra due spam
 botname = "^8RC| "                  #prefisso degli output del Redcap (lasciare vuoto "" se non si vuole prefisso) #TODO non utilizzato
 RC_lang = "ITA"                     #Localizzazione linguaggio ITA #TODO (ENG FRA e altre, da fare)
 AdminGuids = ["0606EED6F696AAE45235F765D78CF"]   #guid automaticamente abilitata al max liv di autorizzazione
-gameserver_autorestart = 2          #0: non riavvia 1: riavvio giornaliero 2: riavvia tutte le volte che è vuoto
+gameserver_autorestart = 2          #0: riavvia solo il Redcap 1: riavvia giornalmente Redcap e Gameserver 2: riavvia Redcap e Gameserver tutte le volte che il Gameserver è vuoto
 
 ##SERVER
 ServerPars = {
-"AliasDuration": 90,                #tempo di memorizzazione in giorni di un vecchio alias prima che sia cancellato per inutilizzo
+"AliasDuration": 90,                #tempo di memorizzazione in giorni di un vecchio alias prima che sia cancellato per inutilizzo #TODO non utilizzato
 "AntiReconInterval" : 0,            #Tempo di antireconnect in sec (se 0  = Disattivato)
 "BalanceMode" : 2,                  #0=disattivato 1=attivato 2=automatico
 "Baseconf" : "server.cfg",          #nome della configurazione standard del gameserver
@@ -106,35 +106,6 @@ ServerPars = {
 "UrtPath" : "../../../../home/ale/UT/q3ut4",            #path relativo della cartella q3ut4 di urt  #DEBUG
 "MapCycle": "mycycle.txt"           #path del file di cyclemap
 }
-
-StandardMaps = [                    #mappe standard incluse nello z_pack
-"ut4_abbey",
-"ut4_algiers",
-"ut4_ambush",
-"ut4_austria",
-"ut4_casa",
-"ut4_crossing",
-"ut4_eagle",
-"ut4_elgin",
-"ut4_harbortown",
-"ut4_kingdom",
-"ut4_mandolin",
-"ut4_maya",
-"ut4_oildepot",
-"ut4_prague",
-"ut4_ramelle",
-"ut4_riyadh",
-"ut4_sanc",
-"ut4_suburbs",
-"ut4_subway",
-"ut4_swim",
-"ut4_thingley",
-"ut4_tombs",
-"ut4_toxic",
-"ut4_tunis",
-"ut4_turnpike",
-"ut4_uptown",
-]
 
 ##SKILL (parametri per la formula skill)
 #NOTA: punteggio approssimativo di mappa che un giocatore a skill 1000 deve ottenere per mantenere la skill invariata:
@@ -208,21 +179,13 @@ webdata = {
 "w_url" : 'www.bravewarriors.eu',    #URL FTP
 "w_login" : 'xxxxxx',                #FTP login
 "w_password" : 'xxxxxx',             #FTP password
-"w_directory" : '/httpdocs/serverstats', #directory FTP utilizzata da RedCap
+"ftp_directory" : '/httpdocs/serverstats', #directory utilizzata da RedCap (formato FTP)
+"w_directory" : '/serverstats',      #directory utilizzata da RedCap (formato web)
 "w_tabella" : "skilltable.htm",      #tabella skills
 "w_dialoghi" : "dialoghi.htm",       #file dialoghi
 }
 
 
 
-
-
-
-
-
 #SERVIZIO
 GameServerDown = 20             #Secondi di attesa prima di ritentare, quando RedCap trova il gameserver down
-
-## CRON e TEMPI
-WeekControl = 1                 #giorno della settimana per operazioni settimanali (0=Domenica, 1=lunedi, ecc.)
-MonthControl = 28               #giorno del mese (da 1 a 28) per operazioni mensili (cancellazione record mensile)

@@ -29,11 +29,11 @@ class Server:
         self.MaxClients = "99"                                          #Numero massimo player
         self.MaxFlood = parametri["MaxFlood"]                           #massimo numero di say in un tempo fissato
         self.MaxNickChanges = parametri["MaxNickChanges"]               #massimi change nick in un tempo fissato
-        self.MinNot_toplay = parametri["MinNot_toplay"]                  #Notoriety minima per entrare nel server
+        self.MinNot_toplay = parametri["MinNot_toplay"]                 #Notoriety minima per entrare nel server
         self.Nick_is_good = parametri["goodNick"]                       #Nick ben formato
         self.Nick_is_length = parametri["minNick"]                      #Lunghezza minima nick
-        self.LastMapChange = 0                                          #Time al quale e' stato chiesto un cambio mappa
-        self.LastVote = 0                                               #Time al quale e' stato chiesto l'ultimo voto
+        self.LastMapChange = 0.0                                        #Time al quale e' stato chiesto un cambio mappa
+        self.LastVote = 0.0                                             #Time al quale e' stato chiesto l'ultimo voto
         self.Logfolder = parametri["Logfolder"]                         #cartella dei logs
         self.PT = {}                                                    #PlayerTable: dizionario che rappresenta i players presenti sul server e le loro caratteristiche
         self.Q3ut4 = {"cfg":[], "map":[], "mapcycle":[]}                #elenco mappe, cfg e mapcycle
@@ -41,7 +41,7 @@ class Server:
         self.Restart_when_empty = False                                 #se true riavvia il server quando vuoto.
         self.Sbil = 1                                                   #coefficiente di sbilanciamento teams
         self.Server_mode = 0                                            #0 = fase avvio 1 = normale 2 = warmode
-        self.ShowHeadshots = parametri["ShowHeadshots"]                                       #Se True mostra gli headshot
+        self.ShowHeadshots = parametri["ShowHeadshots"]                 #Se True mostra gli headshot
         self.Sk_Kpp = sk_pars["Sk_Kpp"]                                 #Sensibilita' skill: numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
         self.Sk_penalty = sk_pars["Sk_penalty"]                         #penalita' per teamkill (espressa come n. di kill da fare per bilanciare una penalty)
         self.Sk_range = sk_pars["Sk_range"]                             #Ampiezza curva skill:piu grande e' il valore, piu' alti sono i valori di skill che si possono raggiungere.
@@ -198,12 +198,12 @@ class Server:
 
     def teamskill_eval(self):
         """Calcola le teamskill dei red e dei blue"""
-        tot_red_skill = 0
-        tot_blue_skill = 0
+        tot_red_skill = 0.0
+        tot_blue_skill = 0.0
         for pl in self.PT:
-            if self.PT[pl].team == "1":
+            if self.PT[pl].team == 1:
                 tot_red_skill += self.PT[pl].skill
-            elif self.PT[pl].team == "2":
+            elif self.PT[pl].team == 2:
                 tot_blue_skill += self.PT[pl].skill
         if self.TeamMembers[1]:
             self.TeamSkill[0] = tot_red_skill / self.TeamMembers[1]     #Team non vuoto
