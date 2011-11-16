@@ -14,7 +14,7 @@ A different level can be assigned to each command from config file
 
 *{{{[r,b,s]}}}*   parameters choice
 
-*{{{<target>}}}*   mandatory parameter to be replaced with name (or part of the name) of the target player
+*{{{<target>}}}*   mandatory parameter to be replaced with target player name or a univoque part of his name
 
 *{{{<team>}}}*   mandatory parameter to be replaced with team id (r=red, b=blue, s=spect)
 
@@ -27,13 +27,29 @@ A different level can be assigned to each command from config file
 
   * *!ban {{{<target>}}}* : Permanently ban the target player  by IP and GUID.
 
-  * *!cmd {{{<cmd>}}}* : Same as "_\rcon _". It can execute whatsoever command a rcon owner could execute into the game console. <font color=red> NOTE: be careful to assign an appropriate level to this command.</font>
+  * *!cmd {{{<cmd>}}}* : Same as "_\rcon _". It can execute whatsoever command _cmd_ a rcon owner could execute into the game console. <font color=red> NOTE: be careful to assign an appropriate level to this command.</font>
 
   * *!cy* : Immediately cycle to the next map.
 
   * *!dbnick {{{<target>}}}* : Set the actual nickname as main nickname for the target player.
 
   * *!f{{{<team>}}}{{{[rbs]}}} {{{<target>}}}* : Forces the target player to join the specified team (ex: _*!fr joh*_ will force player johnny to join red team).
+
+  * *!info* : give some information about Redcap itself and the gameserver.
+
+  * *!k {{{<target>}}}* : kick the target player from gameserver
+
+  * *!lev{{{<num>}}} {{{<target>}}}* : Assigns the level _num_ to the target player.
+
+  * *!map{{{<map>}}}* : Immediately loads the specified map. _map_ must be a valid map name or part of it.
+
+  * *!maplist* : List all the maps available on the gameserver.
+
+  * *!m {{{<target>}}}* : mute the target player. If a player quits before map end, he will be muted again when reconnects.
+
+  * *!mall* : mute all the players. If a player quits before map end, he will be muted again when reconnects.
+
+  * *!notoriety{{{<num>}}}* : Sets the lowest notoriety needed to play on the gameserver. All the players with a notoriety lower than _num_ will be kicked. When RedCap restarts, notoriety will be set again to the value specified into the config file.
 
   * *!tm* : Ask for a automatic balance at round end. It works only if autobalance mode is MAN.
 
