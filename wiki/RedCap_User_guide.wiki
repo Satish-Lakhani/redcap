@@ -11,6 +11,20 @@ A different level can be assigned to each command from config file
 
 == Commands syntax ==
 *!example*   it is the command itself
-*[r,b,s]*    optional parameters
+
+*{{{[r,b,s]}}}*    optional parameters
+
 *(r, b, s)*  mandatory parameters
-*<target>*   name (or part of the name) of the target player
+
+*{{{<target>}}}*   name (or part of the name) of the target player
+
+== Command list ==
+  * *!al {{{<target>}}}* : List all the alias previously used by the player.
+
+  * *!ab* : Switches balance mode between AUTO/MAN/OFF. When AUTO, balance is automatically executed at round end if needed. When MAN, balance is executed at round end if previously called by *!tm* command. When OFF no balance is allowed.
+
+  * *!ban {{{<target>}}}* : Permanently ban the target by IP and GUID.
+
+  * *!tm* : Ask for a automatic balance at round end. It works only if autobalance mode is MAN.
+
+  * *!v* : Enable vote for X seconds. When vote is enabled vote mode is changed to "voteType" instead to "unvoteType". X, voteType and unvoteType can be set in config file.
