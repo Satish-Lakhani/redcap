@@ -2,12 +2,15 @@
 
 = Preface =
 
-RedCap bot is a python script
+*RedCap* bot is a python script aimed to manage Urban Terror gameservers from chat line. Features includes a wide range of user commands and a lot of automatic features. Most of them can be enabled/disabled from config file.
 
 
-= Details =
+= Commands =
+All Redcap commands starts with *!*, someone of them accepts one or more parameters.
+A different level can be assigned to each command from config file
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+== Commands syntax ==
+*!example*   it is the command itself
+*[r,b,s]*    optional parameters
+*(r, b, s)*  mandatory parameters
+*<target>*   name (or part of the name) of the target player
