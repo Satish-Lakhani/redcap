@@ -14,11 +14,7 @@ A different level can be assigned to each command from config file
 
 *{{{[r,b,s]}}}*   parameters choice
 
-*{{{<target>}}}*   mandatory parameter to be replaced with target player name or a univoque part of his name
-
-*{{{<team>}}}*   mandatory parameter to be replaced with team id (r=red, b=blue, s=spect)
-
-*{{{<num>}}}*   mandatory parameter to be replaced with the appropiate numeric value
+*{{{<target>}}}*   mandatory parameter to be replaced with target player name or some other specified value.
 
 == Command list ==
   * *!al {{{<target>}}}* : List all the alias previously used by the player.
