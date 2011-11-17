@@ -1,5 +1,5 @@
 #summary How to use RedCap bot.
-= RedCap Help =
+= RedCap use manual =
 
 == Preface ==
 
