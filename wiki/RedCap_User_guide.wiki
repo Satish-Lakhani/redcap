@@ -79,10 +79,10 @@ A different level can be assigned to each command from config file
 
   * *!untrust{{{[num]}}} {{{<target>}}}* : decrease target player notoriety by _num_. If notoriety decreases under the min level allowed on the gamserver, the player will be kicked.
 
-  * *!unwar* : 
+  * *!unwar* : unsets warmode and reloads the standard gameserver config
 
   * *!v* : Enable vote for _X_ seconds. When vote is enabled vote mode is changed to "_voteType_" instead to "_unvoteType_". X, voteType and unvoteType can be set in config file.
 
-  * *!war{{{[cfg]}}}* : set the gameserver in matchmode loading the specifide configuration file. _cfg_ can be a valid config name or part of it. If _cfg_
+  * *!war{{{[cfg]}}}* : set the gameserver in matchmode loading the specifide configuration file. _cfg_ can be a valid config name or part of it. If no _cfg_ is specified. RedCap will use its own standard war config file (similar to Urban Zone TS config file). Once the server remains empty for a few seconds, the warmode will be unset and base usual config reloaded.
 
   * *!z {{{[target]}}}* : displays some info about target player. Different detail level can be set in config file for normal players and admins. If no target is specified RedCap will show information (lesser detail) about all the players in game.
