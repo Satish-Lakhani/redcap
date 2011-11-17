@@ -79,7 +79,7 @@ A different level can be assigned to each command from config file
 
   * *!untrust{{{[num]}}} {{{<target>}}}* : decrease target player notoriety by _num_. If notoriety decreases under the min level allowed on the gamserver, the player will be kicked.
 
-  * *!unwar* : unsets warmode and reloads the standard gameserver config
+  * *!unwar* : unsets warmode and reloads the standard gameserver config file.
 
   * *!v* : Enable vote for _X_ seconds. When vote is enabled vote mode is changed to "_voteType_" instead to "_unvoteType_". X, voteType and unvoteType can be set in config file.
 
