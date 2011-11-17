@@ -7,7 +7,7 @@
 
 == Commands ==
 All Redcap commands starts with *!*, someone of them accepts one or more parameters.
-A different level can be assigned to each command from config file
+Not all the commands are available to everybody. An appropriate level can be assigned to each command from config file.
 
 == Commands syntax ==
 *!example*   it is the command itself
