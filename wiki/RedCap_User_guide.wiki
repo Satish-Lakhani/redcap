@@ -23,7 +23,7 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!ban {{{<target>}}}* : Permanently ban the target player by IP and GUID.
 
-  * *!cmd {{{<cmd>}}}* : Same as "_\rcon _". It can execute whatsoever command _cmd_ a rcon owner could execute into the game console. <font color=red> NOTE: be careful to assign an appropriate level to this command.</font>
+  * *!cmd {{{<cmd>}}}* : Same as "_\rcon _". It can execute whatsoever command _cmd_ a rcon owner could execute into the game console. <font color=red> NOTE: be careful to assign an appropriate level to this command in config file.</font>
 
   * *!cy* : Immediately cycle to the next map.
 
@@ -35,7 +35,7 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!kk {{{<target>}}}* : kick the target player from gameserver
 
-  * *!lev{{{<num>}}} {{{<target>}}}* : Assigns the level _num_ to the target player. <font color=red> NOTE: be careful to assign an appropriate level to this command.</font>
+  * *!lev{{{<num>}}} {{{<target>}}}* : Assigns the level _num_ to the target player. <font color=red> NOTE: be careful to assign an appropriate level to this command in config file.</font>
 
   * *!map{{{<map>}}}* : Immediately loads the specified map. _map_ must be a valid map name or part of it.
 
