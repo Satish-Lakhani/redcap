@@ -21,8 +21,6 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!ab* : Switches balance mode between AUTO/MAN/OFF. When AUTO, balance is automatically executed at round end if needed. When MAN, balance is executed at round end if previously called by *!tm* command. When OFF no balance is allowed.
 
-  * *!b{{{<num>}}} {{{<target>}}}* : Temporarily bans the target player by GUID for _num_ hours. An upper limit for _num_ can be set in config file.
-
   * *!ban {{{<target>}}}* : Permanently ban the target player by IP and GUID.
 
   * *!cmd {{{<cmd>}}}* : Same as "_\rcon _". It can execute whatsoever command _cmd_ a rcon owner could execute into the game console. <font color=red> NOTE: be careful to assign an appropriate level to this command.</font>
@@ -35,7 +33,7 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!info* : give some information about Redcap itself and the gameserver.
 
-  * *!k {{{<target>}}}* : kick the target player from gameserver
+  * *!kk {{{<target>}}}* : kick the target player from gameserver
 
   * *!lev{{{<num>}}} {{{<target>}}}* : Assigns the level _num_ to the target player. <font color=red> NOTE: be careful to assign an appropriate level to this command.</font>
 
@@ -64,6 +62,8 @@ Not all the commands are available to everybody. An appropriate level can be ass
   * *!spam {{{<text>}}}* : add the text _text_ to the spamlist (you can use {{{^1 - ^}}}9 for colours).
 
   * *!spamlist* : lists all the spam sentences saved in RedCap memory.
+
+  * *!tban{{{<num>}}} {{{<target>}}}* : Temporarily bans the target player by GUID for _num_ hours. An upper limit for _num_ can be set in config file.
 
   * *!top* : display alltime, monthly, weekly and daily kill records.
 
