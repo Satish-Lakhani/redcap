@@ -56,7 +56,6 @@ class Database:
     "ban":"""UPDATE TBgiocatori SET BANNED = 5 WHERE GUID = ?""",     #banna una GUID
     "cercaskill" : """SELECT ROUND,SKILL,STREAK FROM TBskill WHERE GUID = ?""",           #cerca in base a una GUID
     "classifica":"""SELECT TBskill.NICK, ROUND, SKILL, STREAK, BANNED, LASTSEEN FROM TBskill, TBgiocatori WHERE TBskill.GUID=TBgiocatori.GUID AND ROUND>60 AND BANNED = 1 ORDER BY SKILL DESC""", #crea la classifica
-    "deregistra":"""UPDATE TBgiocatori SET BANNED = 0,NICK = ? WHERE GUID = ?""" ,#aggiorna il nick nel DB e gli toglie il passport
     "eliminaguid":"""DELETE FROM TBgiocatori WHERE GUID = ? AND BANNED < 5""", #elimina una GUID se non bannata
     "eliminavecchi":"""DELETE FROM TBgiocatori WHERE LASTSEEN < ? AND BANNED < 5""",#elimina dal DB le guid non piu utilizzate da parecchio tempo se non bannate
     "endban" : """UPDATE TBgiocatori SET TMPBAN = 0 WHERE GUID = ?""",  #termina un ban temporaneo
@@ -70,7 +69,6 @@ class Database:
     "kstreakupdpers" : """UPDATE TBskill SET STREAK = ? WHERE GUID = ?""", #aggiorno la kstreak personale
     "lastseen":"""UPDATE TBgiocatori SET LASTSEEN = ? WHERE GUID = ?""", #aggiorna la data di ultima visita
     "nick" : """SELECT NICK, BANNED FROM TBgiocatori WHERE GUID = ?""", #data una guid recupera il nick e la registrazione
-    "registra":"""UPDATE TBgiocatori SET BANNED = 1, NICK = ? WHERE GUID = ?""" ,#aggiorna il nick nel DB e gli assegna il passport
     "tmpban" : """UPDATE TBgiocatori SET TMPBAN = ? WHERE GUID = ?""",  #banna una GUID temporaneamente
     "trovazeroround":"""SELECT TBgiocatori.GUID FROM TBskill, TBgiocatori WHERE TBskill.GUID=TBgiocatori.GUID AND TBskill.ROUND < 2 AND TBgiocatori.BANNED < 5""" #trova i player che non hanno giocato nemmeno due round completi.
     }

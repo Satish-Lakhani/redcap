@@ -3,21 +3,16 @@
 
 #TODO fare controllo armi ammesse per team
 #TODO fare anche ban per nick
-#TODO e' effettivamente necessario recuperare gli alias alla connection o si fa su richiesta?
 #TODO eliminare gli alias piu vecchi di n giorni
-#TODO note per warmode: no kick, warn o richiami per badguid o badnick, tkill o thit o censura (registrare variazione skill?), non registrare ne spammare record. no spam vari.
-#TODO fare comando hit che dice le hit eseguite in percentuale
 #TODO fare manutenzioni programmate
 #TODO evitare che un crash durante cw cancelli la config war
 #TODO fare comando shuffle
 #TODO fare bilanciamento immediato in modalita CTF
-#eliminare penalita per autokill con nade
 #fare archiviazione dialoghi
-#TODO azzerare la tabella skill (o tutta il db?)
 #TODO completare classifica 
 #TODO fare comando DBban e DBunban
-#TODO sistemare voto che rimane sempre attivo.
 #TODO bannare guid originale per cambio guid in game
+#TODO fare comando join
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -60,7 +55,7 @@ def q3ut4_parse():
     """parsa la directory q3ut4"""
     M_RC.GSRV.Q3ut4["map"] = M_AUX.StandardMaps                       #carico solo mappe di base
     M_RC.GSRV.Q3ut4["cfg"] = []
-    PARSER.q3ut4_check(M_CONF.ServerPars["UrtPath"], M_RC.GSRV.Q3ut4, M_RC.GSRV.MapCycle)   #recupero mappe e cfg.
+    PARSER.q3ut4_check(M_CONF.SV_UrtPath, M_RC.GSRV.Q3ut4, M_RC.GSRV.MapCycle)   #recupero mappe e cfg.
 
 def redcap_main():
     while 1:

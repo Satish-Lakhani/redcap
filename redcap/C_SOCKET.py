@@ -3,19 +3,20 @@
 
 import socket
 import time
+import M_CONF
 
 class Sock:
     """gestisce l'invio dei comandi al gameserver e le rispettive risposte"""
 
-    def __init__(self,parametri):
+    def __init__(self):
         """inizializzo il lanciatore di comandi utilizzando i parametri di config"""
-        self.rcon = parametri["ServerRcon"]                                                     #Rcon del gamenserver
-        self.server = parametri["ServerIP"]                                                     #IP del gameserver
-        self.port = parametri["ServerPort"]                                                     #porta del gameserver
-        self.sleeptime = parametri["Tsleep"]                                                    #tempo di attesa tra 2 comandi
-        self.log = parametri["ServerLog"]                                                       #path del log di RedCap
+        self.rcon = M_CONF.Sck_ServerRcon                                                     #Rcon del gamenserver
+        self.server = M_CONF.Sck_ServerIP                                                     #IP del gameserver
+        self.port = M_CONF.Sck_ServerPort                                                     #porta del gameserver
+        self.sleeptime = M_CONF.Sck_Tsleep                                                    #tempo di attesa tra 2 comandi
+        self.log = M_CONF.Sck_ServerLog                                                       #path del log di RedCap
         self.s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)                               #creo il socket
-        self.s.settimeout(parametri["ServerTimeout"])                                           #timeout del socket
+        self.s.settimeout(M_CONF.Sck_ServerTimeout)                                           #timeout del socket
         self.Header = chr(255) + chr(255) + chr(255) + chr(255) + "rcon " + self.rcon + " "     #creo l'header del comando rcon
         self.sv_resp = ""                                                                       #Risposta del gameserver
         try:
@@ -26,7 +27,6 @@ class Sock:
 
     def cmd(self,comando):
         """gestisce il lancio comandi al server attraverso la routine protetta __invia"""
-        #pass    #DEBUG
         self.sv_resp = ""
         self.sv_resp = self.__invia(comando)
         time.sleep(self.sleeptime)

@@ -34,7 +34,7 @@ class Player:
         #self.rusher =0         #tempo totale di vita sul gameserver / tempo totale (da un'idea della bravura e camperosita)
         self.skill = 0.0        #skill
         self.skill_coeff = 1.0  #coefficiente di moltiplicazione skill che tende a 1 a round infiniti coeff = 1+[A/(round^C+B)]
-        self.skill_var = 0.0    #variazione skill durante il periodo di connessione #TODO o mappa corrente?
+        self.skill_var = 0.0    #variazione skill durante la mappa corrente?
         self.slot_id = None     #(string) slot id
         self.team = 0           #(string) 0=Sconosciuto 1=red, 2=blue, 3=spect
         self.tempban = 0        #data dell'ultimo tempban
@@ -76,14 +76,13 @@ class Player:
 
     def load_loc(self, loc):                    #loc = (guid, IP, provider, location, old_ip)
         """aggiorna i dati presi dalla tabella loc"""
-        if not loc[4]:                              #campo vuoto
+        if not loc[4] and self.ip:                              #campo vuoto
             self.oldIP = self.ip
             return
         else:
             self.oldIP = loc[4]                     #carico i vecchi IP
             if self.oldIP.find(self.ip) == -1:      #se non c'e l'IP lo aggiungo
-                self.oldIP += " "
-                self.oldIP += self.ip
+                self.oldIP += " %s" %(self.ip)
 
     def invalid_guid(self):
         """verifica se la guid del player NON e' corretta"""

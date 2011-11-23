@@ -1,6 +1,6 @@
 #!/bin/bash
 while :
 do
-python RCmain.py
+python M_MAIN.py
 done
 
