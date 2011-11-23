@@ -1,63 +1,63 @@
-import M_CONF
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
 import math
-
+import M_CONF
 
 class Server:
     """Rappresenta il gameserver"""
-    def __init__(self,parametri, sk_pars, warn_pars):
-        self.AliasDuration = parametri["AliasDuration"]
-        self.AntiReconInterval = parametri["AntiReconInterval"]         #Tempo minimo fra due connessioni
+    def __init__(self):
+        self.AliasDuration = M_CONF.SV_AliasDuration
+        self.AntiReconInterval = M_CONF.SV_AntiReconInterval            #Tempo minimo fra due connessioni
         self.Attivo = True                                              #TODO: da gestire. Presuppongo che il server sia up finche non provo il contrario
-        self.BalanceMode = parametri["BalanceMode"]                     #modalita' di bilanciamento 0=disattivato 1=attivato 2=automatico
+        self.BalanceMode = M_CONF.SV_BalanceMode                        #modalita' di bilanciamento 0=disattivato 1=attivato 2=automatico
         self.BalanceRequired = False                                    #e' stato richiesto un balance se True
-        self.Baseconf = parametri["Baseconf"]                           #config di base
-        self.Basewar = parametri["Basewar"]                             #config di base per CW
-        self.FloodControl = parametri["FloodControl"]                   #Flood control abilitato
+        self.Baseconf = M_CONF.SV_Baseconf                              #config di base
+        self.Basewar = M_CONF.SV_Basewar                                #config di base per CW
+        self.FloodControl = M_CONF.SV_FloodControl                      #Flood control abilitato
         self.Full = 1                                                   #0 = vuoto, 1= c'e gente 2= pieno (da usare per kikkare gli spect o cose simili)
         self.Gametype = ""                                              #gametype
-        self.KsMin = sk_pars["Ks_min"]                                  #minima streak affinche' il bot segnali la killstreak
-        self.KsNot = sk_pars["Ks_not"]                                  #minima notoriety per segnalazione killstreak
-        self.Ks_show = sk_pars["Ks_show"]                               #minima ks per segnalazione in chat
-        self.Ks_showbig = sk_pars["Ks_showbig"]                         #minima ks per segnalazione in bigtext
-        self.MapCycle = parametri["MapCycle"]                           #nome file mapcycle
+        self.KsMin = M_CONF.Sk_Ks_min                                   #minima streak affinche' il bot segnali la killstreak #TODO non usata?
+        self.KsNot = M_CONF.Sk_Ks_not                                   #minima notoriety per segnalazione killstreak
+        self.Ks_show = M_CONF.Sk_Ks_show                                #minima ks per segnalazione in chat
+        self.Ks_showbig = M_CONF.Sk_Ks_showbig                          #minima ks per segnalazione in bigtext
+        self.MapCycle = M_CONF.SV_MapCycle                              #nome file mapcycle
         self.MapName = ""                                               #nome mappa corrente
         self.MapTime = 0                                                #tempo in secondi da quando e' iniziata la mappa
         self.MatchMode = ""                                             #stato matchmode
         self.MaxClients = "99"                                          #Numero massimo player
-        self.MaxFlood = parametri["MaxFlood"]                           #massimo numero di say in un tempo fissato
-        self.MaxNickChanges = parametri["MaxNickChanges"]               #massimi change nick in un tempo fissato
-        self.MinNot_toplay = parametri["MinNot_toplay"]                 #Notoriety minima per entrare nel server
-        self.Nick_is_good = parametri["goodNick"]                       #Nick ben formato
-        self.Nick_is_length = parametri["minNick"]                      #Lunghezza minima nick
+        self.MaxFlood = M_CONF.SV_MaxFlood                              #massimo numero di say in un tempo fissato
+        self.MaxNickChanges = M_CONF.SV_MaxNickChanges                  #massimi change nick in un tempo fissato
+        self.MinNot_toplay = M_CONF.Nt_MinNot_toplay                    #Notoriety minima per entrare nel server
+        self.Nick_is_good = M_CONF.SV_goodNick                          #Nick ben formato
+        self.Nick_is_length = M_CONF.SV_minNick                         #Lunghezza minima nick
+        self.Nukemode = False                                           #Se True nuko tutti a random
         self.LastMapChange = 0.0                                        #Time al quale e' stato chiesto un cambio mappa
         self.LastVote = 0.0                                             #Time al quale e' stato chiesto l'ultimo voto
-        self.Logfolder = parametri["Logfolder"]                         #cartella dei logs
+        self.Logfolder = M_CONF.SV_Logfolder                            #cartella dei logs
         self.PT = {}                                                    #PlayerTable: dizionario che rappresenta i players presenti sul server e le loro caratteristiche
         self.Q3ut4 = {"cfg":[], "map":[], "mapcycle":[]}                #elenco mappe, cfg e mapcycle
         self.RedCapStatus = 0                                           #stato RedCap (1=paused 0=attivo) #TODO serve o basta server_mode?
         self.Restart_when_empty = False                                 #se true riavvia il server quando vuoto.
         self.Sbil = 1                                                   #coefficiente di sbilanciamento teams
         self.Server_mode = 0                                            #0 = fase avvio 1 = normale 2 = warmode
-        self.ShowHeadshots = parametri["ShowHeadshots"]                 #Se True mostra gli headshot
-        self.Sk_Kpp = sk_pars["Sk_Kpp"]                                 #Sensibilita' skill: numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
-        self.Sk_penalty = sk_pars["Sk_penalty"]                         #penalita' per teamkill (espressa come n. di kill da fare per bilanciare una penalty)
-        self.Sk_range = sk_pars["Sk_range"]                             #Ampiezza curva skill:piu grande e' il valore, piu' alti sono i valori di skill che si possono raggiungere.
-        self.Sk_team_impact = sk_pars["Sk_team_impact"]                 #frazione della skill calcolata sul team avversario, rispetto a quella calcolata sulla vittima
+        self.ShowHeadshots = M_CONF.SV_ShowHeadshots                    #Se True mostra gli headshot
+        self.Sk_Kpp = M_CONF.Sk_Kpp                                     #Sensibilita' skill: numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
+        self.Sk_penalty = M_CONF.Sk_penalty                             #penalita' per teamkill (espressa come n. di kill da fare per bilanciare una penalty)
+        self.Sk_range = M_CONF.Sk_range                                 #Ampiezza curva skill:piu grande e' il valore, piu' alti sono i valori di skill che si possono raggiungere.
+        self.Sk_team_impact = M_CONF.Sk_team_impact                     #frazione della skill calcolata sul team avversario, rispetto a quella calcolata sulla vittima
         self.SpamList = []                                              #Lista degli spam (recuperati dal file spam.txt)
         self.SpamlistIndex = 0                                          #indice della frase da spammare
         self.TopScores = {"Alltime":[0.0, 0, " "],"Month":[0.0, 0, " "],"Week":[0.0, 0, " "],"Day":[0.0, 0, " "], "HSkill":[0.0, 0, " "], "LSkill":[0.0, 0, " "]} #Top scores del server (alltime, month, week, day, Hskill Lskill) (time, valore, DBnick)
         self.TeamSkill = [0,0]                                          #skill media team red e blue
         self.TeamSkillCoeff = 1                                         #coefficiente di bilanciamento per teams squilibrati
         self.TeamMembers = [0,0,0,0]                                    #players 0=sconosciuto, 1=red, 2=blue, 3=spect
-        self.UrtPath = parametri["UrtPath"]                             #path relativo della cartella q3ut4 di urt
+        self.UrtPath = M_CONF.SV_UrtPath                                #path relativo della cartella q3ut4 di urt #TODO sembra non utilizzato. Verificare.
         self.VoteMode = False                                           #indica se il voto e' abilitato
-        self.WarnMax = warn_pars["max_warns"]                           #valore di warning dopo di che vieni kikkato  (si azzerano al reconnect). Uno slap dati da Redcap o un tk o un hit comportano automaticamente un warning.
-        self.WarnAdm = warn_pars["adm_warn"]                            #valore di uno warn dato da un admin
-        self.WarnTk = warn_pars["tk_warn"]                              #valore di uno warn causato da un tk (in realta' un tk vale circa tk_warn + 3 hit_warn
-        self.WarnHit = warn_pars["hit_warn"]                            #valore di uno warn dato da un team hit
+        self.WarnMax = M_CONF.W_max_warns                               #valore di warning dopo di che vieni kikkato  (si azzerano al reconnect). Uno slap dati da Redcap o un tk o un hit comportano automaticamente un warning.
+        self.WarnAdm = M_CONF.W_adm_warn                                #valore di uno warn dato da un admin
+        self.WarnTk = M_CONF.W_tk_warn                                  #valore di uno warn causato da un tk (in realta' un tk vale circa tk_warn + 3 hit_warn
+        self.WarnHit = M_CONF.W_hit_warn                                #valore di uno warn dato da un team hit
         self.z_profiler = { }                                           #DEBUG
 
     def is_kstreak(self, K, V, ora):
@@ -68,7 +68,7 @@ class Server:
             res +=  1                           #killstreak da annuncio in bigtext
         elif self.PT[K].ks >= self.Ks_show:
             res += 2                            #killstreak da Annuncio in console
-        if self.PT[K].ks > self.PT[K].ksmax:
+        if self.PT[K].ks > self.PT[K].ksmax and self.tot_players(1) >= M_CONF.MinPlayers:
             self.PT[K].ksmax = self.PT[K].ks
             res += 4                            #killstreak personal record
         if self.PT[V].ks >= self.Ks_showbig:

@@ -36,6 +36,25 @@ StandardMaps = [                    #mappe standard incluse nello z_pack
 "ut4_uptown",
 ]
 
+#colori per i dialoghi
+colori = {
+"0":"#00FF00",
+"1":"#00FFFF",
+"2":"#FFFF00",
+"3":"#FFFFCC",
+"4":"#006600",
+"5":"#0066FF",
+"6":"#330033",
+"7":"#330033",
+"8":"#FF6600",
+"9":"#FF66FF",
+"10":"#FF66FF",
+"11":"#969696",
+"12":"#99CC99",
+"13":"#FFCCCC",
+"14":"#6699FF"
+}
+
 def cr_riavvia(autorestart):
     """restarto RedCap ed eventualmente il server"""
     import os
@@ -44,7 +63,7 @@ def cr_riavvia(autorestart):
     if log_backup():    #provo a fare il backup del log
         M_RC.scrivilog("DAILY LOG AND DB BACKUP DONE.", M_CONF.crashlog)
         os.remove(M_CONF.NomeFileLog)
-        M_RC.SCK.cmd("exec " + M_CONF.ServerPars["Baseconf"])                   #ricarico il config TODO vedere se sufficiente per ricreare il games.log
+        M_RC.SCK.cmd("exec " + M_CONF.SV_Baseconf)                   #ricarico il config TODO vedere se sufficiente per ricreare il games.log
     if autorestart > 0:
         M_RC.scrivilog("REDCAP and GAMESERVER DAILY RESTART.", M_CONF.crashlog)
         os.system("./S_full_restart.sh")
@@ -57,50 +76,40 @@ def log_backup():
     """Esegue funzioni di backup sul file di log. Utilizzata da cr_riavvia()"""
     import shutil
     import re
+    timestamp = time.strftime("%Y_%b_%d", time.localtime())
     #leggo il log
     logfile = open(M_CONF.NomeFileLog, "r")
     contenuto = logfile.read()
     logfile.close()
     contenuto=re.sub(r"Item: .* ","",contenuto) #elimino le voci Item
     #creo il file di log in Archivi
-    logfile = open(M_CONF.NomeArchivi + "/" + time.strftime("%Y_%b_%d", time.localtime()) + ".log", "w")
+    logfile = open(M_CONF.NomeArchivi + "/" + timestamp + ".log", "w")
     logfile.write(contenuto)
     logfile.close()
     #Copio il DB in Archivi
-    shutil.copy2(M_CONF.NomeDB, M_CONF.NomeArchivi + "/" + time.strftime("%Y_%b_%d", time.localtime()) + "_" + M_CONF.NomeDB)
+    shutil.copy2(M_CONF.NomeDB, M_CONF.NomeArchivi + "/" + timestamp + "_" + M_CONF.NomeDB)
     #Estraggo i dialoghi
     logfile = open(M_CONF.NomeFileLog, "r")
-    contenuto = logfile.read()
+    dialoghi = logfile.read()
     logfile.close()
-    testo = testo.replace("<", "&lt;")
-    testo = testo.replace(">", "&gt;")
-    says=re.findall(r"say: (?P<colore>\d+) (?P<nick>.*): (?P<frase>.*)",testo)
-    #TODO da finire
-    return True
-
-
+    dialoghi = dialoghi.replace("<", "&lt;")
+    dialoghi = dialoghi.replace(">", "&gt;")
+    says=re.findall(r"say: (?P<colore>\d+) (?P<nick>.*): (?P<frase>.*)", dialoghi)
     #creo il file dei dialoghi
-    logfile = open(RCconf.NomeFileLog, "r")
-    testo=logfile.read()
-    logfile.close()
-    testo = testo.replace("<", "&lt;")
-    testo = testo.replace(">", "&gt;")
-    says=re.findall(r"say: (?P<colore>\d+) (?P<nick>.*): (?P<frase>.*)",testo)
     html = "<table class='dialoghi'>" #preparo la tabella e inserisco i dialoghi
     for say in says:
-        if say[2].find("!!sk") != -1 or say[2].find("!!z") != -1:
-            continue #elimino !!sk e !!z
+        if say[2].find("!sk") != -1 or say[2].find("!z") != -1 or say[2].find("!al") != -1:
+            continue #elimino comandi inutili
         html +="<tr><td>"
-        html += "<span style='color:" + RCwords.colori[say[0]] + "'>" +say[1] + "</span></td><td style='color:#bbbbbb'>" + say[2]
+        html += "<span style='color:" + colori[say[0]] + "'>" +say[1] + "</span></td><td style='color:#bbbbbb'>" + say[2]
         html +="</td></tr>\n"
     html +="</table>"
     #salvo il tutto in un file
-    saylog = time.strftime("%Y_%b_%d", time.localtime()) + "_saylog.log"
-    logfile = open(RCconf.NomeArchivi + "/" + saylog, "w")
+    logfile = open(M_CONF.NomeArchivi + "/" + timestamp + "_saylog.log", "w")
     logfile.write(html)
     logfile.close()
-
-
+    #TODO trasferire ilfile
+    return True
 
 def web_rank():
     """crea la classifica in formato tabella a partire dal DB"""
@@ -122,7 +131,7 @@ def web_rank():
     cicli = len(dati1)
     tmp = []
     while i < cicli:
-        if dati1[i][3] > M_CONF.minRounds:
+        if dati1[i][3] > M_CONF.w_minRounds:
             tmp.append(dati1[i] + dati2[i][1:len(dati2[i])] + dati3[i][1:len(dati3[i])] + dati4[i][1:len(dati4[i])])
         i+=1
     Dump = sorted(tmp, key=lambda dato: dato[2], reverse=True)    #record ordinati per skill decrescente
@@ -130,12 +139,15 @@ def web_rank():
     #DATI: #0: GUID    # 1: Nick    # 2: Skill    # 3: Round    # 4: Lastconnection    # 5: Level    # 6: Tempban    # 7: Reputation    # 8: Firstconnect    # 9: streak    # 10: alias    # 11: varie
     #HIT: #12: head    # 13: torso    # 14: arms    # 15: legs    # 16: body    #LOC: #17: IP    # 18: provider    # 19: location    # 20: oldip    #KILL: #21-38: kills #39: deaths
 
-    table_ini = "<script type='text/javascript' src='http://%s/wz_tooltip.js'></script><table class=\"sortable\"><tbody>" %(M_CONF.webdata["w_url"] + M_CONF.webdata["w_directory"]) #parte iniziale della table
-    header = "<tr><th>NICK</th><th>SKILL</th><th>STREAK</th><th>ROUNDS</th><th title='Headshots'>HS</th><th>LAST IP</th><th>LAST VISIT</th></tr>" #Header (SKILL, NICK, STREAK, ROUNDS, HIT, IP, LASTVISIT)
+    table_ini = "<script type='text/javascript' src='http://%s/wz_tooltip.js'></script><table class=\"sortable\"><tbody>" %(M_CONF.w_url + M_CONF.w_directory) #parte iniziale della table
+    header = "<tr><th>ID</th><th>NICK</th><th>SKILL</th><th>STREAK</th><th>ROUNDS</th><th title='Headshots'>HS</th><th>LAST IP</th><th>LAST VISIT</th></tr>" #Header (SKILL, NICK, STREAK, ROUNDS, HIT, IP, LASTVISIT)
     table_end = "</tbody></table>"              #parte finale della table
     TABLE = table_ini + header                  #contenuto della table
-
+    i_id = 1
     for guid in Dump:                           #CREO LA RIGA ed i suoi span. RIGHE CON TOOLTIP: <a href="#" onmouseover="TagToTip('Span2')" onmouseout="UnTip()">Homepage </a>
+        #*** Cella ID ***************
+        ID = cella(str(i_id), "", "", "")
+        i_id += 1
         #*** Cella SKILL ************
         if guid[39] <> 0:   #evito divisione per 0
             tooltip_SKILL = "K/D:"+ str(round(sum(guid[21:38]) / float(guid[39]),2))
@@ -148,14 +160,18 @@ def web_rank():
         #_________ TOOLTIP
         rc_nick = "<div class='rc_nick'>%s</div>" %striphtml(str(guid[1]))  #nick
         masked_guid = guid[0][0:6] + "***"
-        aff = round(guid[3] / M_CONF.Notoriety["roundXpoint"] + ((guid[4]-guid[8])/87400) / M_CONF.Notoriety["dayXpoint"] + guid[7], 1)
+        aff = round(guid[3] / M_CONF.Nt_roundXpoint + ((guid[4]-guid[8])/87400) / M_CONF.Nt_dayXpoint + guid[7], 1)
         affid = aff
-        if affid < M_CONF.MinNotoriety:
-            giorni = (M_CONF.MinNotoriety - affid) * M_CONF.Notoriety["dayXpoint"]
+        stx=""
+        if affid < M_CONF.Nt_MinNot_toplay:
+            stx="color:red"
+            giorni = (M_CONF.Nt_MinNot_toplay - affid) * M_CONF.Nt_dayXpoint
             affid = str(affid) + " <span style='color:red;'>Non affidabile per %s giorni</span>" %str(giorni)
         f_conn = time.strftime("%d/%m/%Y&nbsp;%H:%M",time.localtime(guid[8]))
+        #colonna1
         rc_col1_txt = "Guid: <b>%s</b><br />Level: <b>%s</b><br />Affidabilit&agrave;: <b>%s</b><br />First Visit: <b>%s</b>" %(masked_guid, str(guid[5]), str(affid), f_conn)
         rc_col1 = "<div class='rc_col1'>%s</div>" %rc_col1_txt
+        #colonna2
         aliases = guid[10].split("  ")
         rc_col2_txt = "<b>ALIAS:</b><br />"
         for al in aliases:
@@ -163,7 +179,7 @@ def web_rank():
             if len(al) == 2:
                 rc_col2_txt += (time.strftime("%d/%m/%Y&nbsp;%H:%M",time.localtime(float(al[0]))) + "&nbsp;<span class=rc_al>" + striphtml (str(al[1]) )+ "</span><br />")
         rc_col2 = "<div class='rc_col2'>%s</div>" %rc_col2_txt
-
+        #colonna3
         rc_col3_txt = "<b>IP:</b><br />"
         if guid[20]:
             ips = guid[20].split(" ")
@@ -173,8 +189,6 @@ def web_rank():
                 rc_col3_txt += (masked_ip + "<br />")
         else:
             rc_col3_txt += ("UNKNOWN<br />")
-
-
         rc_col3 = "<div class='rc_col3'>%s</div>" %rc_col3_txt
         rc_tip = rc_nick + rc_col1 + rc_col2 + rc_col3
         NICK_tooltip ="<div class='rc_tip'>%s</div>" %rc_tip
@@ -186,7 +200,7 @@ def web_rank():
             cls = "rc_cNICK_g"
         elif aff < M_CONF.MinNotoriety:
             cls = "rc_cNICK_r"
-        NICK = cella(txt, "", cls, "")
+        NICK = cella(txt, "", cls, stx)
         NICK_SPAN = "<span id='%s'>%s</span>" %(id, NICK_tooltip)
         #*** Cella STREAK ************
         STREAK = cella(str(guid[9]), "", "", "")
@@ -216,10 +230,10 @@ def web_rank():
         #*** Cella LAST VISIT ********
         hrs = (int(time.time() - guid[4]) // 60) // 60
         day = hrs // 24
-        l_conn = "%d giorni e %d ore" % (day, hrs % 24)
+        l_conn = "%d g. : %d h." % (day, hrs % 24)
         LASTVISIT = cella(l_conn, "", "", "")
         #*** CREO LA RIGA ************
-        riga_txt = NICK + SKILL + STREAK + ROUNDS + HSHOTS + IP + LASTVISIT
+        riga_txt = ID + NICK + SKILL + STREAK + ROUNDS + HSHOTS + IP + LASTVISIT
         riga = "<tr>%s</tr>" %riga_txt
         #_________ AGGIUNGO I TOOLTIPS
         riga += NICK_SPAN
@@ -229,11 +243,11 @@ def web_rank():
 
     TABLE += table_end  #Completo la table
     #Salvo in locale
-    htmlfile = open("HTML" + "/" + M_CONF.webdata["w_tabella"], "w")
+    htmlfile = open("HTML" + "/" + M_CONF.w_tabella, "w")
     htmlfile.write(TABLE)
     htmlfile.close()
     #trasferisco
-    if web_FTPtransfer("HTML" + "/" + M_CONF.webdata["w_tabella"], M_CONF.webdata["w_tabella"]):
+    if web_FTPtransfer("HTML" + "/" + M_CONF.w_tabella, M_CONF.w_tabella):
         return "WEBRANK TRANSFER OK"
     else:
         return "WEBRANK TRANSFER FAILED"
@@ -245,9 +259,9 @@ def web_FTPtransfer(filefrom, fileto):
     from ftplib import FTP
     htmlfile = open(filefrom, "rb")
     try:
-        connessione = FTP(M_CONF.webdata["w_url"])
-        connessione.login(M_CONF.webdata["w_login"], M_CONF.webdata["w_password"])   # connect to host, default port
-        connessione.cwd(M_CONF.webdata["ftp_directory"])
+        connessione = FTP(M_CONF.w_url)
+        connessione.login(M_CONF.w_login, M_CONF.w_password)   # connect to host, default port
+        connessione.cwd(M_CONF.w_ftp_directory)
         connessione.storbinary('STOR ' + fileto, htmlfile)
         connessione.quit()
     except:

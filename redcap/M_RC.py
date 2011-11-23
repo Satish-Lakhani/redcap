@@ -18,8 +18,8 @@ Status = eval( "M_%s.RC_status" %M_CONF.RC_lang)
 Logs = eval("M_%s.RC_logoutputs" %M_CONF.RC_lang)
 Killz = eval("M_%s.RC_kills" %M_CONF.RC_lang)
 
-SCK = C_SOCKET.Sock(M_CONF.SocketPars)                                              #Istanzio il socket
-GSRV = C_GSRV.Server(M_CONF.ServerPars, M_CONF.sv_SkillPars, M_CONF.sv_WarnPars)    #Istanzio il gameserver
+SCK = C_SOCKET.Sock()                                                                       #Istanzio il socket
+GSRV = C_GSRV.Server()                                                                          #Istanzio il gameserver
 DB = C_DB.Database(M_CONF.NomeDB)                                                   #Istanzio il DB
 
 #DB.connetti()
@@ -86,8 +86,8 @@ def clientuserinfo(info):                       #info (0=slot_id, 1=ip, 2=guid)
         GSRV.player_ADDINFO(info)                   #gli aggiungo GUID e IP
     elif info[2] <> GSRV.PT[info[0]].guid:          #cambio guid durante il gioco #TODO vedere se possibile, se no eliminare
         if GSRV.Server_mode <> 2:                   #non attivo in warmode
-            GSRV.PT[info[0]].notoriety += M_CONF.Notoriety["guidchange"]    #gli abbasso la notoriety in proporzione
-            scrivilog(str(GSRV.PT[info[0]].ip) + " " + GSRV.PT[info[0]].guid + " GUID CHANGE TO: " + info[2], "crash.log")
+            GSRV.PT[info[0]].notoriety += M_CONF.Nt_guidchange    #gli abbasso la notoriety in proporzione
+            scrivilog(" GUID CHANGE: " + str(GSRV.PT[info[0]].nick) + " IP: " + str(GSRV.PT[info[0]].ip) + " GUID: " + GSRV.PT[info[0]].guid + " CHANGED TO: " + info[2], M_CONF.badguid)
             kick("Redcap", info[0], Lang["guidchange"]%info[1])
 
 def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
@@ -98,7 +98,8 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
             say(Lang["startupend"], 1)
     if GSRV.Server_mode <> 2:                   #non attivo in warmode
         if GSRV.PT[info[0]].invalid_guid():                                                 #CONTROLLO VALIDITA GUID (adesso che ho pure il nick!)
-            GSRV.PT[info[0]].notoriety += M_CONF.Notoriety["badguid"]                       #abbasso la notoriety
+            GSRV.PT[info[0]].notoriety += M_CONF.Nt_badguid                       #abbasso la notoriety
+            scrivilog("BADGUID: " + str(GSRV.PT[info[0]].nick) + " IP: " + str(GSRV.PT[info[0]].ip) + " GUID: " + GSRV.PT[info[0]].guid, M_CONF.badguid)
             kick("Redcap", info[0], Lang["invalidguid"]%info[1])                            #e lo kikko         #TODO  registrare nick e ip in DB o in log
             return  #inutile andare avanti
         if GSRV.PT[info[0]].invalid_nick(GSRV.Nick_is_length, GSRV.Nick_is_good, info[1]):  #CONTROLLO VALIDITA NICK (non ancora assegnato al player!)
@@ -155,8 +156,8 @@ def cr_floodcontrol():
     """verifica (periodica) che nessun player abbia fatto flood"""
     for PL in GSRV.PT:
         if GSRV.PT[PL].flood >= GSRV.MaxFlood:
-            GSRV.PT[PL].reputation += M_CONF.Notoriety["floodpenalty"]
-            GSRV.PT[PL].notoriety = GSRV.PT[PL].notoriety_upd(M_CONF.Notoriety["roundXpoint"], M_CONF.Notoriety["dayXpoint"])   #aggiorno la notoriety
+            GSRV.PT[PL].reputation += M_CONF.Nt_floodpenalty
+            GSRV.PT[PL].notoriety = GSRV.PT[PL].notoriety_upd(M_CONF.Nt_roundXpoint, M_CONF.Nt_dayXpoint)   #aggiorno la notoriety
             kick("Redcap", GSRV.PT[PL].slot_id, Lang["flood"]%GSRV.PT[PL].nick)
         else:
             GSRV.PT[PL].flood = 0        #Se non e kikkato lo rimetto a zero
@@ -174,7 +175,7 @@ def cr_full():
                     GSRV.Full = 1     
     elif clients == 0:                          # faccio operazioni da SERVER VUOTO
         GSRV.Full = 0
-        GSRV.MinNot_toplay = M_CONF.ServerPars["MinNot_toplay"] #rimetto la MinNot_toplay al valore base.
+        GSRV.MinNot_toplay = M_CONF.Nt_MinNot_toplay #rimetto la MinNot_toplay al valore base.
         if GSRV.Server_mode == 2:               #tolgo la configurazione war
             SCK.cmd("g_password ''")            #tolgo la password
             SCK.cmd("exec " + GSRV.Baseconf)    #carico la config di base
@@ -198,12 +199,15 @@ def cr_nickrotation():
         else:
             GSRV.PT[PL].nickchanges = 0        #Se non e' kikkato lo rimetto a zero
 
+def cr_nukeall():
+    pass    #TODO
+
 def cr_notorietycheck():
     """controllo notoriety"""
     for PL in GSRV.PT:
         if GSRV.PT[PL].notoriety < GSRV.MinNot_toplay and GSRV.PT[PL].tobekicked == 0:  #false per evitare di spammare 2 volte
             say(Lang["lownotoriety"]%(GSRV.PT[PL].nick, GSRV.PT[PL].notoriety, GSRV.MinNot_toplay), 0)   #TODO trasformare in tell
-            time_to_wait = (GSRV.MinNot_toplay - GSRV.PT[PL].notoriety) * M_CONF.Notoriety["dayXpoint"]
+            time_to_wait = (GSRV.MinNot_toplay - GSRV.PT[PL].notoriety) * M_CONF.Nt_dayXpoint
             say(Lang["lownotoriety2"]%str(time_to_wait), 0)
             GSRV.PT[PL].tobekicked = 1
 
@@ -259,13 +263,15 @@ def cr_unvote():
     """verifica (periodica) che il voto non sia rimasto attivo dopo il comando !v"""
     if GSRV.VoteMode and ((time.time() - GSRV.LastVote) > M_CONF.voteTime):
         GSRV.VoteMode = False
+        SCK.cmd("g_allowVote " + str(M_CONF.unvoteType))     # disabilito il voto
+        say(Lang["voteOFF"], 0)
 
 def cr_warning():
     """verifica se qualche player ha troppi warning o se e tobekicked"""
     for PL in GSRV.PT:
         if GSRV.PT[PL].warning >= GSRV.WarnMax:
-            GSRV.PT[PL].reputation += M_CONF.Notoriety["warnpenalty"]
-            GSRV.PT[PL].notoriety = GSRV.PT[PL].notoriety_upd(M_CONF.Notoriety["roundXpoint"], M_CONF.Notoriety["dayXpoint"])   #aggiorno la notoriety
+            GSRV.PT[PL].reputation += M_CONF.Nt_warnpenalty
+            GSRV.PT[PL].notoriety = GSRV.PT[PL].notoriety_upd(M_CONF.Nt_roundXpoint, M_CONF.Nt_dayXpoint)   #aggiorno la notoriety
             kick("Redcap", GSRV.PT[PL].slot_id, Lang["warning"]%GSRV.PT[PL].nick)
 
 def db_datacontrol(guid,id):
@@ -274,7 +280,7 @@ def db_datacontrol(guid,id):
     dati = DB.esegui(DB.query["cercadati"], (guid,)).fetchone()     #PROVO A CARICARE da TABELLA DATI
     if dati:                                                        #IL PLAYER ESISTE IN DB recupero i dati (guid, DBnick, skill, rounds, lastconn, level, tempban, notoriety, firstconn, streak, alias, varie)
         GSRV.PT[id].isinDB = True                                   #esiste gia nel DB
-        GSRV.PT[id].load_dati(dati, M_CONF.Notoriety["roundXpoint"], M_CONF.Notoriety["dayXpoint"], time.time())
+        GSRV.PT[id].load_dati(dati, M_CONF.Nt_roundXpoint, M_CONF.Nt_dayXpoint, time.time())
     else:                                                               #IL PLAYER NON ESISTE IN DB: gli assegno i valori non ancora assegnati e lo registro inserendo guid e nick
         GSRV.PT[id].DBnick = GSRV.PT[id].nick                           #gli assegno il DBnick (potra' essere cambiato in seguito con il comando !nick)
         GSRV.PT[id].alias = [[str(time.time()), GSRV.PT[id].nick]]      #gli assegno il suo primo alias
@@ -374,7 +380,7 @@ def ini_recordlist():
     dati = DB.esegui(DB.query["getrecords"]).fetchall()
     DB.disconnetti()
     for element in dati:    #TIPO VAL TIME OWNER
-        GSRV.TopScores[element[0]][0] = element[2]   #time
+        GSRV.TopScores[element[0]][0] = float(element[2])   #time
         GSRV.TopScores[element[0]][1] = element[1]   #val
         GSRV.TopScores[element[0]][2] = element[3]   #owner
 
@@ -386,6 +392,7 @@ def ini_spamlist():
         buf.close()
         GSRV.SpamList = spam
     if M_CONF.RecordSpam:
+        GSRV.SpamList.append("^2RedCap ^4%s ^2by Lebbra! #" %M_CONF.versione)
         GSRV.SpamList.append(Lang["top"]%("Alltime", str(GSRV.TopScores["Alltime"][1]), str(GSRV.TopScores["Alltime"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(float(GSRV.TopScores["Alltime"][0])))))
         GSRV.SpamList.append(Lang["top"]%("Month", str(GSRV.TopScores["Month"][1]), str(GSRV.TopScores["Month"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(float(GSRV.TopScores["Month"][0])))))
         GSRV.SpamList.append(Lang["top"]%("Week", str(GSRV.TopScores["Week"][1]), str(GSRV.TopScores["Week"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(float(GSRV.TopScores["Week"][0])))))
@@ -664,9 +671,9 @@ def info(richiedente, parametri):       #TODO finire    #FUNZIONA
     """parametri vari server:IP admin, nextmap,ecc"""
     versione = "^2RedCap ^5%s " %M_CONF.versione
     autore = "^3by bw|Lebbra! ^2IP/Port: ^5"
-    server = "%s:%s" %(M_CONF.SocketPars["ServerIP"], M_CONF.SocketPars["ServerPort"])
+    server = "%s:%s" %(M_CONF.Sck_ServerIP, M_CONF.Sck_ServerPort)
     tell(richiedente, versione + autore + server)
-    tell(richiedente, "^2Players:^3U:%s ^1R:%s ^5B:%s ^2S:%s ^3Servermode:^5%s"%(str(GSRV.TeamMembers[0]), str(GSRV.TeamMembers[1]), str(GSRV.TeamMembers[2]), str(GSRV.TeamMembers[3]), str(GSRV.Server_mode)))
+    tell(richiedente, "^2Players:^3U:%s ^1R:%s ^5B:%s ^2S:%s ^3Servermode:^5%s" %(str(GSRV.TeamMembers[0]), str(GSRV.TeamMembers[1]), str(GSRV.TeamMembers[2]), str(GSRV.TeamMembers[3]), str(GSRV.Server_mode)))
 
 def kick(richiedente, parametri, reason = ""):  #FUNZIONA
     """Kikka un player dal server"""
@@ -760,18 +767,23 @@ def nuke(richiedente, parametri):   #FUNZIONA
     if target.isdigit():                                                   #se ho trovato lo slot
          SCK.cmd("nuke " + target)
          lanciatore = GSRV.PT[richiedente].nick
-         say(Lang["nuked"]%(GSRV.PT[target].nick, lanciatore),0)
+         say(Lang["nuked"]%(lanciatore, GSRV.PT[target].nick),0)
 
 def notlev(richiedente, parametri):
     """cambia temporaneamente la notoriety necessaria per giocare sul server"""
     if parametri.group("num").isdigit():
         GSRV.MinNot_toplay = parametri.group("num")
     else:
-        GSRV.MinNot_toplay = M_CONF.ServerPars["MinNot_toplay"]
+        GSRV.MinNot_toplay = M_CONF.Nt_MinNot_toplay
     say(Lang["not_changed"] %str(GSRV.MinNot_toplay), 2)
 
 def nukeall():
-    pass #TODO da fare
+    if GSRV.Nukemode:
+        GSRV.Nukemode = False       #nukemode disattivato
+        say("^7NUKEMODE ^2OFF", 2)
+    else:
+        GSRV.Nukemode = True        #nukemode disattivato
+        say("^7NUKEMODE ^1ON", 2)
 
 def ora (richiedente, parametri):   #FUNZIONA
     """dice l'ora"""
@@ -862,9 +874,9 @@ def status(richiedente, parametri, modo = M_CONF.status):       #FUNZIONA
     if not parametri.group("target"):                     #comando status senza target: do nick e slot di tutti
         for player in GSRV.PT:
             if GSRV.PT[richiedente].level >= M_CONF.lev_admin:
-                tell(richiedente, "^4%s ^%s%s ^7Aff.%s ^4Lev.%s" %(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick, str(round(GSRV.PT[player].notoriety, 1)), str(GSRV.PT[player].level)))
+                tell(richiedente, "^6%s ^%s%s  ^3DB.^5%s ^3Aff.^7%s ^3Lev.^7%s " %(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick, str(GSRV.PT[player].DBnick), str(round(GSRV.PT[player].notoriety, 1)), str(GSRV.PT[player].level)))
             else:
-                tell(richiedente, "^4%s ^%s%s ^7Aff.%s" %(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick, str(round(GSRV.PT[player].notoriety, 1))))
+                tell(richiedente, "^6%s ^%s%s ^3Aff.^7%s" %(GSRV.PT[player].slot_id, str(GSRV.PT[player].team), GSRV.PT[player].nick, str(round(GSRV.PT[player].notoriety, 1))))
         return
     elif GSRV.PT[richiedente].level >= M_CONF.lev_admin:
         modo = M_CONF.status_adm
@@ -920,7 +932,7 @@ def trust(richiedente, parametri):
     """aumenta o diminuisce la reputation"""
     target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():
-        repu_var = M_CONF.Notoriety["guidminage"] / M_CONF.Notoriety["dayXpoint"]   #unita di variazione di reputazione
+        repu_var = 1.0
         if parametri.group("num").isdigit():
             repu_var = repu_var * int(parametri.group("num"))
         if parametri.group("un") == "un":                                           #diminuisco l'affidabilita
@@ -928,7 +940,7 @@ def trust(richiedente, parametri):
         else:
             GSRV.PT[target].reputation += repu_var
             GSRV.PT[target].tobekicked = 0          #se c era un tobekicked lo sospendo
-        GSRV.PT[target].notoriety = GSRV.PT[target].notoriety_upd(M_CONF.Notoriety["roundXpoint"], M_CONF.Notoriety["dayXpoint"])   #aggiorno la notoriety
+        GSRV.PT[target].notoriety = GSRV.PT[target].notoriety_upd(M_CONF.Nt_roundXpoint, M_CONF.Nt_dayXpoint)   #aggiorno la notoriety
         tell(richiedente, Lang["not_update"] %(str(GSRV.PT[target].nick), str(GSRV.PT[target].notoriety)))
         tell(target, Lang["not_update"] %(str(GSRV.PT[target].nick), str(GSRV.PT[target].notoriety)))
 
@@ -938,6 +950,7 @@ def unwar(richiedente, parametri):   #FUNZIONA
     say(Lang["warunloaded"]%GSRV.Baseconf, 2)
     SCK.cmd("exec %s" %GSRV.Baseconf)                #eseguo la config di base
     GSRV.Server_mode = 1                             #passo in modalita normale
+    SCK.cmd("reload")                               #avvio la cfg
 
 def war(richiedente, parametri):    #FUNZIONA
     """setta il server in modalita' war"""
