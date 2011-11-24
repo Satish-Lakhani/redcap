@@ -4,8 +4,19 @@
 
 
 = Features list=
-  # Exhaustive chat command set (See [RedCap_User_guide full command list].)
+  # Exhaustive chat command set with more than 30 different commands (See [RedCap_User_guide full command list]).
+  # Fully customizable configuration (See [RedCap_config_file full configuration guide])
+  # Anticheat control: !RedCap kiks for bad guid, in game guid change, nick rotation hack.
+  # Anti flooding control (fully customizable)
+  # Irregular nickname (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp])
+  # Bad words censoring (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp] list)
+  # Player skill calculation system based on statistic kill expectancy, opponent skill and opposite team mean skill.
+  # General player stats showing skill, killstreak, hit distributionand more...
+  # IP recording in stats.
+  # Player alias recording in stats.
 
+Sample of remote webrank:
+[http://flic.kr/p/aK479F]
 
 = Credits & Licence =
 RedCap has been developed from scratch by bw|Lebbra!
