@@ -4,7 +4,7 @@
 
 
 = Features list=
-  # Exhaustive chat command set (See full command list here.)
+  # Exhaustive chat command set (See [RedCap_User_guide full command list].)
 
 
 = Credits & Licence =
