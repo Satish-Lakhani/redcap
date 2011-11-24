@@ -10,7 +10,7 @@ Do not forgot to save M_CONF.py with _*.py*_ extension. A different extension wi
 = Config vars =
 
 * THESE PARAMETERS MUST BE CONFIGURED OR REDCAP WILL NOT RUN PROPERLY!!! *
-||VARIABLE||VALUE||DESCRIPTION||
+||VARIABLE||SAMPLE VALUE||DESCRIPTION||
 ||{{{NomeFileLog}}}|| "../xxxxx.log"||_Relative path of gameserver log_||
 ||{{{AdminGuids}}}||["XXXXXXXXXXXXXXXXXXXXXXXX"]*||_Guid in this field is automatically enabled to the highest admin level (level 100)_||
 ||{{{SV_Baseconf}}}||"xxxxxx.cfg"|| _Name of gameserver base config file_||
@@ -21,16 +21,16 @@ Do not forgot to save M_CONF.py with _*.py*_ extension. A different extension wi
 ||{{{Sck_ServerPort}}}||27960||_Gameserver IP port_||
 
 * THESE PARAMETERS MUST BE CONFIGURED IF  _{{{Website_ON = True}}}_ OR REDCAP WILL NOT RUN PROPERLY!!! *
-||VARIABLE||VALUE||DESCRIPTION||
+||VARIABLE||SAMPLE VALUE||DESCRIPTION||
 ||{{{Website_ON}}}||False|| _(True or False) True if you want to use RedCap web features (rank and chatlog  FTP transfer to auxiliary website)_||
-||w_url|| 'www.yoursite.com'|| _FTP url of auxiliary website_||
-||w_login ||'xxxxxxxx'||_FTP login of auxiliary website_||
-||w_password||'xxxxxxx'||_FTP password of auxiliary website_||
-||w_ftp_directory||'/httpdocs/serverstats'||_#Remote relative path of folder used by RedCap for FTP transfer_||
-||w_directory||'/serverstats'||_Remote relative url of folder used by RedCap for FTP transfer_||
+||{{{w_url}}}|| 'www.yoursite.com'|| _FTP url of auxiliary website_||
+||{{{w_login}}}||'xxxxxxxx'||_FTP login of auxiliary website_||
+||{{{w_password}}}||'xxxxxxx'||_FTP password of auxiliary website_||
+||{{{w_ftp_directory}}}||'/httpdocs/serverstats'||_#Remote relative path of folder used by RedCap for FTP transfer_||
+||{{{w_directory}}}||'/serverstats'||_Remote relative url of folder used by RedCap for FTP transfer_||
 
 * THESE PARAMETERS SHOULD BE CONFIGURED IN ORDER TO CUSTOMIZE YOUR REDCAP *
-||VARIABLE||VALUE||DESCRIPTION||
+||VARIABLE||SAMPLE VALUE||DESCRIPTION||
 ||{{{KickForSpace}}}|| True ||_(True or False) If True RedCap kicks a spect when gameserver is full. Admins cannot be kicked._||
 ||{{{maxSlap}}}||10||_Max. slap number to be used with !s{{{[num]}}} command. If num > 10 then num = 10._||
 ||{{{MinPlayers}}}||4||_Min. number of active players for registering a record_||
@@ -41,3 +41,6 @@ Do not forgot to save M_CONF.py with _*.py*_ extension. A different extension wi
 ||{{{botname}}}||"^8RC: "||_prefix of Redcap outputs (#TODO not used yet)._||
 ||{{{RC_lang }}}||"ITA"||_Language localization for RedCap. ITA only (#TODO ENG FRA and others. See M_ITA.py for translation procedure)._||
 ||{{{gameserver_autorestart}}}|| 2||_#Automatically restart the Gameserver: 0: no restart 1: daily restart 2: restart when empty._||
+
+=UNDER CONSTRUCTION=
+==TO BE CONTINUED==
