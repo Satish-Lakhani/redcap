@@ -14,7 +14,7 @@ _Do not_ forgot to save M_CONF.py with _*.py*_ extension. A different extension 
 = Config vars =
 
 * THESE PARAMETERS MUST BE CONFIGURED OR REDCAP WILL NOT RUN PROPERLY!!! *
-||VARIABLE||SAMPLE VALUE||DESCRIPTION||
+||VARIABLE||EXAMPLE VALUE||DESCRIPTION||
 ||{{{NomeFileLog}}}|| "../xxxxx.log"||_Relative path of gameserver log_||
 ||{{{AdminGuids}}}||["XXXXXXXXXXXXXXXXXXXXXXXX"]*||_Guid in this field is automatically enabled to the highest admin level (level 100)_||
 ||{{{SV_Baseconf}}}||"xxxxxx.cfg"|| _Name of gameserver base config file_||
@@ -25,7 +25,7 @@ _Do not_ forgot to save M_CONF.py with _*.py*_ extension. A different extension 
 ||{{{Sck_ServerPort}}}||27960||_Gameserver IP port_||
 
 * THESE PARAMETERS MUST BE CONFIGURED IF  _{{{Website_ON = True}}}_ OR REDCAP WILL NOT RUN PROPERLY!!! *
-||VARIABLE||SAMPLE VALUE||DESCRIPTION||
+||VARIABLE||EXAMPLE VALUE||DESCRIPTION||
 ||{{{Website_ON}}}||False|| _(True or False) True if you want to use !RedCap web features (rank and chatlog  FTP transfer to auxiliary website)_||
 ||{{{w_url}}}|| 'www.yoursite.com'|| _FTP url of auxiliary website_||
 ||{{{w_login}}}||'xxxxxxxx'||_FTP login of auxiliary website_||
@@ -34,7 +34,7 @@ _Do not_ forgot to save M_CONF.py with _*.py*_ extension. A different extension 
 ||{{{w_directory}}}||'/serverstats'||_Remote relative url of folder used by !RedCap for FTP transfer_||
 
 * THESE PARAMETERS SHOULD BE CONFIGURED IN ORDER TO CUSTOMIZE YOUR REDCAP *
-||VARIABLE||SAMPLE VALUE||DESCRIPTION||
+||VARIABLE||EXAMPLE VALUE||DESCRIPTION||
 ||{{{KickForSpace}}}|| True ||_(True or False) If True !RedCap kicks a spect when gameserver is full. Admins cannot be kicked._||
 ||{{{maxSlap}}}||10||_Max. slap number to be used with !s{{{[num]}}} command. If num > 10 then num = 10._||
 ||{{{MinPlayers}}}||4||_Min. number of active players for registering a record_||
