@@ -3,10 +3,11 @@
 = RedCap =
 
 
-== Features ==
-UNDER CONSTRUCTION
+= Features list=
+  # Exhaustive chat command set (See full command list here.)
 
-== Credits & Licence ==
+
+= Credits & Licence =
 RedCap has been developed from scratch by bw|Lebbra!
 
 Download and use of RedCap is free of charge for non-commercial use under GNU/GPL 2
