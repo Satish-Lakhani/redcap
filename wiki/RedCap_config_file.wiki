@@ -51,7 +51,7 @@ _Do not_ forgot to save M_CONF.py with _*.py*_ extension. A different extension 
 ||{{{SV_FloodControl}}}||True||_(True or False) If True, !Redcap will kick players that spams more than {{{SV_MaxFlood}}} chat lines in less then15 sec._||
 ||{{{SV_MaxFlood}}}||6||_Max number of chat lines in 15 sec. Active only when {{{SV_FloodControl = True}}}_||
 ||{{{SV_MaxNickChanges}}}||3||_Max nick changes in 15 sec._||
-||{{{SV_goodNick}}}||r"[a-zA-Z]"||_Regex that player nick must satisfy to be allowed to play in the game server._||
+||{{{SV_goodNick}}}||{{{r"[a-zA-Z]"}}}||_Regex that player nick must satisfy to be allowed to play in the game server._||
 ||{{{SV_minNick}}}||3||_Min length allowed for a player nick._||
 ||{{{SV_ShowHeadshots}}}||True||_(True or False) If True headshot are displayed in upper gameserver chat._||
 
