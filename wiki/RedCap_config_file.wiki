@@ -1,40 +1,40 @@
 #summary Configuration file guide.
 
-== Preface ==
+= Preface =
 The file *M_CONF.py* includes all the parameters you need to config for a correct running of RedCap.
 
 M_CONF.py is a python text file and it can be edited with whatever text editor. In order to have a good visualization I strongly suggest to use code editors like [http://www.geany.org Geany] or Notepad++ and not text processors as Word or Notepad.
 
 Do not forgot to save M_CONF.py with _*.py*_ extension. A different extension will like .txt or .doc will prevent RedCap to start.
 
-== Config vars ==
+= Config vars =
 
-* THESE PARAMETERS ***MUST*** BE CONFIGURED OR REDCAP WILL NOT RUN PROPERLY!!! *
+* THESE PARAMETERS _MUST_ BE CONFIGURED OR REDCAP WILL NOT RUN PROPERLY!!! *
+||
+||{{{NomeFileLog}}}|| "../games.log"||    _Relative path of gameserver log_||
 
-*NomeFileLog = "../games.log"*    _Relative path of gameserver log_
+||{{{AdminGuids}}} ||["XXXXXXXXXXXXXXXXXXXXXXXX"]*|| _Guid in this field is automatically enabled to the highest admin level (level 100)_||
+||
+*{{{SV_Baseconf}}} = "xxxxxx.cfg"*  _Name of gameserver base config file_
 
-*AdminGuids = ["XXXXXXXXXXXXXXXXXXXXXXXX"]* _Guid in this field is automatically enabled to the highest admin level (level 100)_
+*{{{SV_UrtPath}}} = "../../../q3ut4"*    _Relative path of Urban Terror  q3ut4 folder_
 
-*SV_Baseconf = "xxxxxx.cfg"*  _Name of gameserver base config file._
+*{{{SV_MapCycle}}} =  "xxxxxx.cfg"*    _Name of cyclemap config file_
 
-*SV_UrtPath = "../../../q3ut4"*    _Relative path of Urban Terror  q3ut4 folder_
+*{{{Sck_ServerRcon}}} = "XXXXXXXX"*   _Gameserver rcon password_
 
-*SV_MapCycle =  "xxxxxx.cfg"*    _Name of cyclemap config file_
+*{{{Sck_ServerIP}}} =  "xxx.yyy.zzz.kkk"*      _Gameserver IP address_
 
-*Sck_ServerRcon = "XXXXXXXX"*   _Gameserver rcon password_
-
-*Sck_ServerIP =  "xxx.yyy.zzz.kkk"*      _Gameserver IP address_
-
-*Sck_ServerPort = 27960* #Gameserver IP port
+*{{{Sck_ServerPort}}} = 27960* _Gameserver IP port_
 
 * THESE PARAMETERS **MUST** BE CONFIGURED IF  _{{{Website_ON = True}}}_ OR REDCAP WILL NOT RUN PROPERLY!!! *
 
-Website_ON = False #(True or False) True if you want to use RedCap web features (rank and chatlog  FTP transfer to auxiliary website)
+{{{Website_ON = False #(True or False) True if you want to use RedCap web features (rank and chatlog  FTP transfer to auxiliary website)
 w_url = 'www.yoursite.com'      #FTP url of auxiliary website
 w_login = '*******' #FTP login of auxiliary website
 w_password = '********' #FTP password of auxiliary website
 w_ftp_directory = '/httpdocs/serverstats', #Remote relative path of folder used by RedCap for FTP transfer
-w_directory = '/serverstats' #Remote relative url of folder used by RedCap for FTP transfer
+w_directory = '/serverstats' #Remote relative url of folder used by RedCap for FTP transfer}}}
 
 ### ==================================================================  ###
 ### THESE PARAMETERS *CAN* BE CONFIGURED IN ORDER TO CUSTOMIZE YOUR REDCAP   ###
