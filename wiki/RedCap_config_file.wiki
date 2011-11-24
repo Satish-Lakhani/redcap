@@ -8,3 +8,44 @@ M_CONF.py is a python text file and it can be edited with whatever text editor. 
 Do not forgot to save M_CONF.py with _*.py*_ extension. A different extension will like .txt or .doc will prevent RedCap to start.
 
 == Config vars ==
+
+=== THESE PARAMETERS ***MUST*** BE CONFIGURED OR REDCAP WILL NOT RUN PROPERLY!!! ===
+
+NomeFileLog = "../games.log"    #Relative path of gameserver log
+AdminGuids = ["****************************"] #Guid in this field is automatically enabled to the highest admin level (level 100)
+SV_Baseconf = "server.cfg"  #Name of gameserver base config file.
+SV_UrtPath = "../../../q3ut4"    #Relative path of Urban Terror  q3ut4 folder
+SV_MapCycle =  "mapcycle.cfg"    #Name of cyclemap config file
+Sck_ServerRcon = "********"   #Gameserver rcon password
+Sck_ServerIP =  "***.***.***.***"      #Gameserver IP address
+Sck_ServerPort = 27960 #Gameserver IP port
+
+=== THESE PARAMETERS **MUST** BE CONFIGURED IF  *** Website_ON = True *** OR REDCAP WILL NOT RUN PROPERLY!!! ===
+
+Website_ON = False #(True or False) True if you want to use RedCap web features (rank and chatlog  FTP transfer to auxiliary website)
+w_url = 'www.yoursite.com'      #FTP url of auxiliary website
+w_login = '*******' #FTP login of auxiliary website
+w_password = '********' #FTP password of auxiliary website
+w_ftp_directory = '/httpdocs/serverstats', #Remote relative path of folder used by RedCap for FTP transfer
+w_directory = '/serverstats' #Remote relative url of folder used by RedCap for FTP transfer
+
+### ==================================================================  ###
+### THESE PARAMETERS *CAN* BE CONFIGURED IN ORDER TO CUSTOMIZE YOUR REDCAP   ###
+### ==================================================================  ###
+#PLAYER
+KickForSpace = True #(True or False) If True RedCap kicks a spect when gameserver is full. Admins cannot be kicked.
+maxSlap = 10 #Max. slap number to be used with !s[num] command. If num > 10 then num = 10.
+
+#RECORD
+MinPlayers = 4 #Min. number of active players for registering a record
+MinNotoriety = 0 #Min. notoriety level required to a player for registering a record
+
+#CONSOLE SPAMS
+RecordSpam = True #(True or False) If True, Redcap periodically spams records in chat
+CustomSpam = True #(True or False) If True, Redcap periodically spams sentences stored in spam.txt,
+Spamtime = 140 #Time between two consecutive spams
+
+#REDCAP
+botname = "^8RC| " #prefix of Redcap outputs (#TODO not used yet)
+RC_lang = "ITA" #Language localization for RedCap. ITA only #TODO (ENG FRA and others. See M_ITA.py for translation procedure)
+gameserver_autorestart = 2 #Automatically restart the Gameserver: 0: no restart 1: daily restart 2: restart when empty.
