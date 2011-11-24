@@ -1,31 +1,46 @@
 #summary Redcap requirement and features list
 
-= RedCap requirements=
+= !RedCap requirements=
+_if your server do not comply requirements 1, 2, 3, it will be *not* possible to run !RedCap unless your server Provider install it for you._
 
+  # Python >2.5 installed on the server (It is standard on Linux based gameserver, to be verified on Windows based server)
+  # Remote FTP access to the server
+  # Possibility to remote start a script on the game server, or at least to modify the existing script starting Urban Terror.
+  # Console remote access to the game server (ssh type) is *not* a must but it helps a lot.
+  # *No* need of MySQL
 
 = Features list=
-  # Exhaustive chat command set with more than 30 different commands (See [RedCap_User_guide full command list]). Command use is recorded in a separate log file for further use.
-  # Fully customizable configuration (See [RedCap_config_file full configuration guide])
-  # Anticheat control: !RedCap kicks for bad guid, in game guid change, nick rotation hack. Nick IP and GUID are recorded in a separate log file for further use.
-  # Automatic (or manual) team balance.
-  # Anti flooding control (fully customizable).
-  # Automatic daily maintenance (DB clean, gameserver restart, files backup, etc...)
-  # Irregular nickname (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp])
-  # Bad words censoring (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp] list)
-  # Player skill calculation system based on statistic kill expectancy, opponent skill and opposite team mean skill.
-  # General player stats showing skill, killstreak, hit distribution and more...
-  # IP recording in stats.
-  # Player alias recording in stats.
-  # Player temporary ban and enforced ban by IP and GUID
-  # Acces control to gameserver based on player reliability (customizable)
-  # Anti reconnection system
-  # One command switch to and from CW mode with possibility to load different configuration files.
-  # Possibility to manage (create, delete, list) spam messages directly from game chat.
+_Most of these features are customizable and can be switched on or off._
+
+  * Exhaustive chat command set with more than 30 different commands (See [RedCap_User_guide full command list]). Command use is recorded in a separate log file for further use.
+  * Possibility to use all rcon commands from game chat through !cmd{{{<_cmd_>}}}
+  * Use authorization level individually customizable for each command.
+  * Fully customizable configuration file (See [RedCap_config_file full configuration guide]).
+  * Anticheat control: !RedCap kicks for bad guid, in game guid change, nick rotation hack. In case of automatic kick IP and GUID are recorded in a separate log file for further use.
+  * Automatic (or manual) team balance.
+  * Anti flooding control (fully customizable).
+  * Automatic daily maintenance (DB cleaning, gameserver restart, files backup, etc...)
+  * Irregular nicknames control (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp])
+  * Bad words censoring (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp] list)
+  * Player skill calculation system based on statistic kill expectancy, opponent skill and opposite team mean skill.
+  * General player stats showing skill, killstreak, hit distribution and more...
+  * IP recording in stats.
+  * Player alias recording in stats.
+  * Player temporary ban and enforced ban by IP and GUID
+  * Access control to gameserver based on player reliability (customizable)
+  * Anti reconnection system.
+  * One command switch to and from CW mode with possibility to load different configuration files. RedCap stops every visible activity during CW.
+  * Possibility to manage (create, delete, list) spam messages directly from game chat.
+  * Spectator auto kick when gameserver is full.
+  * Automatic or manual warnings for bad behaviours (teamkills, teamhits, offensive language, etc). Automatic kick at max warning level overtaking.
+  * *No* automatic ban. Ban is the heaviest in game penalty, then !RedCap philosophy is to leave this decision to an human admin.
 
 = TO DO List=
   # Player geolocalization
   # Player identification after IP and GUID change (euristic)
   # IrC integration
+  # Web interface for !RedCap configuration.
+  # Granular gameserver allowed weapon choice
 
 Sample of remote webrank:
 [http://www.bravewarriors.eu/EXT_IMG/stats.png]
@@ -37,16 +52,16 @@ Download and use of RedCap is free of charge for non-commercial use under GNU/GP
 
 Copyright (C) 2011 Alessandro Verdoni
 
-This program is free software; you can redistribute it and/or
+_This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
 as published by the Free Software Foundation; either version 2
-of the License.
+of the License._
 
-This program is distributed in the hope that it will be useful,
+_This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+GNU General Public License for more details._
 
-You should have received a copy of the GNU General Public License
+_You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA._
