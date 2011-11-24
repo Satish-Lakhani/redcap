@@ -20,32 +20,24 @@ Do not forgot to save M_CONF.py with _*.py*_ extension. A different extension wi
 ||{{{Sck_ServerIP}}}||"xxx.yyy.zzz.kkk"||_Gameserver IP address_||
 ||{{{Sck_ServerPort}}}||27960||_Gameserver IP port_||
 
-* THESE PARAMETERS **MUST** BE CONFIGURED IF  _{{{Website_ON = True}}}_ OR REDCAP WILL NOT RUN PROPERLY!!! *
+* THESE PARAMETERS MUST BE CONFIGURED IF  _{{{Website_ON = True}}}_ OR REDCAP WILL NOT RUN PROPERLY!!! *
+||VARIABLE||VALUE||DESCRIPTION||
+||{{{Website_ON}}}||False|| _(True or False) True if you want to use RedCap web features (rank and chatlog  FTP transfer to auxiliary website)_||
+||w_url|| 'www.yoursite.com'|| _FTP url of auxiliary website_||
+||w_login ||'xxxxxxxx'||_FTP login of auxiliary website_||
+||w_password||'xxxxxxx'||_FTP password of auxiliary website_||
+||w_ftp_directory||'/httpdocs/serverstats'||_#Remote relative path of folder used by RedCap for FTP transfer_||
+||w_directory||'/serverstats'||_Remote relative url of folder used by RedCap for FTP transfer_||
 
-{{{Website_ON = False #(True or False) True if you want to use RedCap web features (rank and chatlog  FTP transfer to auxiliary website)
-w_url = 'www.yoursite.com'      #FTP url of auxiliary website
-w_login = '*******' #FTP login of auxiliary website
-w_password = '********' #FTP password of auxiliary website
-w_ftp_directory = '/httpdocs/serverstats', #Remote relative path of folder used by RedCap for FTP transfer
-w_directory = '/serverstats' #Remote relative url of folder used by RedCap for FTP transfer}}}
-
-### ==================================================================  ###
-### THESE PARAMETERS *CAN* BE CONFIGURED IN ORDER TO CUSTOMIZE YOUR REDCAP   ###
-### ==================================================================  ###
-#PLAYER
-KickForSpace = True #(True or False) If True RedCap kicks a spect when gameserver is full. Admins cannot be kicked.
-maxSlap = 10 #Max. slap number to be used with !s[num] command. If num > 10 then num = 10.
-
-#RECORD
-MinPlayers = 4 #Min. number of active players for registering a record
-MinNotoriety = 0 #Min. notoriety level required to a player for registering a record
-
-#CONSOLE SPAMS
-RecordSpam = True #(True or False) If True, Redcap periodically spams records in chat
-CustomSpam = True #(True or False) If True, Redcap periodically spams sentences stored in spam.txt,
-Spamtime = 140 #Time between two consecutive spams
-
-#REDCAP
-botname = "^8RC| " #prefix of Redcap outputs (#TODO not used yet)
-RC_lang = "ITA" #Language localization for RedCap. ITA only #TODO (ENG FRA and others. See M_ITA.py for translation procedure)
-gameserver_autorestart = 2 #Automatically restart the Gameserver: 0: no restart 1: daily restart 2: restart when empty.
+* THESE PARAMETERS SHOULD BE CONFIGURED IN ORDER TO CUSTOMIZE YOUR REDCAP *
+||VARIABLE||VALUE||DESCRIPTION||
+||{{{KickForSpace}}}|| True ||_(True or False) If True RedCap kicks a spect when gameserver is full. Admins cannot be kicked._||
+||{{{maxSlap}}}||10||_Max. slap number to be used with !s{{{[num]}}} command. If num > 10 then num = 10._||
+||{{{MinPlayers}}}||4||_Min. number of active players for registering a record_||
+||{{{MinNotoriety}}}||0||_#Min. notoriety level required to a player for registering a record_||
+||{{{RecordSpam}}}||True||_(True or False) If True, Redcap periodically spams records in chat_||
+||{{{CustomSpam}}}|| True||_(True or False) If True, Redcap periodically spams sentences stored in spam.txt._||
+||{{{Spamtime}}}||140||_Time between two consecutive spams._||
+||{{{botname}}}||"^8RC: "||_prefix of Redcap outputs (#TODO not used yet)._||
+||{{{RC_lang }}}||"ITA"||_Language localization for RedCap. ITA only (#TODO ENG FRA and others. See M_ITA.py for translation procedure)._||
+||{{{gameserver_autorestart}}}|| 2||_#Automatically restart the Gameserver: 0: no restart 1: daily restart 2: restart when empty._||
