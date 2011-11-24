@@ -1,5 +1,10 @@
-#summary One-sentence summary of this page.
+#summary Configuration file guide.
 
-= Introduction =
+== Preface ==
+The file *M_CONF.py* includes all the parameters you need to config for a correct running of RedCap.
 
-UNDER CONSTRUCTION
+M_CONF.py is a python text file and it can be edited with whatever text editor. In order to have a good visualization I strongly suggest to use code editors like [http://www.geany.org Geany] or Notepad++ and not text processors as Word or Notepad.
+
+Do not forgot to save M_CONF.py with _*.py*_ extension. A different extension will like .txt or .doc will prevent RedCap to start.
+
+== Config vars ==
