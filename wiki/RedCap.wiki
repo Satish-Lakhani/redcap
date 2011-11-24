@@ -1,19 +1,31 @@
-#summary One-sentence summary of this page.
+#summary Redcap requirement and features list
 
-= RedCap =
+= RedCap requirements=
 
 
 = Features list=
-  # Exhaustive chat command set with more than 30 different commands (See [RedCap_User_guide full command list]).
+  # Exhaustive chat command set with more than 30 different commands (See [RedCap_User_guide full command list]). Command use is recorded in a separate log file for further use.
   # Fully customizable configuration (See [RedCap_config_file full configuration guide])
-  # Anticheat control: !RedCap kiks for bad guid, in game guid change, nick rotation hack.
-  # Anti flooding control (fully customizable)
+  # Anticheat control: !RedCap kicks for bad guid, in game guid change, nick rotation hack. Nick IP and GUID are recorded in a separate log file for further use.
+  # Automatic (or manual) team balance.
+  # Anti flooding control (fully customizable).
+  # Automatic daily maintenance (DB clean, gameserver restart, files backup, etc...)
   # Irregular nickname (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp])
   # Bad words censoring (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp] list)
   # Player skill calculation system based on statistic kill expectancy, opponent skill and opposite team mean skill.
   # General player stats showing skill, killstreak, hit distribution and more...
   # IP recording in stats.
   # Player alias recording in stats.
+  # Player temporary ban and enforced ban by IP and GUID
+  # Acces control to gameserver based on player reliability (customizable)
+  # Anti reconnection system
+  # One command switch to and from CW mode with possibility to load different configuration files.
+  # Possibility to manage (create, delete, list) spam messages directly from game chat.
+
+= TO DO List=
+  # Player geolocalization
+  # Player identification after IP and GUID change (euristic)
+  # IrC integration
 
 Sample of remote webrank:
 [http://www.bravewarriors.eu/EXT_IMG/stats.png]
