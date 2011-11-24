@@ -6,9 +6,9 @@ The file *M_CONF.py* includes all the parameters you need to config for a correc
 M_CONF.py is a python text file and it can be edited with whatever text editor. In order to have a good visualization I strongly suggest to use code editors like [http://www.geany.org Geany] or Notepad++ and not text processors as Word or Notepad. Use the editor to modify variables values.
 
 
-_Do not_ modify variable names, quotes or something else or RedCap could hung up.
+_Do not_ modify variable names, quotes or something else or !RedCap could hung up.
 
-_Do not_ forgot to save M_CONF.py with _*.py*_ extension. A different extension will like .txt or .doc will prevent RedCap to start.
+_Do not_ forgot to save M_CONF.py with _*.py*_ extension. A different extension will like .txt or .doc will prevent !RedCap to start.
 
 
 = Config vars =
