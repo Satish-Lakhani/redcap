@@ -11,12 +11,12 @@
   # Irregular nickname (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp])
   # Bad words censoring (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp] list)
   # Player skill calculation system based on statistic kill expectancy, opponent skill and opposite team mean skill.
-  # General player stats showing skill, killstreak, hit distributionand more...
+  # General player stats showing skill, killstreak, hit distribution and more...
   # IP recording in stats.
   # Player alias recording in stats.
 
 Sample of remote webrank:
-[http://flic.kr/p/aK479F]
+[http://www.bravewarriors.eu/EXT_IMG/stats.png]
 
 = Credits & Licence =
 RedCap has been developed from scratch by bw|Lebbra!
