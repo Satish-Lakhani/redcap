@@ -1,4 +1,4 @@
-[http://code.google.com/p/redcap/ <-home]
+[http://code.google.com/p/redcap/ <back to homepage]
 
 = Preface =
 The file *M_CONF.py* includes all the parameters you need to config for a correct running of RedCap.
