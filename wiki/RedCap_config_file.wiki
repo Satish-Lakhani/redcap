@@ -14,7 +14,6 @@ M_CONF.py is a python text file and it can be edited with whatever text editor. 
 *_Do not_* forgot to save M_CONF.py with _*.py*_ extension. A different extension like .txt or .doc will prevent !RedCap to start.
 
 = Localization =
-
 All the messages used by !RedCap are in Italian language and they stored in a file called *M_ITA.py*. 
 
 At the moment I have no time to translate it in other languages. If you wish to do it you are welcome (and please send me a copy :-)).
@@ -28,8 +27,11 @@ At the moment I have no time to translate it in other languages. If you wish to 
   # To enable the new language change RC_lang in config file, from "ITA" to the new language ("ENG" or whatever else).
 
 = Config vars =
+!RedCap uses a lot of configuration vars and you can set them in order to obtain the desired behaviour. Normally you do not need to modify all these values, but just some of them, and some other *_should not_* be changed. 
 
-* THESE PARAMETERS MUST BE CONFIGURED OR REDCAP WILL NOT RUN PROPERLY!!! *
+For quick configuration allowing to !RedCap to run, you have to modify just the SECTION 1. To enable webranking features you must modify the SECTION 2. The SECTION 3 modifies !RedCap standard behaviours and it is facultative. The SECTION 4 concerns some engine parameters and you are strongly discouraged to modify it. 
+
+* SECTION 1: THESE PARAMETERS MUST BE CONFIGURED OR REDCAP WILL NOT RUN PROPERLY!!! *
 ||VARIABLE||EXAMPLE VALUE||DESCRIPTION||
 ||{{{NomeFileLog}}}|| "../xxxxx.log"||_Relative path of gameserver log_||
 ||{{{AdminGuids}}}||["XXXXXXXXXXXXXXXXXXXXXXXX"]*||_Guid in this field is automatically enabled to the highest admin level (level 100)_||
@@ -40,7 +42,7 @@ At the moment I have no time to translate it in other languages. If you wish to 
 ||{{{Sck_ServerIP}}}||"xxx.yyy.zzz.kkk"||_Gameserver IP address_||
 ||{{{Sck_ServerPort}}}||27960||_Gameserver IP port_||
 
-* THESE PARAMETERS MUST BE CONFIGURED IF  _{{{Website_ON = True}}}_ OR REDCAP WILL NOT RUN PROPERLY!!! *
+* SECTION 2: THESE PARAMETERS MUST BE CONFIGURED IF  _{{{Website_ON = True}}}_ OR REDCAP WILL NOT RUN PROPERLY!!! *
 ||VARIABLE||EXAMPLE VALUE||DESCRIPTION||
 ||{{{Website_ON}}}||False|| _(True or False) True if you want to use !RedCap web features (rank and chatlog  FTP transfer to auxiliary website)_||
 ||{{{w_url}}}|| 'www.yoursite.com'|| _FTP url of auxiliary website_||
@@ -49,7 +51,7 @@ At the moment I have no time to translate it in other languages. If you wish to 
 ||{{{w_ftp_directory}}}||'/httpdocs/serverstats'||_#Remote relative path of folder used by !RedCap for FTP transfer_||
 ||{{{w_directory}}}||'/serverstats'||_Remote relative url of folder used by !RedCap for FTP transfer_||
 
-* THESE PARAMETERS SHOULD BE CONFIGURED IN ORDER TO CUSTOMIZE YOUR REDCAP *
+* SECTION 3: THESE PARAMETERS SHOULD BE CONFIGURED IN ORDER TO CUSTOMIZE YOUR REDCAP *
 ||VARIABLE||EXAMPLE VALUE||DESCRIPTION||
 ||{{{KickForSpace}}}|| True ||_(True or False) If True !RedCap kicks a spect when gameserver is full. Admins cannot be kicked._||
 ||{{{maxSlap}}}||10||_Max. slap number to be used with !s{{{[num]}}} command. If num > 10 then num = 10._||
@@ -128,7 +130,7 @@ At the moment I have no time to translate it in other languages. If you wish to 
 ||{{{lev_war}}}||1||_Loads a CW config and set the gameserver in war mode_||
 ||{{{lev_unwar}}}||1||_Unload war mode setting the game server to its standard configuration_||
 
-* THESE PARAMETERS MUST NOT BE CHANGED UNLESS YOU EXACTLY KNOW WHAT ARE YOU DOING OR REDCAP WILL NOT RUN PROPERLY!!! *
+* SECTION 4: THESE PARAMETERS MUST NOT BE CHANGED UNLESS YOU EXACTLY KNOW WHAT ARE YOU DOING OR REDCAP WILL NOT RUN PROPERLY!!! *
 ||VARIABLE||EXAMPLE VALUE||DESCRIPTION||
 ||{{{versione}}}||"1.00 Beta"||_!RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING OF THE SCRIPT OUTSIDE OF THIS CONFIGURATION FILE. !!!_||
 ||{{{badguid}}}||"badguid.log"||_Bad guids record file._||
