@@ -1,13 +1,13 @@
-#summary How to use RedCap bot.
+#summary How to use !RedCap bot.
 [http://code.google.com/p/redcap/ <back to homepage]
 = REDCAP USER MANUAL =
 
 == Preface ==
 
-*RedCap* bot is a python script aimed to manage Urban Terror gameservers from chat line. Features includes a wide range of user commands and a lot of automatic features. Most of them can be enabled/disabled from config file.
+*!RedCap* bot is a python script aimed to manage Urban Terror gameservers from chat line. Features includes a wide range of user commands and a lot of automatic features. Most of them can be enabled/disabled from config file.
 
 == Commands ==
-All Redcap commands starts with *!*, someone of them accepts one or more parameters.
+All !Redcap commands starts with *!*, someone of them accepts one or more parameters.
 Not all the commands are available to everybody. An appropriate level can be assigned to each command from config file.
 
 == Commands syntax ==
@@ -32,7 +32,7 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!f{{{<team>}}}{{{[rbs]}}} {{{<target>}}}* : Forces the target player to join the specified team (ex: _*!fr joh*_ will force player johnny to join red team).
 
-  * *!info* : give some information about Redcap itself and the gameserver.
+  * *!info* : give some information about !Redcap itself and the gameserver.
 
   * *!kk {{{<target>}}}* : kick the target player from gameserver
 
@@ -46,7 +46,7 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!mall* : mute all the players. If a player quits before map end, he will be muted again when reconnects.
 
-  * *!notoriety{{{<num>}}}* : Sets the lowest notoriety needed to play on the gameserver. All the players with a notoriety lower than _num_ will be kicked. When RedCap restarts, notoriety will be set again to the value specified into the config file.
+  * *!notoriety{{{<num>}}}* : Sets the lowest notoriety needed to play on the gameserver. All the players with a notoriety lower than _num_ will be kicked. When !RedCap restarts, notoriety will be set again to the value specified into the config file.
 
   * *!n {{{<target>}}}* : nuke the target player.
 
@@ -54,7 +54,7 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!pwd{{{<pwd>}}}* : set a password on the gameserver. To unset the password just type *!pwd*
 
-  * *!restart* : restart RedCap bot. Useful to reload config after some change.
+  * *!restart* : restart !RedCap bot. Useful to reload config after some change.
 
   * *!s{{{[num]}}} {{{<target>}}}* : slaps _num_ times the target player. If no _num_ is specified it slaps one time.
 
@@ -62,7 +62,7 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!spam {{{<text>}}}* : add the text _text_ to the spamlist (you can use {{{^1 - ^}}}9 for colours).
 
-  * *!spamlist* : lists all the spam sentences saved in RedCap memory.
+  * *!spamlist* : lists all the spam MESSAGES saved in !RedCap memory.
 
   * *!tban{{{<num>}}} {{{<target>}}}* : Temporarily bans the target player by GUID for _num_ hours. An upper limit for _num_ can be set in config file.
 
@@ -80,6 +80,6 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!v* : Enable vote for _X_ seconds. When vote is enabled vote mode is changed to "_voteType_" instead to "_unvoteType_". X, voteType and unvoteType can be set in config file.
 
-  * *!war{{{[cfg]}}}* : set the gameserver in matchmode loading the specifide configuration file. _cfg_ can be a valid config name or part of it. If no _cfg_ is specified. RedCap will use its own standard war config file (similar to Urban Zone TS config file). Once the server remains empty for a few seconds, the warmode will be unset and base usual config reloaded.
+  * *!war{{{[cfg]}}}* : set the gameserver in matchmode loading the specifide configuration file. _cfg_ can be a valid config name or part of it. If no _cfg_ is specified. !RedCap will use its own standard war config file (similar to Urban Zone TS config file). Once the server remains empty for a few seconds, the warmode will be unset and base usual config reloaded.
 
-  * *!z {{{[target]}}}* : displays some info about target player. Different detail level can be set in config file for normal players and admins. If no target is specified RedCap will show information (lesser detail) about all the players in game.
+  * *!z {{{[target]}}}* : displays some info about target player. Different detail level can be set in config file for normal players and admins. If no target is specified !RedCap will show information (lesser detail) about all the players in game.
