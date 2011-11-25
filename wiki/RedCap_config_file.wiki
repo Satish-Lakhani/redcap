@@ -17,7 +17,7 @@ M_CONF.py is a python text file and it can be edited with whatever text editor. 
 
 All the messages used by !RedCap are in Italian language and they stored in a file called *M_ITA.py*. 
 
-At the moment I have no time to translate it in other languages. If you wish to do it you are welcome.
+At the moment I have no time to translate it in other languages. If you wish to do it you are welcome (and please send me a copy :-)).
 
   # Make a copy of M_ITA.py and save it as M_XXX.py, where XXX represent the new language (i.e. ENG, FRA, GER, NET, etc..)
   # All message are in the following format: {{{"notimetocmd": "^3Devi aspettare ancora ^7%s minuti ^3per chiamare questo comando",}}} 
