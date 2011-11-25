@@ -18,13 +18,15 @@ All the messages used by !RedCap are in Italian language and they stored in a fi
 
 At the moment I have no time to translate it in other languages. If you wish to do it you are welcome (and please send me a copy :-)).
 
-  # Make a copy of M_ITA.py and save it as M_XXX.py, where XXX represent the new language (i.e. ENG, FRA, GER, NET, etc..)
-  # All message are in the following format: {{{"notimetocmd": "^3Devi aspettare ancora ^7%s minuti ^3per chiamare questo comando",}}} 
-  # You must translate _*only*_ the message between double quotes on the right side, after colon mark (i.e the above message could translated as follows: {{{"notimetocmd": "^2You must still wait for ^7%s minutes ^3to use this command",}}} 
-  # _*Do not_* cancel _%s_ it represents a !RedCap internal variable.
-  # _*Do not_* cancel the comma *,* at the end of each line or !RedCap will hung up
-  # You can change message colors changing the {{{^X}}}, where X has this meaning: 1=red; 2=green; 3=yellow; 4=blue; 5=light blue; 6=fuxia; 7=white; 8=black. In the above mentioned example _You must still wait for_ has been changed from yellow to green.
-  # To enable the new language change RC_lang in config file, from "ITA" to the new language ("ENG" or whatever else).
+  * Make a copy of M_ITA.py and save it as M_XXX.py, where XXX represent the new language (i.e. ENG, FRA, GER, NET, etc..)
+  * All message are in the following format: 
+{{{"notimetocmd": "^3Devi aspettare ancora ^7%s minuti ^3per chiamare questo comando",}}} 
+  * You must translate _*only*_ the message between double quotes on the right side, after colon mark (i.e the above message could translated as follow): 
+{{{"notimetocmd": "^2You must still wait for ^7%s minutes ^3to use this command",}}} 
+  * _*Do not_* cancel _%s_ it represents a !RedCap internal variable.
+  * _*Do not_* cancel the comma *,* at the end of each line or !RedCap will hung up
+  * You can change message colors changing the {{{^X}}}, where X has this meaning: 1=red; 2=green; 3=yellow; 4=blue; 5=light blue; 6=fuxia; 7=white; 8=black. In the above mentioned example _You must still wait for_ has been changed from yellow to green.
+  * To enable the new language, change RC_lang value in config file, from "ITA" to the new language ("ENG" or whatever else).
 
 = Config vars =
 !RedCap uses a lot of configuration vars and you can set them in order to obtain the desired behaviour. Normally you do not need to modify all these values, but just some of them, and some other *_should not_* be changed. 
