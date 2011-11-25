@@ -1,5 +1,6 @@
 #summary How to use RedCap bot.
-= RedCap user manual =
+[http://code.google.com/p/redcap/ <back to homepage]
+= !RedCap user manual =
 
 == Preface ==
 
