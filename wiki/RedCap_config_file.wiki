@@ -8,6 +8,8 @@ M_CONF.py is a python text file and it can be edited with whatever text editor. 
 
 _Do not_ modify variable names, quotes or something else or !RedCap could hung up.
 
+_Do not_ change variable format: if value is like 1.0 change to 2.0 or 0.5 or 4.3 etc, but *not* change to 1 or 2 or 7. If format is like 1 do *not* change to 1.0 or 2.5. If format is "pippo" do *not* change to _pippo_ or vice versa.
+
 _Do not_ forgot to save M_CONF.py with _*.py*_ extension. A different extension like .txt or .doc will prevent !RedCap to start.
 
 
