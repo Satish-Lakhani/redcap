@@ -1,5 +1,5 @@
 #summary Redcap requirement and features list
-
+[http://code.google.com/p/redcap/ <back to homepage]
 = !RedCap requirements=
 _if your server do not comply requirements 1, 2, 3, it will be *not* possible to run !RedCap unless your server Provider install it for you._
 
