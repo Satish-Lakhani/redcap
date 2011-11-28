@@ -22,10 +22,16 @@ Actually !RedCap has only been tested on Linux server with ssh access. It can pr
   # If previous points has been correctly done, your !RedCap is now ready to run!
 
 =Running the !RedCap=
-There are four different shell files for manage !RedCap start and/or automatic restart. All of them are based on a bash linux shell. If you want to run !RedCap on a Windows gameserver, you must correspondingly modify these files:
-  # *{{{S_start.sh}}}* _Basic start of !RedCap_
-  # *{{{S_prestart.sh}}}* _Autostart of !RedCap_
-  # *{{{S_full_restart.sh}}}* _Autorestart of !RedCap and UrbanTerror_
-  # *{{{start_urt.sh}}}* _Autostart of RedCap and UrbanTerror_
+There are four different shell files for manage !RedCap start and/or automatic restart. All of them are based on a bash linux shell. If you want to run !RedCap on a _Windows gameserver_, you must correspondingly modify these files:
 
-The easy way 
+  * *{{{S_start.sh}}}* _Basic start of !RedCap_
+    Run directly *{{{S_start.sh}}}* from a ssh console is mostly for debugging and it is *not* suggested for normal !RedCap use, because when you shut down ssh console, !RedCap will stop.
+
+  * *{{{S_prestart.sh}}}* _Autostart of !RedCap_  
+    Run *{{{S_prestart.sh}}}* from ssh console is a good solution if you are not interested in an autorestart of the Urban Terror gameserver. It is based on Unix [http://ss64.com/bash/screen.html screen] command. in ssh console move to {{{S_prestart.sh}}} folder and type this command *./S_prestart.sh*. When ssh console is closed !RedCap continues to run as a separate process called  {{{Redcap_1Beta}}}.
+
+  * *{{{start_urt.sh}}}* _Autostart of !RedCap and Urban Terror_
+    If you plan to use *{{{start_urt.sh}}}* you must copy it from DOC/ folder to the main gameserver directory (where ioUrTded.i386 is), and assign it chmod 775. The use of {{{start_urt.sh}}} is the best way to run !RedCap and it is intended as a replacement of Urban Terror starting script: it starts and stops toghether with the Urban Terror gameserver. On the other side you must have the rights for _correctly modify_ this file in order to run.
+
+  * *{{{S_full_restart.sh}}}* _Autorestart of !RedCap and Urban Terror_
+    The file *{{{S_full_restart.sh}}}* is just a hardlink to {{{start_urt.sh}}}. You can use it only if {{{start_urt.sh}}} is enabled. This file is used by !RedCap for a gameserver full restart when required.
