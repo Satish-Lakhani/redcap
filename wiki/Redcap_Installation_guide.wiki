@@ -22,3 +22,10 @@ Actually !RedCap has only been tested on Linux server with ssh access. It can pr
   # If previous points has been correctly done, your !RedCap is now ready to run!
 
 =Running the !RedCap=
+There are four different shell files for manage !RedCap start and/or automatic restart. All of them are based on a bash linux shell. If you want to run !RedCap on a Windows gameserver, you must correspondingly modify these files:
+  # *{{{S_start.sh}}}* _Basic start of !RedCap_
+  # *{{{S_prestart.sh}}}* _Autostart of !RedCap_
+  # *{{{S_full_restart.sh}}}* _Autorestart of !RedCap and UrbanTerror_
+  # *{{{start_urt.sh}}}* _Autostart of RedCap and UrbanTerror_
+
+The easy way 
