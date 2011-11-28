@@ -7,10 +7,18 @@ Actually !RedCap has only been tested on Linux server with ssh access. It can pr
 
 =Installation steps=
   # Check the [http://code.google.com/p/redcap/w/edit/RedCap minimal requirements] to run !RedCap. If they are not satisfied you cannot run the !RedCap.
-  # Download last !RedCap version from [http://code.google.com/p/redcap/downloads/list here]
+  # Download last !RedCap version from [http://code.google.com/p/redcap/downloads/list here].
   # Unzip it on your local PC: a folder named *{{{Redcap_1.0_Beta_(yyyymmdd)}}}* will be created.
-  # Suggestion: rename this folder with a easier name (i.e. RC10)
-  # Open the file *{{{M_CONF.py}}}* and configure it as explained [http://code.google.com/p/redcap/wiki/RedCap_config_file here]. This is _a very important step_. If !RedCap is not properly configured it will hung up. Once *{{{M_CONF.py}}}* is properly configured do not forget to save it.
+  # Suggestion: rename this folder with a easier and shorter name (i.e. RC10).
+  # Open the file *{{{M_CONF.py}}}* and configure it as explained [http://code.google.com/p/redcap/wiki/RedCap_config_file here]. _This is a very important step. If !RedCap is not properly configured it will hung up_. 
+  # Once *{{{M_CONF.py}}}* is properly configured do not forget to save it.
   # FTP transfer the entire !RedCap folder to your gameserver. It is strongly suggested to put the !RedCap folder into the same folder of gameserver log.
   # Assign execution permission (rwx-rw-rw or 755) to the following files: _{{{S_start.sh, S_prestart.sh, S_full_restart.sh}}}_
-  # Check your server configuration file for
+  # Check your gameserver configuration file for the following lines (_you can also set g_loghits "0", but !RedCap in that case will not give any info about hits)_. If someone of the below mentioned lines has been modified, restart the gameserver.
+    * {{{seta g_logsync "1"}}}
+    * {{{seta g_logroll "0"}}}
+    * {{{seta logfile "2"}}}
+    * {{{seta g_loghits "1"}}}
+  # If previous points has been correctly done, your !RedCap is now ready to run!
+
+=Running the !RedCap=
