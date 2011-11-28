@@ -6,7 +6,7 @@
 Actually !RedCap has only been tested on Linux server with ssh access. It can probably run on Windows server but I have no feedback about it.
 
 =Installation steps=
-  # Check the [http://code.google.com/p/redcap/w/edit/RedCap minimal requirements] to run !RedCap. If they are not satisfied you cannot run the !RedCap.
+  # Check the [http://code.google.com/p/redcap/wiki/RedCap minimal requirements] to run !RedCap. If they are not satisfied you cannot run the !RedCap.
   # Download last !RedCap version from [http://code.google.com/p/redcap/downloads/list here].
   # Unzip it on your local PC: a folder named *{{{Redcap_1.0_Beta_(yyyymmdd)}}}* will be created.
   # Suggestion: rename this folder with a easier and shorter name (i.e. RC10).
