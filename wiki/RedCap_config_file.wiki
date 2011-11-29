@@ -3,13 +3,13 @@
 
 [Preface#Preface]
 
-[Localization #Localization ]
+[Localization#Localization]
 
-[Config vars# Config vars ]
+[Config vars#Config vars]
 
 [Remote webrank configuration#Remote webrank configuration]
 
-= Preface =
+=Preface=
 The file *M_CONF.py* includes all the parameters you need to config for a correct running of !RedCap.
 
 M_CONF.py is a python text file and it can be edited with whatever text editor. In order to have a good visualization I strongly suggest to use code editors like [http://www.geany.org Geany] or Notepad++ and not text processors as Word or Notepad. Use the editor to modify variables values.
@@ -21,7 +21,7 @@ M_CONF.py is a python text file and it can be edited with whatever text editor. 
 
 *_Do not_* forgot to save M_CONF.py with _*.py*_ extension. A different extension like .txt or .doc will prevent !RedCap to start.
 
-= Localization =
+=Localization=
 All the messages used by !RedCap are in Italian language and they stored in a file called *M_ITA.py*. 
 
 At the moment I have no time to translate it in other languages. If you wish to do it you are welcome (and please send me a copy :-)).
@@ -36,7 +36,7 @@ At the moment I have no time to translate it in other languages. If you wish to 
   * You can change message colors changing the {{{^X}}}, where X has this meaning: 1=red; 2=green; 3=yellow; 4=blue; 5=light blue; 6=fuxia; 7=white; 8=black. In the above mentioned example _You must still wait for_ has been changed from yellow to green.
   * To enable the new language, change RC_lang value in config file, from "ITA" to the new language ("ENG" or whatever else).
 
-= Config vars =
+=Config vars=
 !RedCap uses a lot of configuration vars and you can set them in order to obtain the desired behaviour. Normally you do not need to modify all these values, but just some of them, and some other *_should not_* be changed. 
 
 For quick configuration allowing to !RedCap to run, you have to modify just the SECTION 1. To enable webranking features you must modify the SECTION 2. The SECTION 3 modifies !RedCap standard behaviours and it is facultative. The SECTION 4 concerns some engine parameters and you are strongly discouraged to modify it. 
