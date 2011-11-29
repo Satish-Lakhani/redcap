@@ -1,7 +1,7 @@
 [http://code.google.com/p/redcap/ <back to homepage]
 =REDCAP CONFIGURATION GUIDE=
 
-[Prefazione#Preface_1]
+[PrefaZione#Preface_1]
 
 [Localization#Localization]
 
