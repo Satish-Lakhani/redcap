@@ -1,7 +1,7 @@
 [http://code.google.com/p/redcap/ <back to homepage]
 =REDCAP CONFIGURATION GUIDE=
 
-[Preface#Preface]
+[_Preface_#Preface]
 
 [Localization#Localization]
 
@@ -9,7 +9,7 @@
 
 [Remote webrank configuration#Remote webrank configuration]
 
-=Preface=
+= Preface =
 The file *M_CONF.py* includes all the parameters you need to config for a correct running of !RedCap.
 
 M_CONF.py is a python text file and it can be edited with whatever text editor. In order to have a good visualization I strongly suggest to use code editors like [http://www.geany.org Geany] or Notepad++ and not text processors as Word or Notepad. Use the editor to modify variables values.
