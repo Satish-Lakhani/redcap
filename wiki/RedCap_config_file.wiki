@@ -1,6 +1,14 @@
 [http://code.google.com/p/redcap/ <back to homepage]
 =REDCAP CONFIGURATION GUIDE=
 
+[Preface#Preface]
+
+[Localization #Localization ]
+
+[Config vars# Config vars ]
+
+[Remote webrank configuration#Remote webrank configuration]
+
 = Preface =
 The file *M_CONF.py* includes all the parameters you need to config for a correct running of !RedCap.
 
@@ -162,5 +170,7 @@ For quick configuration allowing to !RedCap to run, you have to modify just the 
 ||{{{CRON2}}}||3600||_Cron2 frequency in seconds (slow timer)._||
 ||{{{TempoCiclo}}}||0.5||_Gameserver log control frequency in seconds._||
 ||{{{GameServerDown}}}||20||_Waiting time before considering gameserver down (not used)._||
+
 =Remote webrank configuration=
+
 *TO BE DONE*
