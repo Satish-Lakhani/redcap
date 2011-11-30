@@ -37,6 +37,7 @@ _Most of these features are customizable and can be switched on or off._
 
 = TO DO List=
   # Player geolocalization
+  # Periodic automatic DB maintenance
   # Player identification after IP and GUID change (euristic)
   # IrC integration
   # Web interface for !RedCap configuration.
