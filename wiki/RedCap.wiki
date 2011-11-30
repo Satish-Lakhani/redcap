@@ -41,6 +41,7 @@ _Most of these features are customizable and can be switched on or off._
   # IrC integration
   # Web interface for !RedCap configuration.
   # Granular gameserver allowed weapon choice
+  # Optimization for modes other than Team Survivor
 
 Sample of remote webrank:
 [http://www.bravewarriors.eu/EXT_IMG/stats.png]
