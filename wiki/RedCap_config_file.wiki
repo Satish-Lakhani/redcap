@@ -39,7 +39,7 @@ For quick configuration allowing to !RedCap to run, you have to modify just the 
 ||{{{AdminGuids}}}||["XXXXXXXXXXXXXXXXXXXXXXXX"]*||_Guid in this field is automatically enabled to the highest admin level (level 100)_||
 ||{{{SV_Baseconf}}}||"xxxxxx.cfg"|| _Name of gameserver base config file_||
 ||{{{SV_UrtPath}}}||"../../../q3ut4"||_Relative path of Urban Terror  q3ut4 folder_||
-||{{{SV_MapCycle}}}||"xxxxxx.cfg"||_Name of cyclemap config file_||
+||{{{SV_MapCycle}}}||"xxxxxx.txt"||_Name of cyclemap config file_||
 ||{{{Sck_ServerRcon}}}||"XXXXXXXX"||_Gameserver rcon password_||
 ||{{{Sck_ServerIP}}}||"xxx.yyy.zzz.kkk"||_Gameserver IP address_||
 ||{{{Sck_ServerPort}}}||27960||_Gameserver IP port_||
