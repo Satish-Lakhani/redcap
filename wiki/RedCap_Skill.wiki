@@ -1,0 +1,53 @@
+#summary How the skill works
+
+[http://code.google.com/p/redcap/ <back to homepage]
+=REDCAP SKILL GUIDE=
+
+=Preface=
+What is the skill in !RedCap and how it works?
+
+As the word itself says, the skill is a number that try to evaluate the ability and experience of a Urban Terror player. Of course we not expect that the value found by !RedCap was a absolute and infallible measure of everyone skill. It is just a clue, because player skill depends from a lot of different parameters: internet connection quality, played map, player training, team cooperation and so on...
+
+In any case facts demonstrates that !RedCap skill system works very well (after some hundred of rounds has been played) and good players (i.e. belonging to a national team) always have the best skill levels, while newcomers are mostly in the negative part of the ranking.
+
+=How it works?=
+Most of old bots used a simply kills/deaths (K/D) ratio to assign player's skill, but this raw procedure has a lots of bugs and workaround:
+  * To play constantly against low level players grants a high K/D ratio
+  * A "camping" behaviour grants higher skills, because usually a good rusher could end a map with, example, 17-6 score that means a K/D = 2,83; A camper could easily end a map with a 6-2, corresponding to K/D=3.
+  * Playing with the stronger or larger team usually grants a better score and ratio.
+
+!RedCap skill system try to avoid this weakness using a more elaborate algorithm based on a statistic expectancy ratio depending from opponent skill and opponent team mean skill. Two additional non linear balancing coefficients take in count unbalanced teams and the fact that a player with a few rounds could still have a wrong skill.
+
+
+Let say:
+  * K = Killer's skill
+  * V = Victim's skill
+  * Kt = Killer's team mean skill
+  * Vt = Killer's team mean skill
+  * Rk = Killer's played rounds
+  * Rv = Victim's played rounds
+  * Nr = Number of active players in Red team
+  * Nb = Number of active players in Blue's team
+  * S = Theoric skill range
+  * T = Parameter considering weight of Killer's team mean skill compared  to Killer's skill
+  * Z = How many kills against an equivalent opponent you have to achieve to gain 1 skill point
+  
+  * Dsk_K = Killer's skill variation
+  * Dsk_V = Victim's skill variation
+
+So, Let say:
+
+KTbv = (1-math.tanh((K-Vt)/S))/Z and Kbv = (1-math.tanh((V-K)/S))/Z
+
+VTbv = (1-math.tanh((V-Kt)/S))/Z and Vbv = (1-math.tanh((K-V)/S))/Z
+
+we obtain:
+
+*Dsk_K = (Nr/Nb)^0,75^(T KTbv+(1-T) Kbv)(1 + (1000/(Rk^1.2^ + 60)))*    Killer' skill variation
+
+*Dsk_V = (Nr/Nb)^0,75^(T VTbv+(1-T) Vbv)(1 + (1000/(Rk^1.2^ + 60)))*    Victim's skill variation
+
+
+*TO BE CONTINUED*
+
+
