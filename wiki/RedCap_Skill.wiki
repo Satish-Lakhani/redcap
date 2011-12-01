@@ -35,7 +35,7 @@ Let say:
   * Dsk_K = Killer's skill variation
   * Dsk_V = Victim's skill variation
 
-So, Let say:
+And let say:
 
 KTbv = (1-math.tanh((K-Vt)/S))/Z and Kbv = (1-math.tanh((V-K)/S))/Z
 
