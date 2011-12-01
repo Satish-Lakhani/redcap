@@ -45,7 +45,7 @@ we obtain:
 
 *Dsk_K = (Nr/Nb)^0,75^(T KTbv+(1-T) Kbv)(1 + (1000/(Rk^1.2^ + 60)))*    Killer' skill variation
 
-*Dsk_V = (Nr/Nb)^0,75^(T VTbv+(1-T) Vbv)(1 + (1000/(Rv^1.2^ + 60)))*    Victim's skill variation
+*Dsk_V = -(Nr/Nb)^0,75^(T VTbv+(1-T) Vbv)(1 + (1000/(Rv^1.2^ + 60)))*    Victim's skill variation
 
 
 *TO BE CONTINUED*
