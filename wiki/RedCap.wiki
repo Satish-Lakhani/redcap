@@ -43,7 +43,8 @@ _Most of these features are customizable and can be switched on or off._
   # Web interface for !RedCap configuration.
   # Granular gameserver allowed weapon choice
   # Optimization for modes other than Team Survivor
-  #Language localization (you are welcome ;))
+  # Language localization (you are welcome ;))
+  # Maintenance routines for Database periodic cleaning.
 
 Sample of remote webrank:
 [http://www.bravewarriors.eu/EXT_IMG/stats.png]
