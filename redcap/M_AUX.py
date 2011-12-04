@@ -9,22 +9,27 @@ DB = C_DB.Database(M_CONF.NomeDB)
 
 StandardMaps = [                    #mappe standard incluse nello z_pack
 "ut4_abbey",
+"ut4_abbeyctf",
 "ut4_algiers",
 "ut4_ambush",
 "ut4_austria",
 "ut4_casa",
 "ut4_crossing",
+"ut4_dressingroom",
 "ut4_eagle",
 "ut4_elgin",
+"ut4_firingrange",
 "ut4_harbortown",
 "ut4_kingdom",
 "ut4_mandolin",
 "ut4_maya",
 "ut4_oildepot",
+"ut4_paradise",
 "ut4_prague",
 "ut4_ramelle",
 "ut4_riyadh",
 "ut4_sanc",
+"ut4_snoppis",
 "ut4_suburbs",
 "ut4_subway",
 "ut4_swim",
@@ -34,6 +39,11 @@ StandardMaps = [                    #mappe standard incluse nello z_pack
 "ut4_tunis",
 "ut4_turnpike",
 "ut4_uptown",
+"ut4_company",  #Mappack 4.1.1
+"ut4_docks",
+"ut4_herring",
+"ut4_horror",
+"ut4_ricochet",
 ]
 
 #colori per i dialoghi
@@ -108,7 +118,11 @@ def log_backup():
     logfile = open(M_CONF.NomeArchivi + "/" + timestamp + "_saylog.log", "w")
     logfile.write(html)
     logfile.close()
-    #TODO trasferire ilfile
+
+    if web_FTPtransfer(M_CONF.NomeArchivi + "/" + timestamp + "_saylog.log", M_CONF.w_dialoghi):
+        return "CHATFILE TRANSFER OK"
+    else:
+        return "CHATFILE TRANSFER FAILED"
     return True
 
 def web_rank():
@@ -138,9 +152,9 @@ def web_rank():
 
     #DATI: #0: GUID    # 1: Nick    # 2: Skill    # 3: Round    # 4: Lastconnection    # 5: Level    # 6: Tempban    # 7: Reputation    # 8: Firstconnect    # 9: streak    # 10: alias    # 11: varie
     #HIT: #12: head    # 13: torso    # 14: arms    # 15: legs    # 16: body    #LOC: #17: IP    # 18: provider    # 19: location    # 20: oldip    #KILL: #21-38: kills #39: deaths
-
+    lasttableupdate = str(time.strftime("%d.%b&nbsp;%H:%M",time.localtime()))
     table_ini = "<script type='text/javascript' src='http://%s/wz_tooltip.js'></script><table class=\"sortable\"><tbody>" %(M_CONF.w_url + M_CONF.w_directory) #parte iniziale della table
-    header = "<tr><th>ID</th><th>NICK</th><th>SKILL</th><th>STREAK</th><th>ROUNDS</th><th title='Headshots'>HS</th><th>LAST IP</th><th>LAST VISIT</th></tr>" #Header (SKILL, NICK, STREAK, ROUNDS, HIT, IP, LASTVISIT)
+    header = "<tr title=\"Last update: %s\"><th>ID</th><th>NICK</th><th>SKILL</th><th>STREAK</th><th>ROUNDS</th><th title='Headshots'>HS</th><th>LAST IP</th><th>LAST VISIT</th></tr>" %lasttableupdate #Header (SKILL, NICK, STREAK, ROUNDS, HIT, IP, LASTVISIT)
     table_end = "</tbody></table>"              #parte finale della table
     TABLE = table_ini + header                  #contenuto della table
     i_id = 1

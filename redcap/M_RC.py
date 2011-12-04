@@ -35,12 +35,28 @@ nuked = '34'
 ##FUNZIONI INTERNE DEL REDCAP##
 def balance_do():
     """esegue il bilanciamento"""
-    if abs(GSRV.TeamMembers[1] - GSRV.TeamMembers[2]) > 1:  #verifico se gli sbilanciamenti richiedono balance
+    moved = False
+    if GSRV.BalanceMode ==3:        #modalita clan balance
+        to_move = GSRV.team_clanbalance()
+        for player in to_move[0]:       #sposto i red
+            #print "Muoverei %s slot %s red" %(GSRV.PT[player].DBnick, GSRV.PT[player].slot_id)
+            SCK.cmd("forceteam %s red" %GSRV.PT[player].slot_id)
+            say("^5%s ^3moved to red because he is a ^5%s" %(GSRV.PT[player].nick, M_CONF.clanbalanceTag)  , 1)
+            moved = True
+        for player in to_move[1]:       #sposto i blu
+            #print "Muoverei %s slot %s blu" %(GSRV.PT[player].DBnick, GSRV.PT[player].slot_id)
+            SCK.cmd("forceteam %s blue" %GSRV.PT[player].slot_id)
+            say("^5%s ^3moved to blue because is not a ^5%s" %(GSRV.PT[player].nick, M_CONF.clanbalanceTag)  , 1)
+            moved = True
+        if moved:   #se ho fatto il bilanciamento di clan esco, se no  faccio quello normale.
+            return moved
+    if abs(GSRV.TeamMembers[1] - GSRV.TeamMembers[2]) > 1:  #Modalita normale: verifico se gli sbilanciamenti richiedono balance
         moving = GSRV.team_balance()
         SCK.cmd("forceteam " + moving)
         GSRV.BalanceRequired = False
         say(Lang["balancexecuted"], 1)
-        return True
+        moved = True
+    return moved
 
 def censura(frase):
     """controlla se nella frase ci sono parole non ammesse"""
@@ -50,7 +66,7 @@ def censura(frase):
         if re.search(insulto,testo,re.I):                       #ho trovato un insulto
             return True
 
-def clientconnect(id):      #TODO non serve se c'è lo stesso in clientuserinfo
+def clientconnect(id):      #TODO non serve se c'e' lo stesso in clientuserinfo
     """Gestisce un nuovo client"""
     if id not in GSRV.PT:                           #Se e un nuovo player (nel senso di appena entrato in game)
         newplayer = C_PLAYER.Player()               #lo creo
@@ -84,10 +100,10 @@ def clientuserinfo(info):                       #info (0=slot_id, 1=ip, 2=guid)
         GSRV.player_NEW(newplayer, info[0], time.time())    #lo aggiungo alla PlayerTable ed ai TeamMember
     if GSRV.PT[info[0]].justconnected:              #Se e un nuovo player
         GSRV.player_ADDINFO(info)                   #gli aggiungo GUID e IP
-    elif info[2] <> GSRV.PT[info[0]].guid:          #cambio guid durante il gioco #TODO vedere se possibile, se no eliminare
+    elif info[2] <> GSRV.PT[info[0]].guid:          #cambio guid durante il gioco.
         if GSRV.Server_mode <> 2:                   #non attivo in warmode
             GSRV.PT[info[0]].notoriety += M_CONF.Nt_guidchange    #gli abbasso la notoriety in proporzione
-            scrivilog(" GUID CHANGE: " + str(GSRV.PT[info[0]].nick) + " IP: " + str(GSRV.PT[info[0]].ip) + " GUID: " + GSRV.PT[info[0]].guid + " CHANGED TO: " + info[2], M_CONF.badguid)
+            scrivilog(" GUID CHANGE: Nick: " + str(GSRV.PT[info[0]].nick) + "DB Nick: " + str(GSRV.PT[info[0]].DBnick)  + " IP: " + str(GSRV.PT[info[0]].ip) + " GUID: " + GSRV.PT[info[0]].guid + " CHANGED TO: " + info[2], M_CONF.badguid)
             kick("Redcap", info[0], Lang["guidchange"]%info[1])
 
 def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
@@ -99,7 +115,7 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
     if GSRV.Server_mode <> 2:                   #non attivo in warmode
         if GSRV.PT[info[0]].invalid_guid():                                                 #CONTROLLO VALIDITA GUID (adesso che ho pure il nick!)
             GSRV.PT[info[0]].notoriety += M_CONF.Nt_badguid                       #abbasso la notoriety
-            scrivilog("BADGUID: " + str(GSRV.PT[info[0]].nick) + " IP: " + str(GSRV.PT[info[0]].ip) + " GUID: " + GSRV.PT[info[0]].guid, M_CONF.badguid)
+            scrivilog("BADGUID: Nick " + str(GSRV.PT[info[0]].nick) + "DB Nick: " + str(GSRV.PT[info[0]].DBnick)  + " IP: " + str(GSRV.PT[info[0]].ip) + " GUID: " + GSRV.PT[info[0]].guid, M_CONF.badguid)
             kick("Redcap", info[0], Lang["invalidguid"]%info[1])                            #e lo kikko         #TODO  registrare nick e ip in DB o in log
             return  #inutile andare avanti
         if GSRV.PT[info[0]].invalid_nick(GSRV.Nick_is_length, GSRV.Nick_is_good, info[1]):  #CONTROLLO VALIDITA NICK (non ancora assegnato al player!)
@@ -331,7 +347,7 @@ def endMap(frase):
 
 def endRound(frase):
     if GSRV.Server_mode == 1:                                       #solo in modalita normale. No war e no startup
-        if GSRV.BalanceMode == 2 or GSRV.BalanceRequired:           #eseguo bilanciamento automatico o su richiesta
+        if GSRV.BalanceMode > 1 or GSRV.BalanceRequired:           #eseguo bilanciamento automatico o su richiesta
             res = balance_do()
 
 def hits(frase):                                                #del tipo ['1', '0', '3', '5'] Vittima, Killer, Zona, Arma (per il momento arma non e' utilizzato)
@@ -351,7 +367,7 @@ def hits(frase):                                                #del tipo ['1', 
 def ini_clientlist():
     """all avvio trova i client gia collegati"""
     Res = SCK.cmd("clientlist")
-    if not Res:         #DEBUG verifico se il server risponde
+    if not Res:         #verifico se il server risponde
         sleep(20)
         scrivilog("NO ANSWER FROM GAMESERVER", M_CONF.crashlog)
         ini_clientlist()
@@ -417,7 +433,7 @@ def initRound(frase):
             if indice_nextmap == len(GSRV.Q3ut4["mapcycle"]):
                 indice_nextmap = 0
             nextmap = GSRV.Q3ut4["mapcycle"][indice_nextmap]
-            ini_say = "^1%s^4%s^2%s^8%s ^3Sk:^1%s^7-^4%s ^3- Nextmap: ^7%s" %(str(GSRV.TeamMembers[1]), str(GSRV.TeamMembers[2]), str(GSRV.TeamMembers[3]), str(GSRV.TeamMembers[0]), str(int(GSRV.TeamSkill[0])), str(int(GSRV.TeamSkill[1])), nextmap)
+            ini_say = "^1%s^4%s^2%s^8%s ^3Sk:^1(%s)^7-^4(%s) ^3- Nextmap: ^7%s" %(str(GSRV.TeamMembers[1]), str(GSRV.TeamMembers[2]), str(GSRV.TeamMembers[3]), str(GSRV.TeamMembers[0]), str(int(GSRV.TeamSkill[0])), str(int(GSRV.TeamSkill[1])), nextmap)
             say(ini_say, 1)
     elif GSRV.Server_mode == 0:
         say(Lang["startup"], 1)
@@ -587,21 +603,36 @@ def balance(richiedente, parametri):    #FUNZIONA
         tell(richiedente, Lang["balanceoff"])
         return
     elif GSRV.BalanceMode == 1:                                #blanciamento manuale
-        tell(richiedente, Lang["balancemanual"])
-        GSRV.BalanceRequired = True
+        if GSRV.Gametype == "7" and GSRV.Server_mode == 1:                                  #bilanciamento immediato in CTF #TODO da testare e aggiornare wiki
+            balance_do()
+        else:
+            tell(richiedente, Lang["balancemanual"])
+            GSRV.BalanceRequired = True
         return
     elif GSRV.BalanceMode == 2:                             #bilanciamento automatico
-        tell(richiedente, Lang["balanceauto"])
+        if GSRV.Gametype == "7" and GSRV.Server_mode == 1:                                  #bilanciamento immediato in CTF #TODO da testare
+            balance_do()
+        else:
+            tell(richiedente, Lang["balanceauto"])
+        return
+    elif GSRV.BalanceMode == 3:                             #bilanciamento clanmode
+        if GSRV.Gametype == "7" and GSRV.Server_mode == 1:                                  #bilanciamento immediato in CTF #TODO da testare
+            balance_do()
+        else:
+            tell(richiedente, Lang["balanceclan"])
         return
 
 def balancemode(richiedente, parametri): #FUNZIONA
     """setta il balancemode"""
-    bmode = { 0:"OFF", 1:"Manual", 2:"Auto", }
+    bmode = { 0:"OFF", 1:"Manual", 2:"Auto",  3: M_CONF.clanbalanceTag + " mode" }
     if GSRV.BalanceMode == 0:
         GSRV.BalanceMode = 1
         say(Lang["balancemode"]%bmode[GSRV.BalanceMode], 2)
     elif GSRV.BalanceMode == 1:
         GSRV.BalanceMode = 2
+        say(Lang["balancemode"]%bmode[GSRV.BalanceMode], 2)
+    elif GSRV.BalanceMode == 2:
+        GSRV.BalanceMode = 3
         say(Lang["balancemode"]%bmode[GSRV.BalanceMode], 2)
     else:
         GSRV.BalanceMode = 0
@@ -667,12 +698,13 @@ def forceteam(richiedente, parametri):  #FUNZIONA
     if target.isdigit():
         SCK.cmd("forceteam " + target + " " + team)
 
-def info(richiedente, parametri):       #TODO finire    #FUNZIONA
+def info(richiedente, parametri):          #FUNZIONA
     """parametri vari server:IP admin, nextmap,ecc"""
-    versione = "^2RedCap ^5%s " %M_CONF.versione
-    autore = "^3by bw|Lebbra! ^2IP/Port: ^5"
-    server = "%s:%s" %(M_CONF.Sck_ServerIP, M_CONF.Sck_ServerPort)
-    tell(richiedente, versione + autore + server)
+    versione = "^2I'm RedCap ^4%s " %M_CONF.versione
+    server = " ^2on ^4%s:%s" %(M_CONF.Sck_ServerIP, M_CONF.Sck_ServerPort)
+    autore = "^3 by bw|Lebbra!"
+    tell(richiedente, versione + server + autore)
+    tell(richiedente, "^3ONLINE HELP and download at: ^6code.google.com/p/redcap/")
     tell(richiedente, "^2Players:^3U:%s ^1R:%s ^5B:%s ^2S:%s ^3Servermode:^5%s" %(str(GSRV.TeamMembers[0]), str(GSRV.TeamMembers[1]), str(GSRV.TeamMembers[2]), str(GSRV.TeamMembers[3]), str(GSRV.Server_mode)))
 
 def kick(richiedente, parametri, reason = ""):  #FUNZIONA
@@ -718,7 +750,6 @@ def maplist(richiedente, parametri):
     frase = "^6Map list: "
     i = 0
     for mappa in GSRV.Q3ut4["map"]:
-        scrivilog(mappa, M_CONF.crashlog)
         i += 1
         frase += ("^" + str(i) + str(mappa) + " ")
         if i == 5:

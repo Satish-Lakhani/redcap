@@ -7,7 +7,7 @@
 #TODO fare manutenzioni programmate
 #TODO evitare che un crash durante cw cancelli la config war
 #TODO fare comando shuffle
-#TODO fare bilanciamento immediato in modalita CTF
+#TODO fare bilanciamento immediato in modalita CTF Fatto, da testare
 #fare archiviazione dialoghi
 #TODO completare classifica 
 #TODO fare comando DBban e DBunban
