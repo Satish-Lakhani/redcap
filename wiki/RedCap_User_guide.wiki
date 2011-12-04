@@ -32,7 +32,7 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!f{{{<team>}}}{{{[rbs]}}} {{{<target>}}}* : Forces the target player to join the specified team (ex: _*!fr joh*_ will force player johnny to join red team).
 
-  * *!info or !help* : give some information about !Redcap itself and the gameserver.
+  * *!info* or *!help* : give some information about !Redcap itself and the gameserver.
 
   * *!kk {{{<target>}}}* : kick the target player from gameserver
 
@@ -68,7 +68,7 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!top* : display alltime, monthly, weekly and daily kill records.
 
-  * *!tm or !teams* : Ask for a automatic balance at round end. It works only if autobalance mode is MAN.
+  * *!tm* or *!teams* : Ask for a automatic balance at round end. It works only if autobalance mode is MAN.
 
   * *!trust{{{[num]}}} {{{<target>}}}* : increase target player notoriety by _num_. Useful to allow a player to immediately enter onto the gameserver even if he has a fresh guid.
 
