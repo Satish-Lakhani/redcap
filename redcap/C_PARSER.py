@@ -10,7 +10,7 @@ class Parser:
     def __init__(self,pathfile):
         """Inizializzo l'oggetto LogParser"""
         self.NomeFile = pathfile #percorso del file da parsare
-        self.dim = os.path.getsize(pathfile)            #dimensione del file da parsare 0  #DEBUG 
+        self.dim = os.path.getsize(pathfile)            #dimensione del file da parsare 
         self.nuovotesto = []                            #quanto di nuovo letto nel log
         self.outputs = []                               #dati di ritorno
 

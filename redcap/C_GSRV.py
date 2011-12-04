@@ -10,10 +10,11 @@ class Server:
         self.AliasDuration = M_CONF.SV_AliasDuration
         self.AntiReconInterval = M_CONF.SV_AntiReconInterval            #Tempo minimo fra due connessioni
         self.Attivo = True                                              #TODO: da gestire. Presuppongo che il server sia up finche non provo il contrario
-        self.BalanceMode = M_CONF.SV_BalanceMode                        #modalita' di bilanciamento 0=disattivato 1=attivato 2=automatico
+        self.BalanceMode = M_CONF.SV_BalanceMode                        #modalita' di bilanciamento 0=disattivato 1=manuale 2=automatico 3=clan
         self.BalanceRequired = False                                    #e' stato richiesto un balance se True
         self.Baseconf = M_CONF.SV_Baseconf                              #config di base
         self.Basewar = M_CONF.SV_Basewar                                #config di base per CW
+        self.clanbalanceTag = M_CONF.clanbalanceTag
         self.FloodControl = M_CONF.SV_FloodControl                      #Flood control abilitato
         self.Full = 1                                                   #0 = vuoto, 1= c'e gente 2= pieno (da usare per kikkare gli spect o cose simili)
         self.Gametype = ""                                              #gametype
@@ -196,6 +197,24 @@ class Server:
                     target = player
         return target + team_to_increase
 
+    def team_clanbalance(self):
+        """esegue il bilanciamento mantenendo red gli appartenenti al clan"""
+        move_to_red = []
+        move_to_blue = []
+        for player in self.PT:
+            if ((self.clanbalanceTag in self.PT[player].nick) or (self.clanbalanceTag in self.PT[player].DBnick)) and self.PT[player].team == 2 :
+                move_to_red.append(self.PT[player].slot_id)      #sono del clan e non sono red
+            elif ((self.clanbalanceTag not in self.PT[player].nick) and (self.clanbalanceTag not in self.PT[player].DBnick)) and self.PT[player].team == 1 :
+                move_to_blue.append(self.PT[player].slot_id)     #non sono del clan e sono red 
+        delta = self.TeamMembers[1] - self.TeamMembers[2] + 2*(len(move_to_red) - len(move_to_blue))
+        if -2 < delta < 2:                                                  #differenza tra blu e red 0 o 1
+            return [move_to_red, move_to_blue]
+        elif len(move_to_red) > len(move_to_blue):          #troppi da muovere red
+            move_to_red = move_to_red[0:len(move_to_blue)]
+        else:                                                                   #troppi da muovere blu
+            move_to_blue = move_to_blue[0:len(move_to_red)]
+        return [move_to_red, move_to_blue]
+    
     def teamskill_eval(self):
         """Calcola le teamskill dei red e dei blue"""
         tot_red_skill = 0.0
@@ -218,7 +237,7 @@ class Server:
         elif X == 1:
             return self.TeamMembers[1] + self.TeamMembers[2]
         elif X == 2:
-            vivi =[]
+            vivi =[0,0]
             for pl in self.PT:
                 if self.PT[pl].vivo == 1:
                     vivi[0] += 1
