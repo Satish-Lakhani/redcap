@@ -18,6 +18,7 @@ _Most of these features are customizable and can be switched on or off._
   * Fully customizable configuration file (See [RedCap_config_file full configuration guide]).
   * Anticheat control: !RedCap kicks for bad guid, in game guid change, nick rotation hack. In case of automatic kick IP and GUID are recorded in a separate log file for further use.
   * Automatic (or manual) team balance.
+  * Anti fake system (every new fake costs one half of player reliability)
   * Anti flooding control (fully customizable).
   * Automatic daily maintenance (DB cleaning, gameserver restart, files backup, etc...)
   * Irregular nicknames control (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp])
@@ -34,17 +35,18 @@ _Most of these features are customizable and can be switched on or off._
   * Spectator auto kick when gameserver is full.
   * Automatic or manual warnings for bad behaviours (teamkills, teamhits, offensive language, etc). Automatic kick at max warning level overtaking.
   * *No* automatic ban. Ban is the heaviest in game penalty, then !RedCap philosophy is to leave this decision to an human admin.
+*  DB Maintenance: automatic clean of unused guids
+*  DB Maintenance: automatic clean of older alias when more than maxAlias
+*  DB Maintenance: automatic daily compression by VACUUM statement to keep DB size as small as possible.
 
 = TO DO List=
   # Player geolocalization
-  # Periodic automatic DB maintenance
   # Player identification after IP and GUID change (euristic)
   # IrC integration
   # Web interface for !RedCap configuration.
   # Granular gameserver allowed weapon choice
-  # Optimization for modes other than Team Survivor
-  # Language localization (you are welcome ;))
-  # Maintenance routines for Database periodic cleaning.
+  # Complete the optimization for modes other than Team Survivor
+  # Language localization other than ENG and ITA (you are welcome ;))
 
 Sample of remote webrank:
 [http://www.bravewarriors.eu/EXT_IMG/stats.png]
