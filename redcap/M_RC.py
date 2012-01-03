@@ -695,12 +695,12 @@ def dbfind(richiedente, parametri): #find a player in DB (for future use)
         tell(richiedente, Lang["toomanyres"] %(str(len(res))))
     else:
         for pl in res:
-            if nome.lower() in pl[1].lower():
-                outp = "^3ID ^6%s: ^5%s" %(pl[0],pl[1])
+            if parametri.group("target").lower() in pl[1].lower():
+                outp = "^3ID ^6%s: ^5%s" %(str(pl[0]), str(pl[1]))
             else:
-                pat=r"(?P<nome>\S*"+nome+"\S*)"
+                pat=r"(?P<nome>\S*" + parametri.group("target") + "\S*)"
                 n = re.search(pat, pl[2], re.I)
-                outp = "^3ID ^6%s: ^4%s, ^3alias ^5%s" %(pl[0],pl[1], n.group("nome"))
+                outp = "^3ID ^6%s: ^4%s, ^3alias ^5%s" %(str(pl[0]),str(pl[1]), str(n.group("nome")))
             tell(richiedente, outp)
 
 def dbnick(richiedente, parametri): #FUNZIONA #TODO aggiungere verifica se esistente ed eventuale merge
