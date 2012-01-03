@@ -46,10 +46,10 @@ class Parser:
                     self.outputs.append((frase, "Comandi"))
                 else:
                     self.outputs.append((frase, "Says"))
-            elif x.find("ClientUserinfo:") !=  -1:                                                       #trovo tutti i CLIENTUSERINFO
-                res = re.search(r"ClientUserinfo: (?P<id>\d+)", x)                        #Recupero l'ID
+            elif x.find("ClientUserinfo:") !=  -1:                                                 #trovo tutti i CLIENTUSERINFO
+                res = re.search(r"ClientUserinfo: (?P<id>\d+)", x)              #Recupero l'ID
                 res1 = re.search(r"\\ip\\(?P<ip>\d*\.\d*\.\d*\.\d*)",x)         #Recupero l'IP
-                res2 = re.search(r"cl_guid\\(?P<guid>.*?)(\\|$)",x)                      #Recupero la GUID
+                res2 = re.search(r"cl_guid\\(?P<guid>.*?)(\\|$)",x)             #Recupero la GUID
                 if not res2:                                                                                      #se non ha la guid gli assegno una fittizia e verra' kikkato
                     GUID = "NOGUID"
                 else:

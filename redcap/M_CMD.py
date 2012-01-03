@@ -11,6 +11,7 @@ comandi = [
 #["balance",r"!tm", M_CONF.lev_balance],
 ["callvote",r"!v$",M_CONF.lev_callvote],
 ["cyclemap",r"!cy", M_CONF.lev_cycle],
+["dbfind",r"!find (?P<target>.*)", M_CONF.lev_dbfind],
 ["dbnick",r"!dbnick (?P<target>.*)", M_CONF.lev_dbnick],
 ["esegui", r"!cmd (?P<cmd>.*)", M_CONF.lev_esegui],
 ["forceteam",r"!f(?P<team>[rbs]) (?P<target>.*)",M_CONF.lev_force],

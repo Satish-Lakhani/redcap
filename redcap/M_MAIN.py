@@ -13,6 +13,10 @@
 #TODO fare comando DBban e DBunban
 #TODO bannare guid originale per cambio guid in game
 #TODO fare comando join
+#TODO fare comando rank che mostri skill dei player in game (e top skill?)
+#TODO fare comando admin che mostra gli admin in game e/o la adminlist
+#TODO fare funzione find in DB (usa almeno 3 lettere)
+#TODO fare funzione record reset
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -102,11 +106,13 @@ def redcap_main():
             if int(CRON1.ticks % (M_CONF.Spamtime // M_CONF.CRON1)) == 0:       #modulo
                 M_RC.cr_spam()                      #spammo
             if CRON1.ticks == 240:                  #E' passata 1 ora circa
-                q3ut4_parse()
+                q3ut4_parse()                       #aggiorno maplist e configs (non si sa mai...)
                 CRON1.reset()
         if CRON2.is_time():                     #ESEGUO OPERAZIONI A CRON1
             if CRON2.get_time("Ora") == M_CONF.Control_Daily:   #all'ora prefissata eseguo operazioni giornaliere (pulizia DB, riavvio server, etc)
                 M_RC.cr_recordErase()                                       #Pulisco i record se del giorno (settimana, mese) prima.
+                M_AUX.db_clean_guid()                                       #Pulisco il DB dalle guid che non frequentano piu' il gameserver da M_CONF.maxAbsence giorni.
+                M_AUX.db_clean_alias()                                      #elimino gli alias in eccesso
                 M_AUX.cr_riavvia(M_CONF.gameserver_autorestart)             #Riavvio del server
                 # -= Non puo' leggere istruzioni oltre qui (riavvio server!) =-
 

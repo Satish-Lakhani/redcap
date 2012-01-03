@@ -24,14 +24,18 @@ w_login = '*******' 						#FTP login of auxiliary website
 w_password = '********' 					#FTP password of auxiliary website
 w_ftp_directory = '/httpdocs/serverstats' 	#Remote relative path of folder used by RedCap for FTP transfer
 w_directory = '/serverstats' 				#Remote relative url of folder used by RedCap for FTP transfer
+w_fullpage = True                           #When True the output w_tabella will be a full html page to be embedded in your website using a <iframe>. When false the output is just a <table> #UPDATE
 w_tabella = "skilltable.htm"                #Ranking table (html format)
 w_dialoghi = "dialoghi.htm"                 #Chat log table (html format)
+w_script_url = "http://www.yoursite.com/mysafepath" #path where safe js scripts are stored (to run sortable.js) #UPDATE
 
 ### ==================================================================  ###
 ### THESE PARAMETERS *CAN* BE CONFIGURED IN ORDER TO CUSTOMIZE YOUR REDCAP   ###
 ### ==================================================================  ###
 #PLAYER
 KickForSpace = True 			#(True or False) If True RedCap kicks a spect when gameserver is full. Admins cannot be kicked.
+maxAbsence = 60                 # Player not visiting the game server will be canceled from DB after 'maxAbsence' days.  #UPDATE
+maxAlias = 15                   #Max n. of alias to be stored. If more then maxAlias, the older one will be canceled #UPDATE
 maxSlap = 10 					#Max. slap number to be used with !s[num] command. If num > 10 then num = 10.
 Ttempban = 96 					#Max duration of a temporary ban (hours)
 
@@ -57,6 +61,7 @@ SV_BalanceMode = 2          	#Team balance mode 0: disabled, 1: manually enabled
 SV_FloodControl = True     		#(True or False) If True, Redcap will kick players that spams more than SV_MaxFlood chat lines in less then15 sec.
 SV_MaxFlood = 6    				#Max number of chat lines in 15 sec. Active only when SV_FloodControl = True
 SV_MaxNickChanges = 3    		#Max nick changes in 15 sec.
+SV_AntiFake = True              #(True or False) If True RedCap assign a reliability penalty when player uses a new fake.#UPDATE
 SV_goodNick = r"[a-zA-Z]"   	#Regex that player nick must satisfy to be allowed to play in the game server.
 SV_minNick = 3   				#Min length allowed for a player nick
 SV_ShowHeadshots = True  		#(True or False) If True headshot are displayed in upper gameserver chat
@@ -104,9 +109,7 @@ W_hit_warn = 0.3       		#Value of a warning caused by a teamhit
 ##MISCELLANEOUS
 commandlogMinLevel = 2 		#All the commands with level equal or above this value are recorded in command log.
 Control_Daily = 6 			#Hour (0-24) when daily maintenance activities will start
-Nt_MinNot_toplay = 0.55 	#Min. notoriety  to play in the gameserver. New player's notoriety is 0
 w_minRounds = 60 			#Rounds to play before a player is shown in webrank
-#maxAbsence = 25 			# giorni di assenza prima di essere cancellati dal server
 
 #COMMANDS LEVEL (Max lev = 100). Player can execute all the commands having a level lower or equal to their own level. Redcap automatically assign level 0 to each new player, unless a different level has been assigned by some admin.:
 lev_alias = 1 				#Shows player's alias
@@ -116,6 +119,7 @@ lev_balance = 0 			#Ask to RedCap for a teambalance at round end
 lev_ban = 3 				#Permanently bans a player
 lev_callvote = 1 			#Enables vote mode "voteType" for "voteTime" seconds.
 lev_cycle = 2 				#Cycles immediately to the next map
+lev_dbfind = 2                #find a player in DB (for future use) #UPDATE
 lev_dbnick = 3 				#Set the actual player's nick as his main nick. Main nick is the one displayed in records and webrank
 lev_esegui = 4 				#Executes an rcon command
 lev_force = 2 				#Moves a player to Red, Blue or Spect
@@ -146,7 +150,7 @@ lev_unwar = 1 				#Unload war mode setting the game server to its standard confi
 ### THESE PARAMETERS ***MUST NOT*** BE CHANGED UNLESS YOU EXACTLY KNOW WHAT ARE YOU DOING OR REDCAP WILL NOT RUN PROPERLY!!!   ###
 ### ================================================================================================================  ###
 
-versione = "1.00 Beta(20111211)" 	#RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING OF THE SCRIPT OUTSIDE OF THIS CONFIGURATION FILE. !!!
+versione = "1.02 Beta(20120103)" 	#RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING OF THE SCRIPT OUTSIDE OF THIS CONFIGURATION FILE. !!!
 
 ##AUXILIARY FILES and LOGS
 badguid = "badguid.log" 	#Bad guids record file
@@ -162,8 +166,10 @@ SV_Logfolder = "logs"   	#Log folder
 ##NOTORIETY:  If player notoriety is lower than Nt_MinNot_toplay, the player is immediately kicked from gameserver.
 Nt_badguid = -20    		#Notoriety penalty for bad formatted guid
 Nt_dayXpoint = 5    		#Guid age (days) giving 1 notoriety point
+Nt_fakepenalty = -1         #min penalty for using a new fake   #UPDATE
 Nt_floodpenalty = -0.2  	#Notoriety penalty for flooding
 Nt_guidchange = -50 		#Notoriety penalty for guid change in game
+Nt_MinNot_toplay = 0.6      #Min. notoriety  to play in the gameserver. New player's notoriety is 0
 Nt_roundXpoint = 200    	#N. of round to be played giving 1 notoriety point
 Nt_warnpenalty = -1 		#Notoriety penalty for a kick from RedCap
 
