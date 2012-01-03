@@ -12,11 +12,13 @@ _if your server do not comply requirements 1, 2, 3, it will be *not* possible to
 = Features list=
 _Most of these features are customizable and can be switched on or off._
 
-  * Exhaustive chat command set with more than 30 different commands (See [RedCap_User_guide full command list]). Command use is recorded in a separate log file for further use.
-  * Possibility to use all rcon commands from game chat through !cmd{{{<_cmd_>}}}
+  * Exhaustive chat command set with *more than 30 different commands* (See [RedCap_User_guide full command list]). 
+  * *Fully customizable configuration file* (See [RedCap_config_file full configuration guide]).
+  * *Anticheat log control*: !RedCap kicks for bad guid, in game guid change, nick rotation hack. In case of automatic kick IP and GUID are recorded in a separate log file for further use.
+  * Webranking with automatic FTP transfer on your clan website as full HTML document or HTML table
   * Use authorization level individually customizable for each command.
-  * Fully customizable configuration file (See [RedCap_config_file full configuration guide]).
-  * Anticheat control: !RedCap kicks for bad guid, in game guid change, nick rotation hack. In case of automatic kick IP and GUID are recorded in a separate log file for further use.
+  * Command use recording in a separate log file for further use.
+  * Possibility to use all rcon commands from game chat through !cmd{{{<_cmd_>}}}
   * Automatic (or manual) team balance.
   * Anti fake system (every new fake costs one half of player reliability)
   * Anti flooding control (fully customizable).
@@ -35,9 +37,9 @@ _Most of these features are customizable and can be switched on or off._
   * Spectator auto kick when gameserver is full.
   * Automatic or manual warnings for bad behaviours (teamkills, teamhits, offensive language, etc). Automatic kick at max warning level overtaking.
   * *No* automatic ban. Ban is the heaviest in game penalty, then !RedCap philosophy is to leave this decision to an human admin.
-*  DB Maintenance: automatic clean of unused guids
-*  DB Maintenance: automatic clean of older alias when more than maxAlias
-*  DB Maintenance: automatic daily compression by VACUUM statement to keep DB size as small as possible.
+ *  DB Maintenance: automatic clean of unused guids
+ *  DB Maintenance: automatic clean of older alias when more than maxAlias
+ *  DB Maintenance: automatic daily compression by VACUUM statement to keep DB size as small as possible.
 
 = TO DO List=
   # Player geolocalization
