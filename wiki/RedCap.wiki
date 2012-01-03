@@ -15,31 +15,31 @@ _Most of these features are customizable and can be switched on or off._
   * Exhaustive chat command set with *more than 30 different commands* (See [RedCap_User_guide full command list]). 
   * *Fully customizable configuration file* (See [RedCap_config_file full configuration guide]).
   * *Anticheat log control*: !RedCap kicks for bad guid, in game guid change, nick rotation hack. In case of automatic kick IP and GUID are recorded in a separate log file for further use.
-  * Webranking with automatic FTP transfer on your clan website as full HTML document or HTML table
+  * *Webranking and stats* with automatic FTP transfer on your clan website as full HTML document or HTML table
   * Use authorization level individually customizable for each command.
   * Command use recording in a separate log file for further use.
   * Possibility to use all rcon commands from game chat through !cmd{{{<_cmd_>}}}
-  * Automatic (or manual) team balance.
+  * Automatic (or manual) *team balance*.
   * Anti fake system (every new fake costs one half of player reliability)
   * Anti flooding control (fully customizable).
   * Automatic daily maintenance (DB cleaning, gameserver restart, files backup, etc...)
   * Irregular nicknames control (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp])
-  * Bad words censoring (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp] list)
-  * Player skill calculation system based on statistic kill expectancy, opponent skill and opposite team mean skill.
+  * *Bad words censoring* (customizable through a [http://en.wikipedia.org/wiki/Regular_expression regexp] list)
+  * Player *skill calculation system based on statistic* kill expectancy, opponent skill and opposite team mean skill.
   * General player stats showing skill, killstreak, hit distribution and more...
   * IP recording in stats.
   * Player alias recording in stats.
   * Player temporary ban and enforced ban by IP and GUID
   * Access control to gameserver based on player reliability (customizable)
   * Anti reconnection system.
-  * One command switch to and from CW mode with possibility to load different configuration files. RedCap stops every visible activity during CW.
+  * One command *switch to and from CW mode* with possibility to load different configuration files. RedCap stops every visible activity during CW.
   * Possibility to manage (create, delete, list) spam messages directly from game chat.
   * Spectator auto kick when gameserver is full.
   * Automatic or manual warnings for bad behaviours (teamkills, teamhits, offensive language, etc). Automatic kick at max warning level overtaking.
-  * *No* automatic ban. Ban is the heaviest in game penalty, then !RedCap philosophy is to leave this decision to an human admin.
- *  DB Maintenance: automatic clean of unused guids
- *  DB Maintenance: automatic clean of older alias when more than maxAlias
- *  DB Maintenance: automatic daily compression by VACUUM statement to keep DB size as small as possible.
+  * DB Maintenance: automatic clean of unused guids
+  * DB Maintenance: automatic clean of older alias when more than maxAlias
+  * DB Maintenance: automatic daily compression by VACUUM statement to keep DB size as small as possible.
+  * *NO* automatic ban. Ban is the heaviest in game penalty, then !RedCap philosophy is to leave this decision to an human admin.
 
 = TO DO List=
   # Player geolocalization
