@@ -108,6 +108,7 @@ For quick configuration allowing to !RedCap to run, you have to modify just the 
 ||{{{lev_cycle}}}||2||_Cycles immediately to the next map_||
 ||{{{lev_dbnick}}}||3||_#Set the actual player's nick as his main nick. Main nick is the one displayed in records and webrank_||
 ||{{{lev_esegui}}}||4||_Executes an rcon command_||
+||{{{lev_find}}}||2||_Look in DB for a player and shows infos_||
 ||{{{lev_force}}}||2||_Moves a player to Red, Blue or Spect_||
 ||{{{lev_info}}}||0||_Shows some info about game server and !RedCap itself_||
 ||{{{lev_kick}}}||1||_Kicks a player_||
