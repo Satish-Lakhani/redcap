@@ -32,6 +32,8 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!f{{{<team>}}}{{{[rbs]}}} {{{<target>}}}* : Forces the target player to join the specified team (ex: _*!fr joh*_ will force player johnny to join red team).
 
+  * *!find {{{<target>}}}* : Find _target_ in DB and shows info (up to 4 different records)
+
   * *!info* or *!help* : give some information about !Redcap itself and the gameserver.
 
   * *!kk {{{<target>}}}* : kick the target player from gameserver
