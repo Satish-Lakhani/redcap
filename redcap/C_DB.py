@@ -13,8 +13,13 @@ class Database:
         self.query = {
         "cercadati":"""SELECT * FROM DATI WHERE GUID = ?""",                    #cerca nella tab DATI in base alla GUID
         "cercaloc":"""SELECT * FROM LOC WHERE GUID = ?""",                      #cerca nella tab LOC in base alla GUID
-        "getallorderedbyguid": """SELECT * FROM %s ORDER BY GUID DESC""", #recupera una tabella ordinata per guid
-        "getrecords":"SELECT * FROM REC""",                                     #recupera la tabella records
+        "cleanalias":"""SELECT GUID,ALIAS FROM DATI""",                         #recupera tutti i player ed i loro alias
+        "cleanedalias":"""UPDATE DATI SET ALIAS=? WHERE GUID=?""",              #sostituisce i vecchi alias con quelli puliti
+        "cleanoldplayers":"""SELECT GUID FROM DATI WHERE ? - LASTCONN > ? AND TEMPBAN < ?""",   #elimina i player con guid inutilizzate
+        "delplayer":"""DELETE FROM %s WHERE GUID = '%s'""",                     #elimina una guid da una tabella
+        "findplayer":"""SELECT rowid,NICK,ALIAS FROM DATI WHERE ALIAS LIKE ?""", #trova i player con il nick richiesto
+        "getallorderedbyguid":"""SELECT * FROM %s ORDER BY GUID DESC""",        #recupera una tabella ordinata per guid
+        "getrecords":"""SELECT * FROM REC""",                                   #recupera la tabella records
         "newdati" : """INSERT INTO DATI VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",    #inserisce un player  (guid, DBnick, skill, rounds, lastconnect, level, tempban, notoriety, firstconn, streak, alias, varie)
         "newdeath": """INSERT INTO DEATH (GUID) VALUES (?)""",
         "newhit": """INSERT INTO HIT (GUID) VALUES (?)""",
@@ -69,7 +74,6 @@ class Database:
     "kstreakupdpers" : """UPDATE TBskill SET STREAK = ? WHERE GUID = ?""", #aggiorno la kstreak personale
     "lastseen":"""UPDATE TBgiocatori SET LASTSEEN = ? WHERE GUID = ?""", #aggiorna la data di ultima visita
     "nick" : """SELECT NICK, BANNED FROM TBgiocatori WHERE GUID = ?""", #data una guid recupera il nick e la registrazione
-    "tmpban" : """UPDATE TBgiocatori SET TMPBAN = ? WHERE GUID = ?""",  #banna una GUID temporaneamente
     "trovazeroround":"""SELECT TBgiocatori.GUID FROM TBskill, TBgiocatori WHERE TBskill.GUID=TBgiocatori.GUID AND TBskill.ROUND < 2 AND TBgiocatori.BANNED < 5""" #trova i player che non hanno giocato nemmeno due round completi.
     }
     '''

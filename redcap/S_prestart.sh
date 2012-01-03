@@ -1,3 +1,3 @@
 #!/bin/bash
-screen -A -m -d -S Redcap_1Alpha ./S_start.sh
+screen -A -m -d -S Redcap_1Beta ./S_start.sh
 

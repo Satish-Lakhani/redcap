@@ -29,7 +29,7 @@ class Player:
         self.notoriety = 0      #livello di reputazione (sale con anzianita guid, rounds, bonus admin, scende con warning, tempban, tk, malus admin). Calcolata alla connessione
         self.oldIP = ""         #IP usati precedentemente
         self.provider = ""      #provider
-        self.reputation = 0     #reputazione assegnata dagli altri players (salvata in DB)
+        self.reputation = 0     #reputazione assegnata dagli altri players o dal Redcap (salvata in DB)
         self.rounds = 0         #round giocati
         #self.rusher =0         #tempo totale di vita sul gameserver / tempo totale (da un'idea della bravura e camperosita)
         self.skill = 0.0        #skill

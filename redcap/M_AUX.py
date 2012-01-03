@@ -7,63 +7,30 @@ import C_DB         #Classe che rappresenta il DB
 
 DB = C_DB.Database(M_CONF.NomeDB)
 
-StandardMaps = [                    #mappe standard incluse nello z_pack
-"ut4_abbey",
-"ut4_abbeyctf",
-"ut4_algiers",
-"ut4_ambush",
-"ut4_austria",
-"ut4_casa",
-"ut4_crossing",
-"ut4_dressingroom",
-"ut4_eagle",
-"ut4_elgin",
-"ut4_firingrange",
-"ut4_harbortown",
-"ut4_kingdom",
-"ut4_mandolin",
-"ut4_maya",
-"ut4_oildepot",
-"ut4_paradise",
-"ut4_prague",
-"ut4_ramelle",
-"ut4_riyadh",
-"ut4_sanc",
-"ut4_snoppis",
-"ut4_suburbs",
-"ut4_subway",
-"ut4_swim",
-"ut4_thingley",
-"ut4_tombs",
-"ut4_toxic",
-"ut4_tunis",
-"ut4_turnpike",
-"ut4_uptown",
-"ut4_company",  #Mappack 4.1.1
-"ut4_docks",
-"ut4_herring",
-"ut4_horror",
-"ut4_ricochet",
+StandardMaps = [    #mappe standard incluse nello z_pack
+"ut4_abbey","ut4_abbeyctf","ut4_algiers",
+"ut4_ambush","ut4_austria","ut4_casa",
+"ut4_crossing","ut4_dressingroom","ut4_eagle",
+"ut4_elgin","ut4_firingrange","ut4_harbortown",
+"ut4_kingdom","ut4_mandolin","ut4_maya",
+"ut4_oildepot","ut4_paradise","ut4_prague",
+"ut4_ramelle","ut4_riyadh","ut4_sanc",
+"ut4_snoppis","ut4_suburbs","ut4_subway",
+"ut4_swim","ut4_thingley","ut4_tombs",
+"ut4_toxic","ut4_tunis","ut4_turnpike","ut4_uptown",
+"ut4_company",      #Mappack 4.1.1
+"ut4_docks","ut4_herring","ut4_horror","ut4_ricochet",
 ]
 
-#colori per i dialoghi
-colori = {
-"0":"#00FF00",
-"1":"#00FFFF",
-"2":"#FFFF00",
-"3":"#FFFFCC",
-"4":"#006600",
-"5":"#0066FF",
-"6":"#330033",
-"7":"#330033",
-"8":"#FF6600",
-"9":"#FF66FF",
-"10":"#FF66FF",
-"11":"#969696",
-"12":"#99CC99",
-"13":"#FFCCCC",
-"14":"#6699FF"
+
+colori = {          #colori per i dialoghi
+"0":"#00FF00","1":"#00FFFF","2":"#FFFF00","3":"#FFFFCC","4":"#006600","5":"#0066FF","6":"#330033","7":"#330033",
+"8":"#FF6600","9":"#FF66FF","10":"#FF66FF","11":"#969696","12":"#99CC99","13":"#FFCCCC","14":"#6699FF"
 }
+
+tabs = [            #tabelle del DB con guid
+"DATI", "DEATH", "HIT", "KILL", "LOC"
+]
 
 def cr_riavvia(autorestart):
     """restarto RedCap ed eventualmente il server"""
@@ -82,6 +49,41 @@ def cr_riavvia(autorestart):
         M_RC.scrivilog("REDCAP DAILY RESTART.", M_CONF.crashlog)
         sys.exit()
 
+def db_clean_alias():
+    """Elimino gli alias in eccedenza"""
+    j2 = "  "
+    DB.connetti()
+    res = DB.esegui(DB.query["cleanalias"]).fetchall()
+    for player in res:
+        newalias = ""
+        aliases = player[1].split(j2)
+        aliases.sort()
+        aliases.reverse()
+        aliases = aliases[0:M_CONF.maxAlias]
+        for alias in aliases:
+            newalias += (alias + j2)
+        newalias = newalias.rstrip()
+        DB.esegui(DB.query["cleanedalias"],(newalias, player[0]))
+    DB.salva()
+    DB.disconnetti()
+
+def db_clean_guid():
+    """pulizia periodica DB"""
+    DB.connetti()
+    res = DB.esegui(DB.query["cleanoldplayers"], (time.time(), float(M_CONF.maxAbsence*86400), time.time())).fetchall()
+    for guid in res:
+        for tab in tabs:
+            DB.esegui(DB.query["delplayer"] % (tab, guid[0]))  #Elimino guid che non frequentano piu' il gameserver da M_CONF.maxAbsence giorni.
+    DB.salva()
+    DB.disconnetti()
+
+'''
+def db_delete_player(guid, tabs):
+    """cancella un player dal DB. Presuppone il DB gia connesso."""
+    for tab in tabs:
+        DB.esegui(DB.query["delplayer"] % (tab, guid))
+'''
+
 def log_backup():
     """Esegue funzioni di backup sul file di log. Utilizzata da cr_riavvia()"""
     import shutil
@@ -98,6 +100,10 @@ def log_backup():
     logfile.close()
     #Copio il DB in Archivi
     shutil.copy2(M_CONF.NomeDB, M_CONF.NomeArchivi + "/" + timestamp + "_" + M_CONF.NomeDB)
+    DB.connetti()
+    res = DB.esegui("""VACUUM""")   #DOPO che l'ho backuppato, lo comprimo.
+    DB.salva()
+    DB.disconnetti()
     #Estraggo i dialoghi
     logfile = open(M_CONF.NomeFileLog, "r")
     dialoghi = logfile.read()
@@ -118,7 +124,7 @@ def log_backup():
     logfile = open(M_CONF.NomeArchivi + "/" + timestamp + "_saylog.log", "w")
     logfile.write(html)
     logfile.close()
-
+    #crea la classifica se attivato
     if web_FTPtransfer(M_CONF.NomeArchivi + "/" + timestamp + "_saylog.log", M_CONF.w_dialoghi):
         return "CHATFILE TRANSFER OK"
     else:
@@ -153,9 +159,15 @@ def web_rank():
     #DATI: #0: GUID    # 1: Nick    # 2: Skill    # 3: Round    # 4: Lastconnection    # 5: Level    # 6: Tempban    # 7: Reputation    # 8: Firstconnect    # 9: streak    # 10: alias    # 11: varie
     #HIT: #12: head    # 13: torso    # 14: arms    # 15: legs    # 16: body    #LOC: #17: IP    # 18: provider    # 19: location    # 20: oldip    #KILL: #21-38: kills #39: deaths
     lasttableupdate = str(time.strftime("%d.%b&nbsp;%H:%M",time.localtime()))
-    table_ini = "<script type='text/javascript' src='http://%s/wz_tooltip.js'></script><table class=\"sortable\"><tbody>" %(M_CONF.w_url + M_CONF.w_directory) #parte iniziale della table
-    header = "<tr title=\"Last update: %s\"><th>ID</th><th>NICK</th><th>SKILL</th><th>STREAK</th><th>ROUNDS</th><th title='Headshots'>HS</th><th>LAST IP</th><th>LAST VISIT</th></tr>" %lasttableupdate #Header (SKILL, NICK, STREAK, ROUNDS, HIT, IP, LASTVISIT)
+    table_ini = ""
     table_end = "</tbody></table>"              #parte finale della table
+    wz_tooltip_path = "http://" +M_CONF.w_url + M_CONF.w_directory + "/"
+    if M_CONF.w_fullpage:                       #richiedo una pagina html completa
+        table_ini = "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><link href='rank.css' rel='stylesheet' type='text/css' /><script src='%s/sorttable.js'></script></head><body><div class=\"redcap\">" %M_CONF.w_script_url
+        table_end += "</div></body></html>"
+        wz_tooltip_path = ""
+    table_ini += "<script type='text/javascript' src='%swz_tooltip.js'></script><table class=\"sortable\"><tbody>" %(wz_tooltip_path) #parte iniziale della table
+    header = "<tr title=\"Last update: %s\"><th>ID</th><th>NICK</th><th>SKILL</th><th>STREAK</th><th>ROUNDS</th><th title='Headshots'>HS</th><th>LAST IP</th><th>LAST VISIT</th></tr>" %lasttableupdate #Header (SKILL, NICK, STREAK, ROUNDS, HIT, IP, LASTVISIT)
     TABLE = table_ini + header                  #contenuto della table
     i_id = 1
     for guid in Dump:                           #CREO LA RIGA ed i suoi span. RIGHE CON TOOLTIP: <a href="#" onmouseover="TagToTip('Span2')" onmouseout="UnTip()">Homepage </a>
@@ -270,6 +282,7 @@ def web_rank():
 
 def web_FTPtransfer(filefrom, fileto):
     """trasferisce un file sul webserver ausiliario"""
+    esito = True
     from ftplib import FTP
     htmlfile = open(filefrom, "rb")
     try:
@@ -280,10 +293,11 @@ def web_FTPtransfer(filefrom, fileto):
         connessione.quit()
     except:
         htmlfile.close()
-        return False
+        esito = False
+        #return esito
     finally:
         htmlfile.close()
-        return True
+        return esito
 
 class Cronometro:
     """classe per controlli a tempo"""

@@ -36,17 +36,17 @@ nuked = '34'
 def balance_do():
     """esegue il bilanciamento"""
     moved = False
-    if GSRV.BalanceMode ==3:        #modalita clan balance
+    if GSRV.BalanceMode == 3:        #modalita clan balance
         to_move = GSRV.team_clanbalance()
         for player in to_move[0]:       #sposto i red
             #print "Muoverei %s slot %s red" %(GSRV.PT[player].DBnick, GSRV.PT[player].slot_id)
             SCK.cmd("forceteam %s red" %GSRV.PT[player].slot_id)
-            say("^5%s ^3moved to red because he is a ^5%s" %(GSRV.PT[player].nick, M_CONF.clanbalanceTag)  , 1)
+            say("^5%s ^3moved to red because he is a ^5%s" %(GSRV.PT[player].nick, M_CONF.clanbalanceTag), 1)
             moved = True
         for player in to_move[1]:       #sposto i blu
             #print "Muoverei %s slot %s blu" %(GSRV.PT[player].DBnick, GSRV.PT[player].slot_id)
             SCK.cmd("forceteam %s blue" %GSRV.PT[player].slot_id)
-            say("^5%s ^3moved to blue because is not a ^5%s" %(GSRV.PT[player].nick, M_CONF.clanbalanceTag)  , 1)
+            say("^5%s ^3moved to blue because is not a ^5%s" %(GSRV.PT[player].nick, M_CONF.clanbalanceTag), 1)
             moved = True
         if moved:   #se ho fatto il bilanciamento di clan esco, se no  faccio quello normale.
             return moved
@@ -113,10 +113,10 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
             GSRV.Server_mode = 1
             say(Lang["startupend"], 1)
     if GSRV.Server_mode <> 2:                   #non attivo in warmode
-        if GSRV.PT[info[0]].invalid_guid():                                                 #CONTROLLO VALIDITA GUID (adesso che ho pure il nick!)
+        if GSRV.PT[info[0]].invalid_guid():                                       #CONTROLLO VALIDITA GUID (adesso che ho pure il nick!)
             GSRV.PT[info[0]].notoriety += M_CONF.Nt_badguid                       #abbasso la notoriety
             scrivilog("BADGUID: Nick " + str(GSRV.PT[info[0]].nick) + "DB Nick: " + str(GSRV.PT[info[0]].DBnick)  + " IP: " + str(GSRV.PT[info[0]].ip) + " GUID: " + GSRV.PT[info[0]].guid, M_CONF.badguid)
-            kick("Redcap", info[0], Lang["invalidguid"]%info[1])                            #e lo kikko         #TODO  registrare nick e ip in DB o in log
+            kick("Redcap", info[0], Lang["invalidguid"]%info[1])                  #e lo kikko         #TODO  registrare nick e ip in DB o in log
             return  #inutile andare avanti
         if GSRV.PT[info[0]].invalid_nick(GSRV.Nick_is_length, GSRV.Nick_is_good, info[1]):  #CONTROLLO VALIDITA NICK (non ancora assegnato al player!)
             kick("Redcap", info[0], Lang["invalidnick"]%info[1])
@@ -141,7 +141,7 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
         if GSRV.Server_mode <> 2:                           #non attivo in warmode
             saluta(M_CONF.saluti, info[0])                  #chiamo la funzione che si occupa eventualmente di salutare il player
         GSRV.PT[info[0]].lastconnect = time.time()          #aggiorno il lastconnect
-    if res:                                                 #CONTROLLO ALIAS (solo per player NON nuovi)
+    if res:                                                 #CONTROLLO ALIAS (solo per player NON nuovi. I justconnected si)
         esiste = False
         for alias in GSRV.PT[info[0]].alias:
             if info[1] in alias:
@@ -150,6 +150,15 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
         if not esiste:
             new_al = GSRV.PT[info[0]].alias
             new_al.append([str(time.time()), info[1]])      #se non esiste lo aggiungo
+            if GSRV.Server_mode <> 2 and M_CONF.SV_AntiFake:    #se non e in warmode e antifake attivo
+                if GSRV.PT[info[0]].notoriety > -1*M_CONF.Nt_fakepenalty:
+                    penalty = -1*GSRV.PT[info[0]].notoriety/2   #la dimezzo
+                    GSRV.PT[info[0]].reputation += penalty
+                else:
+                    penalty = M_CONF.Nt_fakepenalty
+                    GSRV.PT[info[0]].reputation += penalty
+                GSRV.PT[info[0]].notoriety = GSRV.PT[info[0]].notoriety_upd(M_CONF.Nt_roundXpoint, M_CONF.Nt_dayXpoint)   #aggiorno la notoriety
+                tell(info[0], Lang["newfake"] %(str(penalty), str(GSRV.PT[info[0]].notoriety)))
 
 def comandi (frase):                            #frase [id, testo] (es: "2:31 say: 3 Nero: !slap Cobr4" diventa: ["3", "!slap Cobr4"]
     """processo il comando prima di inviarlo alla finzione specializzata"""
@@ -186,16 +195,18 @@ def cr_full():
         if M_CONF.KickForSpace and GSRV.Server_mode == 1:
             for PL in GSRV.PT:
                 if GSRV.PT[PL].team == 3 and GSRV.PT[PL].level < M_CONF.lev_admin:
-                    GSRV.PT[PL].tobekicked = 4
+                    GSRV.PT[PL].tobekicked = 4  #non lo kikko subito ma gli mando un msg
                     tell(PL, Lang["space"]%GSRV.PT[PL].nick)
                     GSRV.Full = 1     
     elif clients == 0:                          # faccio operazioni da SERVER VUOTO
         GSRV.Full = 0
         GSRV.MinNot_toplay = M_CONF.Nt_MinNot_toplay #rimetto la MinNot_toplay al valore base.
+        SCK.cmd('g_password ""')                #in ogni caso tolgo la password (casomai si rimette da sola se è di default nel baseconf)
         if GSRV.Server_mode == 2:               #tolgo la configurazione war
-            SCK.cmd("g_password ''")            #tolgo la password
-            SCK.cmd("exec " + GSRV.Baseconf)    #carico la config di base
-            GSRV.Server_mode = 1
+            SCK.cmd("g_matchmode 0")
+            SCK.cmd("exec %s" %GSRV.Baseconf)                #eseguo la config di base
+            GSRV.Server_mode = 1                             #passo in modalita normale
+            SCK.cmd("reload")
         if M_CONF.gameserver_autorestart == 2 and GSRV.Restart_when_empty:
             import os
             import sys
@@ -674,6 +685,24 @@ def cyclemap(richiedente, parametri):   #FUNZIONA
         GSRV.LastMapChange = time.time()
         SCK.cmd("cyclemap")
 
+def dbfind(richiedente, parametri): #find a player in DB (for future use)
+    """cerca un player in DB e restituisce info"""
+    nomex = "%" + parametri.group("target") + "%"
+    DB.connetti()
+    res = DB.esegui(DB.query["findplayer"],(nomex,)).fetchall()
+    DB.disconnetti()
+    if len(res) > 4:
+        tell(richiedente, Lang["toomanyres"] %(str(len(res))))
+    else:
+        for pl in res:
+            if nome.lower() in pl[1].lower():
+                outp = "^3ID ^6%s: ^5%s" %(pl[0],pl[1])
+            else:
+                pat=r"(?P<nome>\S*"+nome+"\S*)"
+                n = re.search(pat, pl[2], re.I)
+                outp = "^3ID ^6%s: ^4%s, ^3alias ^5%s" %(pl[0],pl[1], n.group("nome"))
+            tell(richiedente, outp)
+
 def dbnick(richiedente, parametri): #FUNZIONA #TODO aggiungere verifica se esistente ed eventuale merge
     """rende il DBnick uguale al nick corrente"""
     target = trovaslotdastringa(richiedente, parametri.group("target"))
@@ -798,7 +827,7 @@ def nuke(richiedente, parametri):   #FUNZIONA
     if target.isdigit():                                                   #se ho trovato lo slot
          SCK.cmd("nuke " + target)
          lanciatore = GSRV.PT[richiedente].nick
-         say(Lang["nuked"]%(lanciatore, GSRV.PT[target].nick),0)
+         say(Lang["nuked"]%(GSRV.PT[target].nick, lanciatore),0)
 
 def notlev(richiedente, parametri):
     """cambia temporaneamente la notoriety necessaria per giocare sul server"""
