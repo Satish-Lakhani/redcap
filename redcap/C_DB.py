@@ -19,6 +19,7 @@ class Database:
         "delplayer":"""DELETE FROM %s WHERE GUID = '%s'""",                     #elimina una guid da una tabella
         "findplayer":"""SELECT rowid,NICK,ALIAS FROM DATI WHERE ALIAS LIKE ?""", #trova i player con il nick richiesto
         "getallorderedbyguid":"""SELECT * FROM %s ORDER BY GUID DESC""",        #recupera una tabella ordinata per guid
+        "getIPs": """SELECT OLD_IP FROM LOC WHERE rowid = ?""",                 #recupero gli IP di un player
         "getrecords":"""SELECT * FROM REC""",                                   #recupera la tabella records
         "newdati" : """INSERT INTO DATI VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",    #inserisce un player  (guid, DBnick, skill, rounds, lastconnect, level, tempban, notoriety, firstconn, streak, alias, varie)
         "newdeath": """INSERT INTO DEATH (GUID) VALUES (?)""",
@@ -31,6 +32,7 @@ class Database:
         "salvaloc":"""UPDATE LOC SET IP=?, PROVIDER=?, LOCATION=?, OLD_IP=? WHERE GUID=?""",
         "saverecords":"""UPDATE REC SET TIME=?, VAL=?, OWNER=? WHERE TIPO=? """,
         "tempban":"""UPDATE DATI SET TEMPBAN=? WHERE GUID=?""",
+        "unban":"""UPDATE DATI SET TEMPBAN=0.0 WHERE rowid=?""",
         }
 
     def connetti (self): 
