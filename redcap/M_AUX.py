@@ -274,9 +274,9 @@ def web_rank():
     htmlfile.close()
     #trasferisco
     if web_FTPtransfer("HTML" + "/" + M_CONF.w_tabella, M_CONF.w_tabella):
-        return "WEBRANK TRANSFER OK"
+        return True
     else:
-        return "WEBRANK TRANSFER FAILED"
+        return False
 
 #web_rank()
 

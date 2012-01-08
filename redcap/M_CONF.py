@@ -150,8 +150,6 @@ lev_unwar = 1 				#Unload war mode setting the game server to its standard confi
 ### THESE PARAMETERS ***MUST NOT*** BE CHANGED UNLESS YOU EXACTLY KNOW WHAT ARE YOU DOING OR REDCAP WILL NOT RUN PROPERLY!!!   ###
 ### ================================================================================================================  ###
 
-versione = "1.02 Beta(20120103)" 	#RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING OF THE SCRIPT OUTSIDE OF THIS CONFIGURATION FILE. !!!
-
 ##AUXILIARY FILES and LOGS
 badguid = "badguid.log" 	#Bad guids record file
 crashlog = "crash.log" 		#RedCap activity and crashes logfile

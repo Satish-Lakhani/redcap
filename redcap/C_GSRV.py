@@ -7,7 +7,6 @@ import M_CONF
 class Server:
     """Rappresenta il gameserver"""
     def __init__(self):
-        self.AliasMax = M_CONF.SV_AliasMax                              #How many alias Redcap can store in DB for the same player. If more, the older will be deleted
         self.AntiReconInterval = M_CONF.SV_AntiReconInterval            #Tempo minimo fra due connessioni
         self.Attivo = True                                              #TODO: da gestire. Presuppongo che il server sia up finche non provo il contrario
         self.BalanceMode = M_CONF.SV_BalanceMode                        #modalita' di bilanciamento 0=disattivato 1=manuale 2=automatico 3=clan
