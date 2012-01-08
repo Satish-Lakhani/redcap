@@ -216,7 +216,7 @@ def cr_full():
             #scrivilog("REDCAP and GAMESERVER RESTART FOR EMPTY.", M_CONF.crashlog) Appesantisce inutilmente il log
             os.system("./S_full_restart.sh")
             sleep(10)    #aspetto che il server abbia restartato
-            sys.exit()  #TODO da togliere quando redcap restartera se legge shutdown
+            #sys.exit()  #TODO da togliere quando redcap restartera se legge shutdown
     else:
         GSRV.Full = 1
         GSRV.Restart_when_empty = True          #restartera' appena vuoto
