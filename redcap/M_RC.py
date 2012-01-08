@@ -12,6 +12,9 @@ import M_CONF       #Carico le configurazioni programma
 import M_SAYS       #dati ausiliari per gestire i say ed i comandi
 exec("import M_%s" %M_CONF.RC_lang)            #importo modulo localizzazione linguaggio
 
+versione = "1.02 Beta(20120103)" 	#RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING OF THE SCRIPT OUTSIDE OF THIS CONFIGURATION FILE. !!!
+
+
 #Carico i moduli di lingua
 Lang = eval( "M_%s.RC_outputs" %M_CONF.RC_lang)
 Status = eval( "M_%s.RC_status" %M_CONF.RC_lang)
@@ -103,7 +106,7 @@ def clientuserinfo(info):                       #info (0=slot_id, 1=ip, 2=guid)
     elif info[2] <> GSRV.PT[info[0]].guid:          #cambio guid durante il gioco.
         if GSRV.Server_mode <> 2:                   #non attivo in warmode
             GSRV.PT[info[0]].notoriety += M_CONF.Nt_guidchange    #gli abbasso la notoriety in proporzione
-            scrivilog(" GUID CHANGE: Nick: " + str(GSRV.PT[info[0]].nick) + "DB Nick: " + str(GSRV.PT[info[0]].DBnick)  + " IP: " + str(GSRV.PT[info[0]].ip) + " GUID: " + GSRV.PT[info[0]].guid + " CHANGED TO: " + info[2], M_CONF.badguid)
+            scrivilog(" GUID CHANGE: Nick: " + str(GSRV.PT[info[0]].nick) + " DB Nick: " + str(GSRV.PT[info[0]].DBnick)  + " IP: " + str(GSRV.PT[info[0]].ip) + " GUID: " + GSRV.PT[info[0]].guid + " CHANGED TO: " + info[2], M_CONF.badguid)
             kick("Redcap", info[0], Lang["guidchange"]%info[1])
 
 def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
@@ -115,7 +118,7 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
     if GSRV.Server_mode <> 2:                   #non attivo in warmode
         if GSRV.PT[info[0]].invalid_guid():                                       #CONTROLLO VALIDITA GUID (adesso che ho pure il nick!)
             GSRV.PT[info[0]].notoriety += M_CONF.Nt_badguid                       #abbasso la notoriety
-            scrivilog("BADGUID: Nick " + str(GSRV.PT[info[0]].nick) + "DB Nick: " + str(GSRV.PT[info[0]].DBnick)  + " IP: " + str(GSRV.PT[info[0]].ip) + " GUID: " + GSRV.PT[info[0]].guid, M_CONF.badguid)
+            scrivilog("BADGUID: Nick " + str(GSRV.PT[info[0]].nick) + " DB Nick: " + str(GSRV.PT[info[0]].DBnick)  + " IP: " + str(GSRV.PT[info[0]].ip) + " GUID: " + GSRV.PT[info[0]].guid, M_CONF.badguid)
             kick("Redcap", info[0], Lang["invalidguid"]%info[1])                  #e lo kikko         #TODO  registrare nick e ip in DB o in log
             return  #inutile andare avanti
         if GSRV.PT[info[0]].invalid_nick(GSRV.Nick_is_length, GSRV.Nick_is_good, info[1]):  #CONTROLLO VALIDITA NICK (non ancora assegnato al player!)
@@ -210,10 +213,10 @@ def cr_full():
         if M_CONF.gameserver_autorestart == 2 and GSRV.Restart_when_empty:
             import os
             import sys
-            scrivilog("REDCAP and GAMESERVER RESTART FOR EMPTY.", M_CONF.crashlog)
+            #scrivilog("REDCAP and GAMESERVER RESTART FOR EMPTY.", M_CONF.crashlog) Appesantisce inutilmente il log
             os.system("./S_full_restart.sh")
             sleep(10)    #aspetto che il server abbia restartato
-            sys.exit()
+            sys.exit()  #TODO da togliere quando redcap restartera se legge shutdown
     else:
         GSRV.Full = 1
         GSRV.Restart_when_empty = True          #restartera' appena vuoto
@@ -419,7 +422,7 @@ def ini_spamlist():
         buf.close()
         GSRV.SpamList = spam
     if M_CONF.RecordSpam:
-        GSRV.SpamList.append("^2RedCap ^4%s ^2by Lebbra! #" %M_CONF.versione)
+        GSRV.SpamList.append("^2RedCap ^4%s ^2by Lebbra! #" %versione)
         GSRV.SpamList.append(Lang["top"]%("Alltime", str(GSRV.TopScores["Alltime"][1]), str(GSRV.TopScores["Alltime"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(float(GSRV.TopScores["Alltime"][0])))))
         GSRV.SpamList.append(Lang["top"]%("Month", str(GSRV.TopScores["Month"][1]), str(GSRV.TopScores["Month"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(float(GSRV.TopScores["Month"][0])))))
         GSRV.SpamList.append(Lang["top"]%("Week", str(GSRV.TopScores["Week"][1]), str(GSRV.TopScores["Week"][2]), time.strftime("%d.%b %H.%M.%S", time.localtime(float(GSRV.TopScores["Week"][0])))))
@@ -650,7 +653,24 @@ def balancemode(richiedente, parametri): #FUNZIONA
         say(Lang["balancemode"]%bmode[GSRV.BalanceMode], 2)
 
 def ban(richiedente, parametri):
-    """banna in maniera definitiva"""
+    """banna/sbanna in maniera definitiva"""
+    if parametri.group("un") == "un":
+        DB.connetti()
+        res = DB.esegui(DB.query["unban"],(parametri.group("target"),))
+        if res.rowcount == 0:
+            tell(richiedente, Lang["noIDfound"])    #l'ID non esiste
+            DB.disconnetti()
+            return
+        res = DB.esegui(DB.query["getIPs"],(parametri.group("target"),)).fetchall() #l'ID esiste
+        DB.salva()
+        DB.disconnetti()
+        ips = res[0][0].split()
+        if len(ips) == 0:   #TODO necessario?
+            return
+        for ip in ips:
+            SCK.cmd("removeIP " + str(ip))  #sbanni gli IP
+        tell(richiedente, Lang["unbandone"])    #l'ID sbannato
+        return
     target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():
         say(Lang["ban"] %GSRV.PT[target].nick, 2)
@@ -729,10 +749,10 @@ def forceteam(richiedente, parametri):  #FUNZIONA
 
 def info(richiedente, parametri):          #FUNZIONA
     """parametri vari server:IP admin, nextmap,ecc"""
-    versione = "^2I'm RedCap ^4%s " %M_CONF.versione
+    version = "^2I'm RedCap ^4%s " %versione
     server = " ^2on ^4%s:%s" %(M_CONF.Sck_ServerIP, M_CONF.Sck_ServerPort)
     autore = "^3 by bw|Lebbra!"
-    tell(richiedente, versione + server + autore)
+    tell(richiedente, version + server + autore)
     tell(richiedente, "^3ONLINE HELP and download at: ^6code.google.com/p/redcap/")
     tell(richiedente, "^2Players:^3U:%s ^1R:%s ^5B:%s ^2S:%s ^3Servermode:^5%s" %(str(GSRV.TeamMembers[0]), str(GSRV.TeamMembers[1]), str(GSRV.TeamMembers[2]), str(GSRV.TeamMembers[3]), str(GSRV.Server_mode)))
 
@@ -832,7 +852,7 @@ def nuke(richiedente, parametri):   #FUNZIONA
 def notlev(richiedente, parametri):
     """cambia temporaneamente la notoriety necessaria per giocare sul server"""
     if parametri.group("num").isdigit():
-        GSRV.MinNot_toplay = parametri.group("num")
+        GSRV.MinNot_toplay = float(parametri.group("num"))
     else:
         GSRV.MinNot_toplay = M_CONF.Nt_MinNot_toplay
     say(Lang["not_changed"] %str(GSRV.MinNot_toplay), 2)
@@ -854,7 +874,7 @@ def password(richiedente, parametri):  #FUNZIONA
     SCK.cmd("g_password " + parametri.group("pwd"))
     tell(richiedente, Lang["pwdset"])
 
-def rcrestart(richiedente, parametri):
+def rcrestart(richiedente, parametri =""):
     """restarta il RedCap"""
     say(Lang["restart"], 2)
     tmp = []
@@ -862,9 +882,12 @@ def rcrestart(richiedente, parametri):
         tmp.append(GSRV.PT[pl].slot_id)
     for id in tmp:
         say(Lang["salvoplayer"]%GSRV.PT[id].nick, 1)
-        clientdisconnect(id)
+        clientdisconnect(id)        #chiamo la funzione come se il player si disconnettesse
     import sys
-    scrivilog("RIAVVIO RedCap", M_CONF.crashlog)
+    if parametri <> "":
+        scrivilog("RESTART RedCap: %s" %parametri, M_CONF.crashlog)
+    else:
+        scrivilog("RESTART RedCap", M_CONF.crashlog)
     sleep(1)
     sys.exit()
 

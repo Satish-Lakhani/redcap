@@ -3,20 +3,16 @@
 
 #TODO fare controllo armi ammesse per team
 #TODO fare anche ban per nick
-#TODO eliminare gli alias piu vecchi di n giorni
 #TODO fare manutenzioni programmate
 #TODO evitare che un crash durante cw cancelli la config war
 #TODO fare comando shuffle
-#TODO fare bilanciamento immediato in modalita CTF Fatto, da testare
-#fare archiviazione dialoghi
 #TODO completare classifica 
-#TODO fare comando DBban e DBunban
 #TODO bannare guid originale per cambio guid in game
 #TODO fare comando join
 #TODO fare comando rank che mostri skill dei player in game (e top skill?)
 #TODO fare comando admin che mostra gli admin in game e/o la adminlist
-#TODO fare funzione find in DB (usa almeno 3 lettere)
 #TODO fare funzione record reset
+#TODO riavviare il bot al   0:00 ShutdownGame: #FATTO DA CONTROLLARE
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -49,7 +45,9 @@ def init_jobs():
     M_RC.ini_spamlist()             #carico la spamlist
     if M_CONF.Website_ON:           #Se esiste un website di appoggio aggiorno la classifica, la trasferisco al server remoto e salvo il risultato dell'operazione nel log
         M_RC.say("^4Webrank updating...", 2)
-        M_RC.scrivilog(M_AUX.web_rank(), M_CONF.crashlog)
+        res = M_AUX.web_rank()
+        if res == False:
+            M_RC.scrivilog("WEBRANK TRANSFER FAILED", M_CONF.crashlog)
     M_RC.say("^4Q3ut4 parsing...", 2)
     q3ut4_parse()
     M_RC.say("^2Main routine started. Wait for players identification...", 2)
@@ -93,6 +91,9 @@ def redcap_main():
                         continue
                     elif frase[1] == "EndMap":                    
                         M_RC.endMap(frase[0])
+                        continue
+                    elif frase[1] == "Shutdown":
+                        M_RC.rcrestart("Redcap", "Gameserver Shutdown")                #restarto per evitare confusioni di slot e guid se i player non sono gli stessi dopo il gamerestart
                         continue
         if CRON1.is_time():                     #ESEGUO OPERAZIONI A CRON1
             if M_RC.GSRV.Server_mode == 1:          #controlli fatti solo in modalita' normale.

@@ -6,7 +6,7 @@ import M_CONF
 comandi = [
 ["alias", r"!al (?P<target>.*)", M_CONF.lev_alias],
 ["balancemode", r"!ab", M_CONF.lev_balancemode],
-["ban", r"!ban (?P<target>.*)", M_CONF.lev_ban],
+["ban", r"!(?P<un>(un)*)ban (?P<target>.*)", M_CONF.lev_ban],
 ["balance",r"!tm|!teams", M_CONF.lev_balance],  
 #["balance",r"!tm", M_CONF.lev_balance],
 ["callvote",r"!v$",M_CONF.lev_callvote],

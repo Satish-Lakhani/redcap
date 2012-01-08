@@ -79,6 +79,8 @@ class Parser:
                 self.outputs.append((frase, "InitGame"))
             elif x.find("Exit:")!= -1:                                      #trovo gli ENDMAP
                 self.outputs.append((x, "EndMap"))
+            elif x.find("ShutdownGame:")!= -1:              #Server SHUTDOWN
+                self.outputs.append((x, "Shutdown"))
 
     def q3ut4_check(self, path, info, cycle):
         """recupero informazioni dalla directory q3ut4"""
