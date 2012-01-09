@@ -92,9 +92,6 @@ def redcap_main():
                     elif frase[1] == "EndMap":                    
                         M_RC.endMap(frase[0])
                         continue
-                    elif frase[1] == "Shutdown":
-                        M_RC.rcrestart("Redcap", "Gameserver Shutdown")                #restarto per evitare confusioni di slot e guid se i player non sono gli stessi dopo il gamerestart
-                        continue
         if CRON1.is_time():                     #ESEGUO OPERAZIONI A CRON1
             if M_RC.GSRV.Server_mode == 1:          #controlli fatti solo in modalita' normale.
                 M_RC.cr_tbkicked()                  #da fare sempre per primo
