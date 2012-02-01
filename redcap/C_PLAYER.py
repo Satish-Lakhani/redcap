@@ -127,8 +127,9 @@ class Player:
         256: self.ip,
         512: self.level,
         1024: self.warning,
-        2048:self.lastconnect,
+        2048: self.lastconnect,
         4096: aliases,
+        8192: self.location
         }
         return X
 
