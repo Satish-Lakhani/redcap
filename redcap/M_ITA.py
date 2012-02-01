@@ -62,8 +62,11 @@ RC_outputs = {
 "record_no_ppl": "^3meno di ^7%s ^3persone in game. Record di  ^5%s ^3non convalidato",
 "record_personal": "^2Record personale di ^5%s ^6%s kills",
 "record_weekly": "^2RECORD SETTIMANALE di ^5%s ^6%s kills",
+"resetdone": "^3Record %s cancellato.",
+"resetnotdone":"^1Errore. ^3Specificare un parametro: %s",
 "restart": "^1 Riavvio RedCap...",
 "salvoplayer": "^3Salvo i dati di ^5%s",
+"silentmode": "^3Modalita' silenziosa ^6%s",
 "skill": "^3Skill: ^7%s ^3Instantanea: ^7%s ^3Streak: ^7%s ",
 "space":"^3Slots pieni. ^5%s ^3entra in gioco o sarai kikkato.",
 "spacekicked": "^3Server pieno. Spettatore ^5%s ^3kikkato.",
@@ -139,4 +142,5 @@ RC_status = {
 1024: "^3Warning:^7%s ",
 2048:" ^3Ultima visita: ^7%s ",
 4096: "^3Alias:^7%s ",
+8192: "^3da ^7%s",
 }

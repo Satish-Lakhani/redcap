@@ -10,9 +10,10 @@ import C_SOCKET     #Classe socket per comunicazione con UrT
 import M_CMD        #Lista comandi
 import M_CONF       #Carico le configurazioni programma
 import M_SAYS       #dati ausiliari per gestire i say ed i comandi
+import geoip      #geolocalizzazione
 exec("import M_%s" %M_CONF.RC_lang)            #importo modulo localizzazione linguaggio
 
-versione = "1.02 Beta(20120103)" 	#RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING OF THE SCRIPT OUTSIDE OF THIS CONFIGURATION FILE. !!!
+versione = "1.05_(20120201)" 	#RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING OF THE SCRIPT OUTSIDE OF THIS CONFIGURATION FILE. !!!
 
 
 #Carico i moduli di lingua
@@ -21,9 +22,10 @@ Status = eval( "M_%s.RC_status" %M_CONF.RC_lang)
 Logs = eval("M_%s.RC_logoutputs" %M_CONF.RC_lang)
 Killz = eval("M_%s.RC_kills" %M_CONF.RC_lang)
 
-SCK = C_SOCKET.Sock()                                                                       #Istanzio il socket
-GSRV = C_GSRV.Server()                                                                          #Istanzio il gameserver
-DB = C_DB.Database(M_CONF.NomeDB)                                                   #Istanzio il DB
+SCK = C_SOCKET.Sock()                                                                   #Istanzio il socket
+GSRV = C_GSRV.Server()                                                                 #Istanzio il gameserver
+DB = C_DB.Database(M_CONF.NomeDB)                                         #Istanzio il DB
+GLC = geoip.GeoIP('GEOIP/GeoLiteCity.dat')                                #istanzio il geolocator
 
 #DB.connetti()
 #GSRV.Banlist= (DB.esegui("""SELECT * FROM BAN""")).fetchall()   #carico la banlist #TODO da scaricare periodicamente (spostare in modulo apposito?)
@@ -42,14 +44,14 @@ def balance_do():
     if GSRV.BalanceMode == 3:        #modalita clan balance
         to_move = GSRV.team_clanbalance()
         for player in to_move[0]:       #sposto i red
-            #print "Muoverei %s slot %s red" %(GSRV.PT[player].DBnick, GSRV.PT[player].slot_id)
             SCK.cmd("forceteam %s red" %GSRV.PT[player].slot_id)
-            say("^5%s ^3moved to red because he is a ^5%s" %(GSRV.PT[player].nick, M_CONF.clanbalanceTag), 1)
+            if not M_CONF.SV_silentmode:
+                say("^5%s ^3moved to red because he is a ^5%s" %(GSRV.PT[player].nick, M_CONF.clanbalanceTag), 1)
             moved = True
         for player in to_move[1]:       #sposto i blu
-            #print "Muoverei %s slot %s blu" %(GSRV.PT[player].DBnick, GSRV.PT[player].slot_id)
             SCK.cmd("forceteam %s blue" %GSRV.PT[player].slot_id)
-            say("^5%s ^3moved to blue because is not a ^5%s" %(GSRV.PT[player].nick, M_CONF.clanbalanceTag), 1)
+            if not M_CONF.SV_silentmode:
+                say("^5%s ^3moved to blue because is not a ^5%s" %(GSRV.PT[player].nick, M_CONF.clanbalanceTag), 1)
             moved = True
         if moved:   #se ho fatto il bilanciamento di clan esco, se no  faccio quello normale.
             return moved
@@ -57,7 +59,8 @@ def balance_do():
         moving = GSRV.team_balance()
         SCK.cmd("forceteam " + moving)
         GSRV.BalanceRequired = False
-        say(Lang["balancexecuted"], 1)
+        if not M_CONF.SV_silentmode:
+            say(Lang["balancexecuted"], 1)
         moved = True
     return moved
 
@@ -102,23 +105,28 @@ def clientuserinfo(info):                       #info (0=slot_id, 1=ip, 2=guid)
         newplayer = C_PLAYER.Player()                       #lo creo
         GSRV.player_NEW(newplayer, info[0], time.time())    #lo aggiungo alla PlayerTable ed ai TeamMember
     if GSRV.PT[info[0]].justconnected:              #Se e un nuovo player
-        GSRV.player_ADDINFO(info)                   #gli aggiungo GUID e IP
+        GSRV.player_ADDINFO(info)                   #gli aggiungo GUID e IP e location
+        geoinfo = GLC.record_by_addr(info[1])
+        GSRV.PT[info[0]].location = ("%s - %s") %(geoinfo["city"], geoinfo["country_code3"])
     elif info[2] <> GSRV.PT[info[0]].guid:          #cambio guid durante il gioco.
-        if GSRV.Server_mode <> 2:                   #non attivo in warmode
+        if GSRV.Server_mode <> 2:                   #non attivo esclusivamente in warmode
             GSRV.PT[info[0]].notoriety += M_CONF.Nt_guidchange    #gli abbasso la notoriety in proporzione
-            scrivilog(" GUID CHANGE: Nick: " + str(GSRV.PT[info[0]].nick) + " DB Nick: " + str(GSRV.PT[info[0]].DBnick)  + " IP: " + str(GSRV.PT[info[0]].ip) + " GUID: " + GSRV.PT[info[0]].guid + " CHANGED TO: " + info[2], M_CONF.badguid)
+            scrivilog(" GUID CHANGE: Nick: " + str(GSRV.PT[info[0]].nick) + " DB Nick: " + str(GSRV.PT[info[0]].DBnick)  + " IP: " + str(GSRV.PT[info[0]].ip) + " Location: " + str(GSRV.PT[info[0]].location) +  " GUID: " + GSRV.PT[info[0]].guid + " CHANGED TO: " + info[2], M_CONF.badguid)
             kick("Redcap", info[0], Lang["guidchange"]%info[1])
 
 def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
     res = GSRV.player_USERINFOCHANGED(info)     #Aggiorno NICK e TEAM (se res True, il player ha cambiato nick (o e' nuovo)
-    if GSRV.Server_mode == 0:
+    if GSRV.Server_mode == 0:           #controllo se � finito lo startup
         if GSRV.TeamMembers[0] == 0:
-            GSRV.Server_mode = 1
-            say(Lang["startupend"], 1)
+            if M_CONF.SV_silentmode:
+                GSRV.Server_mode = 3    #Silentmode
+            else:
+                GSRV.Server_mode = 5    #Normale
+                say(Lang["startupend"], 1)
     if GSRV.Server_mode <> 2:                   #non attivo in warmode
         if GSRV.PT[info[0]].invalid_guid():                                       #CONTROLLO VALIDITA GUID (adesso che ho pure il nick!)
             GSRV.PT[info[0]].notoriety += M_CONF.Nt_badguid                       #abbasso la notoriety
-            scrivilog("BADGUID: Nick " + str(GSRV.PT[info[0]].nick) + " DB Nick: " + str(GSRV.PT[info[0]].DBnick)  + " IP: " + str(GSRV.PT[info[0]].ip) + " GUID: " + GSRV.PT[info[0]].guid, M_CONF.badguid)
+            scrivilog("BADGUID: Nick " + str(GSRV.PT[info[0]].nick) + " DB Nick: " + str(GSRV.PT[info[0]].DBnick)  + " IP: " + str(GSRV.PT[info[0]].ip) + " Location: " + str(GSRV.PT[info[0]].location) + " GUID: " + GSRV.PT[info[0]].guid, M_CONF.badguid)
             kick("Redcap", info[0], Lang["invalidguid"]%info[1])                  #e lo kikko         #TODO  registrare nick e ip in DB o in log
             return  #inutile andare avanti
         if GSRV.PT[info[0]].invalid_nick(GSRV.Nick_is_length, GSRV.Nick_is_good, info[1]):  #CONTROLLO VALIDITA NICK (non ancora assegnato al player!)
@@ -136,12 +144,14 @@ def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
             if (time.time() -  GSRV.PT[info[0]].lastconnect) < GSRV.AntiReconInterval:                  #CONTROLLO RECONNECT
                 kick("Redcap", info[0], Lang["antirecon"]%(GSRV.PT[info[0]].nick, str( GSRV.AntiReconInterval)))
                 return
-            if "muted" in GSRV.PT[info[0]].varie:           #lo muto in quanto si e' disconnesso da muto.
-                mute("Redcap",info[0])
-                say(Lang["muted"]%GSRV.PT[info[0]].nick, 0)
+            if "muted" in GSRV.PT[info[0]].varie:                                                           #CONTROLLO MUTED .
+                mute("Redcap",info[0])                          #lo muto in quanto si e' disconnesso da muto
+                tell(GSRV.PT[info[0]].slot_id, Lang["muted"]%GSRV.PT[info[0]].nick)
+            if "protected" in GSRV.PT[info[0]].varie:                                                           #CONTROLLO PROTECTED nick .
+                pass    #TODO
         GSRV.PT[info[0]].skill_coeff_update()               #aggiorno il coefficiente skill
         GSRV.PT[info[0]].justconnected = False              #non e piu nuovo
-        if GSRV.Server_mode <> 2:                           #non attivo in warmode
+        if GSRV.Server_mode > 3:                           #attivo solo in normal mode
             saluta(M_CONF.saluti, info[0])                  #chiamo la funzione che si occupa eventualmente di salutare il player
         GSRV.PT[info[0]].lastconnect = time.time()          #aggiorno il lastconnect
     if res:                                                 #CONTROLLO ALIAS (solo per player NON nuovi. I justconnected si)
@@ -195,7 +205,7 @@ def cr_full():
     clients = (GSRV.TeamMembers[0] + GSRV.TeamMembers[1] + GSRV.TeamMembers[2] + GSRV.TeamMembers[3])
     if clients == int(GSRV.MaxClients):              # faccio operazioni da SERVER PIENO
         GSRV.Full = 2
-        if M_CONF.KickForSpace and GSRV.Server_mode == 1:
+        if M_CONF.KickForSpace and GSRV.Server_mode >2: #Silent e normal mode
             for PL in GSRV.PT:
                 if GSRV.PT[PL].team == 3 and GSRV.PT[PL].level < M_CONF.lev_admin:
                     GSRV.PT[PL].tobekicked = 4  #non lo kikko subito ma gli mando un msg
@@ -204,16 +214,18 @@ def cr_full():
     elif clients == 0:                          # faccio operazioni da SERVER VUOTO
         GSRV.Full = 0
         GSRV.MinNot_toplay = M_CONF.Nt_MinNot_toplay #rimetto la MinNot_toplay al valore base.
-        SCK.cmd('g_password ""')                #in ogni caso tolgo la password (casomai si rimette da sola se è di default nel baseconf)
+        SCK.cmd("g_password \"\"")              #in ogni caso tolgo la password (casomai si rimette da sola se e' di default nel baseconf) #TODO sembra non funzionare
         if GSRV.Server_mode == 2:               #tolgo la configurazione war
             SCK.cmd("g_matchmode 0")
             SCK.cmd("exec %s" %GSRV.Baseconf)                #eseguo la config di base
-            GSRV.Server_mode = 1                             #passo in modalita normale
+            if M_CONF.SV_silentmode:
+                GSRV.Server_mode = 3    #Silentmode
+            else:
+                GSRV.Server_mode = 5    #Normale
             SCK.cmd("reload")
         if M_CONF.gameserver_autorestart == 2 and GSRV.Restart_when_empty:
             import os
             import sys
-            #scrivilog("REDCAP and GAMESERVER RESTART FOR EMPTY.", M_CONF.crashlog) Appesantisce inutilmente il log
             os.system("./S_full_restart.sh")
             sleep(10)    #aspetto che il server abbia restartato
             sys.exit() 
@@ -236,9 +248,9 @@ def cr_notorietycheck():
     """controllo notoriety"""
     for PL in GSRV.PT:
         if GSRV.PT[PL].notoriety < GSRV.MinNot_toplay and GSRV.PT[PL].tobekicked == 0:  #false per evitare di spammare 2 volte
-            say(Lang["lownotoriety"]%(GSRV.PT[PL].nick, GSRV.PT[PL].notoriety, GSRV.MinNot_toplay), 0)   #TODO trasformare in tell
+            tell(GSRV.PT[PL].slot_id, Lang["lownotoriety"]%(GSRV.PT[PL].nick, GSRV.PT[PL].notoriety, GSRV.MinNot_toplay))
             time_to_wait = (GSRV.MinNot_toplay - GSRV.PT[PL].notoriety) * M_CONF.Nt_dayXpoint
-            say(Lang["lownotoriety2"]%str(time_to_wait), 0)
+            tell(GSRV.PT[PL].slot_id, Lang["lownotoriety2"]%str(time_to_wait))
             GSRV.PT[PL].tobekicked = 1
 
 def cr_recordErase():
@@ -261,8 +273,8 @@ def cr_recordErase():
 
 def cr_spam():
     """spam periodici"""
-    if GSRV.Server_mode == 2:
-        return                                          #no spam in warmode
+    if GSRV.Server_mode < 5:
+        return                                          #no spam in warmode e silentmode
     if len(GSRV.SpamList) == 0:
         return                                          #spamlist vuota
     else:
@@ -279,11 +291,13 @@ def cr_tbkicked():
             continue
         if GSRV.PT[PL].tobekicked == 1:         #controllo tobekicked
             kick("Redcap", GSRV.PT[PL].slot_id)
-            say(Lang["tbkicked"] %GSRV.PT[PL].nick, 0)
+            if not M_CONF.SV_silentmode:
+                say(Lang["tbkicked"] %GSRV.PT[PL].nick, 0)
         elif GSRV.PT[PL].tobekicked == 2:       #kick per slot pieni
             if GSRV.PT[PL].team == 3:           #se e ancora spect lo kikko
                 kick("Redcap", GSRV.PT[PL].slot_id)
-                say(Lang["spacekicked"] %GSRV.PT[PL].nick, 0)
+                if not M_CONF.SV_silentmode:
+                    say(Lang["spacekicked"] %GSRV.PT[PL].nick, 0)
             else:
                 GSRV.PT[PL].tobekicked = 0      #e entrato in game
         elif GSRV.PT[PL].tobekicked <= 4:       # kick per slot pieni aspetto 2 tick
@@ -341,7 +355,7 @@ def endMap(frase):
             GSRV.PT[pl].varie.remove("muted")           #tolgo la tag muted
         rank.append((GSRV.PT[pl].skill_var, GSRV.PT[pl].nick))
         GSRV.PT[pl].skill_var = 0                       #azzero la skill_var
-    if GSRV.Server_mode <> 2:                               #non attivo in warmode
+    if GSRV.Server_mode <> 2:                               #non attivo in warmode #TODO vedere se eliminare in silentmode
         rank.sort()
         rank.reverse()
         if len(rank) > 4:                                   #se piu' di quattro player in game mostro solo i quattro migliori.
@@ -360,7 +374,7 @@ def endMap(frase):
     endRound(frase)                                     #richiamo anche le solite operazioni da endround
 
 def endRound(frase):
-    if GSRV.Server_mode == 1:                                       #solo in modalita normale. No war e no startup
+    if GSRV.Server_mode > 2:                                       #solo in modalita normale e silent. No war e no startup
         if GSRV.BalanceMode > 1 or GSRV.BalanceRequired:           #eseguo bilanciamento automatico o su richiesta
             res = balance_do()
 
@@ -376,7 +390,8 @@ def hits(frase):                                                #del tipo ['1', 
         if GSRV.ShowHeadshots and int(frase[2]) < 2:      #se e' un headshot e lo devo spammare
             hs = GSRV.PT[frase[1]].hits['0'] + GSRV.PT[frase[1]].hits['1']
             perc = hs*100/GSRV.PT[frase[1]].hits['total']
-            say(Lang["headshot"]%(GSRV.PT[frase[1]].nick, str(hs), str(perc)), 1)
+            if not M_CONF.SV_silentmode:
+                say(Lang["headshot"]%(GSRV.PT[frase[1]].nick, str(hs), str(perc)), 1)
 
 def ini_clientlist():
     """all avvio trova i client gia collegati"""
@@ -399,7 +414,8 @@ def ini_clientlist():
                 GSRV.PT[dati[1]].guid = dati[0]
                 GSRV.PT[dati[1]].nick = dati[2]
                 db_datacontrol(dati[0], dati[1])                    #carico i dati se esistono
-                say(Lang["caricoplayer"]%str(GSRV.PT[dati[1]].nick), 1)
+                if not M_CONF.SV_silentmode:
+                    say(Lang["caricoplayer"]%str(GSRV.PT[dati[1]].nick), 1)
                 GSRV.PT[dati[1]].skill_coeff_update()               #aggiorno il coefficiente skill
                 GSRV.PT[dati[1]].justconnected = False             #non e piu nuovo
                 GSRV.PT[dati[1]].lastconnect = time.time()          #aggiorno il lastconnect
@@ -439,7 +455,7 @@ def initGame(frase):    # frase (0=matchmode, 1=gametype, 2=maxclients, 3=mapnam
 
 def initRound(frase):
     """attivita da fare ad inizio round"""
-    if GSRV.Server_mode == 1:                                       #solo in modalita normale. No war e no startup
+    if GSRV.Server_mode > 2:                                       #solo in modalita normale. No war e no startup
         GSRV.teamskill_eval()                                       #aggiorno le teamskill e il coefficiente di sbilanciamento skill
         GSRV.players_alive()                                        #setto i player non spect a vivo, gli aggiungo un round e updato il coeff skill.
         if (GSRV.MapName + "\n") in GSRV.Q3ut4["mapcycle"]:         #verifico qual'e la prossima mappa
@@ -447,8 +463,9 @@ def initRound(frase):
             if indice_nextmap == len(GSRV.Q3ut4["mapcycle"]):
                 indice_nextmap = 0
             nextmap = GSRV.Q3ut4["mapcycle"][indice_nextmap]
-            ini_say = "^1%s^4%s^2%s^8%s ^3Sk:^1(%s)^7-^4(%s) ^3- Nextmap: ^7%s" %(str(GSRV.TeamMembers[1]), str(GSRV.TeamMembers[2]), str(GSRV.TeamMembers[3]), str(GSRV.TeamMembers[0]), str(int(GSRV.TeamSkill[0])), str(int(GSRV.TeamSkill[1])), nextmap)
-            say(ini_say, 1)
+            if not M_CONF.SV_silentmode:
+                ini_say = "^1%s^4%s^2%s^8%s ^3Sk:^1(%s)^7-^4(%s) ^3- Nextmap: ^7%s" %(str(GSRV.TeamMembers[1]), str(GSRV.TeamMembers[2]), str(GSRV.TeamMembers[3]), str(GSRV.TeamMembers[0]), str(int(GSRV.TeamSkill[0])), str(int(GSRV.TeamSkill[1])), nextmap)
+                say(ini_say, 1)
     elif GSRV.Server_mode == 0:
         say(Lang["startup"], 1)
 
@@ -471,11 +488,14 @@ def kills(frase):                                       #frase del tipo ['0', '1
         if kz > len(Killz)-1:
             kz = len(Killz)-1                           
         if 1 in res:                                    #spammo ks in bigtext
-            say(Killz[kz]%GSRV.PT[frase[0]].nick, 2)
+            if not M_CONF.SV_silentmode:
+                say(Killz[kz]%GSRV.PT[frase[0]].nick, 2)
         elif 2 in res:                                  #spammo ks in console
-            say(Killz[kz]%GSRV.PT[frase[0]].nick, 0)
-        if 4 in res:                                    
-            say(Lang["record_personal"]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[0]].ks)), 0)  #spammo personal record in console
+            if not M_CONF.SV_silentmode:
+                say(Killz[kz]%GSRV.PT[frase[0]].nick, 0)
+        if 4 in res:
+            if not M_CONF.SV_silentmode:
+                say(Lang["record_personal"]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[0]].ks)), 0)  #spammo personal record in console
         if 8 in res:
             say(Lang["record_alltime"]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[0]].ks)), 2)   #spammo alltime record
             ini_spamlist()                              #aggiorno la lista spam
@@ -489,17 +509,22 @@ def kills(frase):                                       #frase del tipo ['0', '1
             say(Lang["record_daily"]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[0]].ks)), 2)     #spammo daily record
             ini_spamlist()                              #aggiorno la lista spam
         elif 512 in res:
-            say(Lang["record_no_not"]%str(GSRV.PT[frase[0]].nick), 0)     #notoriety bassa
+            if not M_CONF.SV_silentmode:
+                say(Lang["record_no_not"]%str(GSRV.PT[frase[0]].nick), 0)     #notoriety bassa
         elif 1024 in res:
-            say(Lang["record_no_ppl"]%(M_CONF.MinPlayers, str(GSRV.PT[frase[0]].nick)), 0)     #poca gente
+            if not M_CONF.SV_silentmode:
+                say(Lang["record_no_ppl"]%(M_CONF.MinPlayers, str(GSRV.PT[frase[0]].nick)), 0)     #poca gente
         if 128 in res:
-            say(Killz[0]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[1]].nick)), 2)               #spammo stop ks in bigtext
+            if not M_CONF.SV_silentmode:
+                say(Killz[0]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[1]].nick)), 2)               #spammo stop ks in bigtext
         elif 256 in res:
-            say(Killz[0]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[1]].nick)), 0)               #spammo stop ks in console
+            if not M_CONF.SV_silentmode:
+                say(Killz[0]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[1]].nick)), 0)               #spammo stop ks in console
         GSRV.PT[frase[0]].kills[frase[2]] += 1          #aggiungo la kill alle statistiche
     elif frase[2] in accident :                                                             #INCIDENTE
         GSRV.PT[frase[1]].deaths += 1                        #aumento di 1 le deaths alla vittima
-        say(Lang["accident"]%GSRV.PT[frase[1]].nick, 0)
+        if not M_CONF.SV_silentmode:
+            say(Lang["accident"]%GSRV.PT[frase[1]].nick, 0)
     elif frase[2] == suicide:                                                               #SUICIDIO
         GSRV.PT[frase[1]].deaths += 1                        #aumento di 1 le deaths alla vittima
         GSRV.PT[frase[1]].skill -= 2 * GSRV.PT[frase[1]].skill_coeff * GSRV.Sk_penalty / GSRV.Sk_Kpp     #penalizzo la skill
@@ -528,7 +553,7 @@ def option_checker(v):
     
 def saluta(modo, id):
     """si occupa di salutare il player al suo ingresso in game"""
-    if GSRV.Server_mode == 2:                               #non attivo in warmode
+    if GSRV.Server_mode < 5:                               #non attivo in warmode e silentmode
         return
     stat = GSRV.PT[id].stats()
     if 2048 in stat:
@@ -617,20 +642,20 @@ def balance(richiedente, parametri):    #FUNZIONA
         tell(richiedente, Lang["balanceoff"])
         return
     elif GSRV.BalanceMode == 1:                                #blanciamento manuale
-        if GSRV.Gametype == "7" and GSRV.Server_mode == 1:                                  #bilanciamento immediato in CTF #TODO da testare e aggiornare wiki
+        if GSRV.Gametype == "7" and GSRV.Server_mode > 2:                                  #bilanciamento immediato in CTF #TODO da testare e aggiornare wiki
             balance_do()
         else:
             tell(richiedente, Lang["balancemanual"])
             GSRV.BalanceRequired = True
         return
     elif GSRV.BalanceMode == 2:                             #bilanciamento automatico
-        if GSRV.Gametype == "7" and GSRV.Server_mode == 1:                                  #bilanciamento immediato in CTF #TODO da testare
+        if GSRV.Gametype == "7" and GSRV.Server_mode > 2:                                  #bilanciamento immediato in CTF #TODO da testare
             balance_do()
         else:
             tell(richiedente, Lang["balanceauto"])
         return
     elif GSRV.BalanceMode == 3:                             #bilanciamento clanmode
-        if GSRV.Gametype == "7" and GSRV.Server_mode == 1:                                  #bilanciamento immediato in CTF #TODO da testare
+        if GSRV.Gametype == "7" and GSRV.Server_mode > 2:                                  #bilanciamento immediato in CTF #TODO da testare
             balance_do()
         else:
             tell(richiedente, Lang["balanceclan"])
@@ -676,8 +701,6 @@ def ban(richiedente, parametri):
         say(Lang["ban"] %GSRV.PT[target].nick, 2)
         time.sleep(1)
         GSRV.PT[target].tempban = time.time() + 63072000   #ban per 2 anni
-        #if GSRV.PT[target].ip in GSRV.Banlist...
-        #GSRV.Banlist.append([])
         #TODO verificare se fare banlist da tenere in memoria (da pulire per i ban vecchi)
         SCK.cmd("addIP " + GSRV.PT[target].ip)      #lo banno
         SCK.cmd("kick " + target)                   #lo kikko (al clientdisconnect si aggiorna il tempban)
@@ -764,8 +787,9 @@ def kick(richiedente, parametri, reason = ""):  #FUNZIONA
         target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():                                                   #se ho trovato lo slot
         if reason <> "":
-            say(reason, 0)
-            time.sleep(1)
+            if not M_CONF.SV_silentmode:
+                say(reason, 0)
+                time.sleep(2)
         SCK.cmd("kick " + target)                                 #Invio al socket il comando kick
 
 def level (richiedente, parametri):  #FUNZIONA
@@ -816,7 +840,8 @@ def mute(richiedente, parametri, reason = ""):
         target = trovaslotdastringa(richiedente, parametri.group("target"))
     if target.isdigit():                                                   #se ho trovato lo slot
         if reason <> "":
-            say(reason, 0)
+            if not M_CONF.SV_silentmode:
+                say(reason, 0)
         if "muted" in GSRV.PT[target].varie:
             GSRV.PT[target].varie.remove("muted")           #tolgo la tag muted
         else:
@@ -881,7 +906,8 @@ def rcrestart(richiedente, parametri =""):
     for pl in GSRV.PT:
         tmp.append(GSRV.PT[pl].slot_id)
     for id in tmp:
-        say(Lang["salvoplayer"]%GSRV.PT[id].nick, 1)
+        if not M_CONF.SV_silentmode:
+            say(Lang["salvoplayer"]%GSRV.PT[id].nick, 1)
         clientdisconnect(id)        #chiamo la funzione come se il player si disconnettesse
     import sys
     if parametri <> "":
@@ -890,6 +916,48 @@ def rcrestart(richiedente, parametri =""):
         scrivilog("RESTART RedCap", M_CONF.crashlog)
     sleep(1)
     sys.exit()
+
+def recordreset(richiedente, parametri):
+    """Azzera uno o tutti i record"""
+    DB.connetti()
+    if parametri.group("target") == "day":
+        DB.esegui(DB.query["saverecords"], ("0.0", "0", " ", "Day"))
+        GSRV.TopScores["Day"] = [0.0, 0, " "]
+    elif parametri.group("target") == "week":
+        DB.esegui(DB.query["saverecords"], ("0.0", "0", " ", "Week"))
+        GSRV.TopScores["Week"] = [0.0, 0, " "]
+    elif parametri.group("target") == "month":
+        DB.esegui(DB.query["saverecords"], ("0.0", "0", " ", "Month"))
+        GSRV.TopScores["Month"] = [0.0, 0, " "]
+    elif parametri.group("target") == "alltime":
+        DB.esegui(DB.query["saverecords"], ("0.0", "0", " ", "Alltime"))
+        GSRV.TopScores["Alltime"] = [0.0, 0, " "]
+    elif parametri.group("target") == "all":
+                DB.esegui(DB.query["saverecords"], ("0", "0.0", " ", "Day",))
+                GSRV.TopScores["Day"] = [0.0, 0, " "]
+                DB.esegui(DB.query["saverecords"], ("0", "0.0", " ", "Week",))
+                GSRV.TopScores["Week"] = [0.0, 0, " "]
+                DB.esegui(DB.query["saverecords"], ("0", "0.0", " ", "Month",))
+                GSRV.TopScores["Month"] = [0.0, 0, " "]
+                DB.esegui(DB.query["saverecords"], ("0", "0.0", " ", "Alltime",))
+                GSRV.TopScores["Alltime"] = [0.0, 0, " "]
+    else:
+        tell(richiedente, Lang["resetnotdone"] %"^4day ^6week ^7month ^5alltime ^2all")
+        DB.disconnetti()
+        return
+    tell(richiedente, Lang["resetdone"] %parametri.group("target"))
+    DB.salva()
+    DB.disconnetti()
+
+def silent(richiedente, parametri):
+    if M_CONF.SV_silentmode:
+        M_CONF.SV_silentmode = False
+        GSRV.Server_mode = 5
+        say(Lang["silentmode"]%"OFF", 2)
+    else:
+        M_CONF.SV_silentmode = True
+        GSRV.Server_mode = 3
+        say(Lang["silentmode"]%"ON", 2)
 
 def skill(richiedente, parametri):  #FUNZIONA
     """Comunica la skill del player"""
@@ -1032,7 +1100,10 @@ def unwar(richiedente, parametri):   #FUNZIONA
     SCK.cmd("g_matchmode 0")
     say(Lang["warunloaded"]%GSRV.Baseconf, 2)
     SCK.cmd("exec %s" %GSRV.Baseconf)                #eseguo la config di base
-    GSRV.Server_mode = 1                             #passo in modalita normale
+    if M_CONF.SV_silentmode:
+        GSRV.Server_mode = 3    #Silentmode
+    else:
+        GSRV.Server_mode = 5    #Normale                        #passo in modalita normale 
     SCK.cmd("reload")                               #avvio la cfg
 
 def war(richiedente, parametri):    #FUNZIONA
@@ -1053,17 +1124,3 @@ def war(richiedente, parametri):    #FUNZIONA
         SCK.cmd("exec %s" %GSRV.Basewar)            #eseguo la config richiesta
     SCK.cmd("reload")                               #avvio la cfg
     GSRV.Server_mode = 2                            #passo in modalita war
-
-'''def z_profiler(routine ="", tim="", modo=""):       #funzione di debug
-    if modo == True:
-        if routine not in GSRV.z_profiler:
-            GSRV.z_profiler[routine] = 0.0
-        GSRV.z_profiler[routine] -=  tim
-    elif modo == False:
-        GSRV.z_profiler[routine] +=  tim
-    else:
-        for controllo in GSRV.z_profiler:
-            print controllo + str(GSRV.z_profiler[controllo])
-            for rout in GSRV.z_profiler:
-                GSRV.z_profiler[rout] = 0.0
-'''
