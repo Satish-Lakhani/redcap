@@ -1,5 +1,8 @@
-## 2012-xx-xx Redcap_1.03(20120104):
+## 2012-xx-xx Redcap_1.03(2012xxxx):
+* Feature added: Silent mode for admins that unlike spam (just new record, kick and ban are spammed)
 * Command added: !unban <target> (look for a ID in DB and unban him)
+* Command added: !rere <record> to cancel a record (made by a cheater for instance)
+* Minor bugs solved
 
 ## 2012-01-04 Redcap_1.02(20120104):
 * Feature added: Antifake system. Using a new fake reduces player's reliability. If reliability falls below Nt_MinNot_toplay, player is not allowed to play on gameserver until his notoriety rise up again.
