@@ -40,7 +40,7 @@ class Server:
         self.RedCapStatus = 0                                           #stato RedCap (1=paused 0=attivo) #TODO serve o basta server_mode?
         self.Restart_when_empty = False                                 #se true riavvia il server quando vuoto.
         self.Sbil = 1                                                   #coefficiente di sbilanciamento teams
-        self.Server_mode = 0                                            #0 = fase avvio 1 = normale 2 = warmode
+        self.Server_mode = 0                                            #0 = fase avvio 2 = warmode  3 = silentmode 5 = normale
         self.ShowHeadshots = M_CONF.SV_ShowHeadshots                    #Se True mostra gli headshot
         self.Sk_Kpp = M_CONF.Sk_Kpp                                     #Sensibilita' skill: numero di kill (a delta skill 0) necessarie per guadagnare un punto skill.
         self.Sk_penalty = M_CONF.Sk_penalty                             #penalita' per teamkill (espressa come n. di kill da fare per bilanciare una penalty)
