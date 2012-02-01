@@ -62,8 +62,11 @@ RC_outputs = {
 "record_no_ppl": "^3Less than ^7%s ^3players in game.  ^5%s's kill streak ^3not saved",
 "record_personal": "^5%s ^2personal record ^6%s kills",
 "record_weekly": "^2WEEKLY Kill streak by ^5%s ^6%s kills",
+"resetdone": "^3Record %s erased.",
+"resetnotdone":"^1Error. ^3Specify a parameter: %s",
 "restart": "^1 Restarting RedCap...",
 "salvoplayer": "^3Saving ^5%s data...",
+"silentmode": "^3Silent mode ^6%s",
 "skill": "^3Skill: ^7%s ^3Map skill: ^7%s ^3Kill streak: ^7%s ",
 "space":"^3Server full. ^5%s ^3enter in game or you will be kicked.",
 "spacekicked": "^3Server full. Spectator ^5%s ^3kicked.",
@@ -139,4 +142,5 @@ RC_status = {
 1024: "^3Warning:^7%s ",
 2048:" ^3Last visit: ^7%s ",
 4096: "^3Alias:^7%s ",
+8192: "^3from ^7%s",
 }

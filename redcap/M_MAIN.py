@@ -7,12 +7,11 @@
 #TODO evitare che un crash durante cw cancelli la config war
 #TODO fare comando shuffle
 #TODO completare classifica 
-#TODO bannare guid originale per cambio guid in game
 #TODO fare comando join
 #TODO fare comando rank che mostri skill dei player in game (e top skill?)
 #TODO fare comando admin che mostra gli admin in game e/o la adminlist
-#TODO fare funzione record reset
-#TODO riavviare il bot al   0:00 ShutdownGame: #FATTO DA CONTROLLARE
+#TODO geoip
+#TODO parametri per decidere cosa far vedere in silentmode?
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -33,7 +32,7 @@ def crashlog(t, v, tra):
 
 sys.excepthook = crashlog                                       #abilito il log dei crash
 
-PARSER = C_PARSER.Parser(M_CONF.NomeFileLog)    #Istanzio il Parser
+PARSER = C_PARSER.Parser(M_CONF.NomeFileLog)   #Istanzio il Parser
 CRON1 = M_AUX.Cronometro(M_CONF.CRON1)          #Istanzio il cron1
 CRON2 = M_AUX.Cronometro(M_CONF.CRON2)          #Istanzio il cron2
 
@@ -43,14 +42,16 @@ def init_jobs():
     M_RC.ini_clientlist()           #recupero i client gia presenti sul server
     M_RC.ini_recordlist()           #recupero i record dal server
     M_RC.ini_spamlist()             #carico la spamlist
-    if M_CONF.Website_ON:           #Se esiste un website di appoggio aggiorno la classifica, la trasferisco al server remoto e salvo il risultato dell'operazione nel log
+    if M_CONF.Website_ON and not M_CONF.SV_silentmode:           #Se esiste un website di appoggio aggiorno la classifica, la trasferisco al server remoto e salvo il risultato dell'operazione nel log
         M_RC.say("^4Webrank updating...", 2)
         res = M_AUX.web_rank()
         if res == False:
             M_RC.scrivilog("WEBRANK TRANSFER FAILED", M_CONF.crashlog)
-    M_RC.say("^4Q3ut4 parsing...", 2)
+    if not M_CONF.SV_silentmode:
+        M_RC.say("^4Q3ut4 parsing...", 2)
     q3ut4_parse()
-    M_RC.say("^2Main routine started. Wait for players identification...", 2)
+    if not M_CONF.SV_silentmode:
+        M_RC.say("^2Main routine started. Wait for players identification...", 2)
     redcap_main()                   #LANCIO LA PROCEDURA PRINCIPALE
 
 def q3ut4_parse():
@@ -76,7 +77,7 @@ def redcap_main():
                 elif frase[1] == "InitRound":
                     M_RC.initRound(frase[0])
                     continue
-                if M_RC.GSRV.Server_mode == 1:             #ALTRI EVENTI da processare solo a startup finito e non in war
+                if M_RC.GSRV.Server_mode > 2:             #ALTRI EVENTI da processare solo a startup finito e non in war
                     if frase[1] == "Hits":
                         M_RC.hits(frase[0])                         #del tipo (['1', '0', '3', '5'], 'Hits') Vittima, Killer, Zona, Arma
                         continue
@@ -93,7 +94,7 @@ def redcap_main():
                         M_RC.endMap(frase[0])
                         continue
         if CRON1.is_time():                     #ESEGUO OPERAZIONI A CRON1
-            if M_RC.GSRV.Server_mode == 1:          #controlli fatti solo in modalita' normale.
+            if M_RC.GSRV.Server_mode > 2:          #controlli fatti solo in modalita' normale o silent.
                 M_RC.cr_tbkicked()                  #da fare sempre per primo
                 M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato
                 M_RC.cr_full()                      #controllo se il server e' pieno o vuoto

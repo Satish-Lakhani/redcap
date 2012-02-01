@@ -40,13 +40,15 @@ def cr_riavvia(autorestart):
     if log_backup():    #provo a fare il backup del log
         M_RC.scrivilog("DAILY LOG AND DB BACKUP DONE.", M_CONF.crashlog)
         os.remove(M_CONF.NomeFileLog)
-        M_RC.SCK.cmd("exec " + M_CONF.SV_Baseconf)                   #ricarico il config TODO vedere se sufficiente per ricreare il games.log
     if autorestart > 0:
         M_RC.scrivilog("REDCAP and GAMESERVER DAILY RESTART.", M_CONF.crashlog)
         os.system("./S_full_restart.sh")
+        time.sleep(2)
         sys.exit()
     else:
         M_RC.scrivilog("REDCAP DAILY RESTART.", M_CONF.crashlog)
+        M_RC.SCK.cmd("exec " + M_CONF.SV_Baseconf)                   #ricarico il config TODO vedere se sufficiente per ricreare il games.log
+        time.sleep(2)
         sys.exit()
 
 def db_clean_alias():
