@@ -56,9 +56,13 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!pwd{{{<pwd>}}}* : set a password on the gameserver. To unset the password just type *!pwd*
 
+  * *!rere{{{<record>}}}* : Delete one or all the records. Targets can be: "_day_", "_week_", "_month_", "_alltime_", "_all_"
+
   * *!restart* : restart !RedCap bot. Useful to reload config after some change.
 
   * *!s{{{[num]}}} {{{<target>}}}* : slaps _num_ times the target player. If no _num_ is specified it slaps one time.
+
+  * *!silent* : For those admins that unlike spam it toggles silent mode ON/OFF (just new records, kick and ban are spammed).
 
   * *!sk {{{[target]}}}* : displays skill information about target player. If no target is specified, applicant skill will be displayed.
 
@@ -73,6 +77,8 @@ Not all the commands are available to everybody. An appropriate level can be ass
   * *!tm* or *!teams* : Ask for a automatic balance at round end. It works only if autobalance mode is MAN.
 
   * *!trust{{{[num]}}} {{{<target>}}}* : increase target player notoriety by _num_. Useful to allow a player to immediately enter onto the gameserver even if he has a fresh guid.
+
+  * *!unban {{{<ID>}}}* : Unban the player ID (even if not in game). Use !find to found player ID in database and unban him.
 
   * *!unspam {{{<num>}}}* : delete the sentence number _num_ from spamlist.
 
