@@ -12,7 +12,7 @@ _if your server do not comply requirements 1, 2, 3, it will be *not* possible to
 = Features list=
 _Most of these features are customizable and can be switched on or off._
 
-  * Exhaustive chat command set with *more than 30 different commands* (See [RedCap_User_guide full command list]). 
+  * Exhaustive chat command set with *more than 35 different commands* (See [RedCap_User_guide full command list]). 
   * *Fully customizable configuration file* (See [RedCap_config_file full configuration guide]).
   * *Anticheat log control*: !RedCap kicks for bad guid, in game guid change, nick rotation hack. In case of automatic kick IP and GUID are recorded in a separate log file for further use.
   * *Webranking and stats* with automatic FTP transfer on your clan website as full HTML document or HTML table
@@ -20,6 +20,7 @@ _Most of these features are customizable and can be switched on or off._
   * Command use recording in a separate log file for further use.
   * Possibility to use all rcon commands from game chat through !cmd{{{<_cmd_>}}}
   * Automatic (or manual) *team balance*.
+  * Player IP geolocalization at City level
   * Anti fake system (every new fake costs one half of player reliability)
   * Anti flooding control (fully customizable).
   * Automatic daily maintenance (DB cleaning, gameserver restart, files backup, etc...)
@@ -42,7 +43,7 @@ _Most of these features are customizable and can be switched on or off._
   * *NO* automatic ban. Ban is the heaviest in game penalty, then !RedCap philosophy is to leave this decision to an human admin.
 
 = TO DO List=
-  # Player geolocalization
+  # ~~Player geolocalization~~
   # Player identification after IP and GUID change (euristic)
   # IrC integration
   # Web interface for !RedCap configuration.
