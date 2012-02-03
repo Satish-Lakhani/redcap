@@ -1,0 +1,7 @@
+#summary Frequently Asked Questions about RedCap bot.
+[http://code.google.com/p/redcap/ <back to homepage]
+= REDCAP F.A.Q. =
+
+  **Q.* Clan autobalance does not work for everybody
+  **A.* _Be sure that the good tag is specified in M_CONF.py config file. If your tag is bw| you should have *clanbalanceTag = "bw|"*. 
+If this still not works, please consider that Redcap can found a clan mate using a fake only if his main nick has the tag included. Ask to your mate to wear the tag, and then use the command *!dbnick yourclanmate* to set his official nick as main. At the first reconnect he will be recognized as a clanmate even if wearing a fake.	
