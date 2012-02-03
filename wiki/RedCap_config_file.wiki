@@ -64,7 +64,7 @@ For quick configuration allowing to !RedCap to run, you have to modify just the 
 ||{{{CustomSpam}}}|| True||_(True or False) If True, !Redcap periodically spams sentences stored in spam.txt._||
 ||{{{Spamtime}}}||140||_Time between two consecutive spams._||
 ||{{{botname}}}||"^8RC: "||_prefix of !Redcap outputs (#TODO not used yet)._||
-||{{{RC_lang }}}||"ITA"||_Language localization for !RedCap. ITA only (#TODO ENG FRA and others. See M_ITA.py for translation procedure)._||
+||{{{RC_lang }}}||"ITA"||_Language localization for !RedCap. ITA, ENG only (#TODO FRA and others. See M_ITA.py for translation procedure)._||
 ||{{{gameserver_autorestart}}}|| 2||_#Automatically restart the Gameserver: 0: no restart 1: daily restart 2: restart when empty._||
 ||{{{SV_AliasDuration}}}||90||_How long (days) a player alias is hold on by !RedCap before it is removed because unused_||
 ||{{{SV_AntiReconInterval}}}||0||_Anti reconnect delay in sec. If {{{SV_AntiReconInterval}}} = X a player cannot reconnect to the game server before X seconds from the first connect._||
@@ -75,10 +75,10 @@ For quick configuration allowing to !RedCap to run, you have to modify just the 
 ||{{{SV_goodNick}}}||{{{r"[a-zA-Z]"}}}||_Regex that player nick must satisfy to be allowed to play in the game server._||
 ||{{{SV_minNick}}}||3||_Min length allowed for a player nick._||
 ||{{{SV_ShowHeadshots}}}||True||_(True or False) If True headshot are displayed in upper gameserver chat._||
-||_STATUS LEGEND_||_Sum of values_  ||_1: Welcome %nick 2: Skill 4: Map skill 8: Highest streak 16: Played rounds 32: Reliability 64: Player slot number 128: Official nick 256: IP 512: Player level 1024: Received warnings 2048: Players last visit 4096: Players alias_||
-||{{{saluti}}}||2049||_Information shown at player connection (i.e. 1+2048)_||
+||_STATUS LEGEND_||_Sum of values_  ||_1: Welcome %nick 2: Skill 4: Map skill 8: Highest streak 16: Played rounds 32: Reliability 64: Player slot number 128: Official nick 256: IP 512: Player level 1024: Received warnings 2048: Players last visit 4096: Players alias 8192: IP Geolocalization_||
+||{{{saluti}}}||2049||_Information shown at player connection (i.e. 1 + 2048 + 8192)_||
 ||{{{status}}}||3233||_Information about player given to everybody (i.e. 1 + 32 + 128 + 1024 + 2048)_||
-||{{{status_adm}}}||4089||_Information about player given to  the admins (i.e. 1 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 2048 + 1024)_||
+||{{{status_adm}}}||4089||_Information about player given to  the admins (i.e. 1 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 2048 + 1024 + 8192)_||
 ||{{{Sk_penalty}}}||4||_Teamkill penalty: it represents the number of additional kill you should gain in order to nullify the penalty._||
 ||{{{Sk_Ks_min}}}||5||_(not used)_||
 ||{{{Sk_Ks_not}}}||0||_Kill streaks made by players with lower notoriety than this are not spammed._||
@@ -106,9 +106,9 @@ For quick configuration allowing to !RedCap to run, you have to modify just the 
 ||{{{lev_ban}}}||3||_Permanently bans a player_||
 ||{{{lev_callvote}}}||1||_Enables vote mode "voteType" for "voteTime" seconds._||
 ||{{{lev_cycle}}}||2||_Cycles immediately to the next map_||
+||{{{lev_dbfind}}}||2||_Look in DB for a player and shows infos_||
 ||{{{lev_dbnick}}}||3||_#Set the actual player's nick as his main nick. Main nick is the one displayed in records and webrank_||
 ||{{{lev_esegui}}}||4||_Executes an rcon command_||
-||{{{lev_find}}}||2||_Look in DB for a player and shows infos_||
 ||{{{lev_force}}}||2||_Moves a player to Red, Blue or Spect_||
 ||{{{lev_info}}}||0||_Shows some info about game server and !RedCap itself_||
 ||{{{lev_kick}}}||1||_Kicks a player_||
@@ -121,8 +121,10 @@ For quick configuration allowing to !RedCap to run, you have to modify just the 
 ||{{{lev_nuke}}}||2||_nukes a player_||
 ||{{{lev_ora}}}|| 0 ||_Shows server time_||
 ||{{{lev_password}}}||1||_Sets a password on the game server_||
+||{{{lev_recordreset}}}||4||_#Resets a record_||
 ||{{{lev_RCrestart}}}||4||_Restart the !RedCap_||
 ||{{{lev_skill}}}||0||_Shows plasyer's skill_||
+||{{{lev_silent}}}||3||_switch between silent and verbose mode_||
 ||{{{lev_slap}}}||1||_Slaps a player n times_||
 ||{{{lev_spam}}}||2||_adds / cancels a message from spam list_||
 ||{{{lev_spamlist}}}||0||_Lists all spam messages_||
@@ -135,9 +137,9 @@ For quick configuration allowing to !RedCap to run, you have to modify just the 
 
 * SECTION 4: THESE PARAMETERS MUST NOT BE CHANGED UNLESS YOU EXACTLY KNOW WHAT ARE YOU DOING OR REDCAP WILL NOT RUN PROPERLY!!! *
 ||VARIABLE||EXAMPLE VALUE||DESCRIPTION||
-||{{{versione}}}||"1.00 Beta"||_!RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING OF THE SCRIPT OUTSIDE OF THIS CONFIGURATION FILE. !!!_||
+||{{{activity}}}||"badguid.log"||_RedCap activity logfile._||
 ||{{{badguid}}}||"badguid.log"||_Bad guids record file._||
-||{{{crashlog}}}||"crash.log"||_!RedCap activity and crashes logfile._||
+||{{{crashlog}}}||"crash.log"||_!RedCap crashes logfile._||
 ||{{{commandlog}}}||"command.log"||_!RedCap commands record file (commandlogMinLevel value specify which command should be recorded into the file)._||
 ||{{{NomeArchivi}}}||"Archivi"||_Gamelogs and database backup folder._||
 ||{{{NomeDB}}}||"Rc_DB.sqlite"||_name of DB file._||
@@ -166,4 +168,5 @@ For quick configuration allowing to !RedCap to run, you have to modify just the 
 
 =Remote webrank configuration=
 
-*TO BE DONE*
+If Parameters in SECTION 2 are duty filled, RedCap will FTP send (at every restart) a HTML file to your website. You then can integrate this HTML file as you like. A _iframe_ is the better solution.
+In the HTML folder of Redcap, you can find useful script and css for webrank formatting.
