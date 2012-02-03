@@ -2,5 +2,14 @@
 [http://code.google.com/p/redcap/ <back to homepage]
 = REDCAP F.A.Q. =
 
-  * *Q.* Clan autobalance does not work for some clan mate.
-  * *A.* _Be sure that the good tag is specified in M_CONF.py config file. If your tag is bw| you should have *clanbalanceTag = "bw|"*. If this still not works, please consider that Redcap can found a clan mate using a fake only if his main nick has the tag included. Ask to your mate to wear the tag, and then use the command *!dbnick yourclanmate* to set his official nick as main. At the first reconnect he will be recognized as a clanmate even if wearing a fake.	
+  * *Q. Autobalance doesn't work correctly.*
+  * *A.* _There are some situation that autobalance routine cannot handle:
+    * During Redcap statrtup autobalance is not active because not every player is identified as red or blue.
+    * The first round of each map, because Redcap is not able to check before round start if someone leaved the server at the end of the previous map. OK, it could execute the balance after the beginning of the first round, but it means that the moved player will remain dead until the new round begins.
+    * _If some player leave the server after round end. The reason is the same as above._
+
+  * *Q. Clan autobalance does not work for some clan mate.*
+  * *A.* _Be sure that the good tag is specified in M_CONF.py config file. If your tag is bw| you should have *clanbalanceTag = "bw|"*. If this still not works, please consider that Redcap can found a clan mate using a fake only if his main nick has the tag included. Ask to your mate to wear the tag, and then use the command *!dbnick yourclanmate* to set his official nick as main. At the first reconnect he will be recognized as a clanmate even if wearing a fake._	
+
+  * *Q. GEO IP Localization is not correct.*
+  * *A.* _IP geolocalization is based on a free IP database offered by [http://www.maxmind.com maxmind]. If you can afford a price of 90€/month, you can replace the free database with the commercial one, increasing the accuracy a lot. 
