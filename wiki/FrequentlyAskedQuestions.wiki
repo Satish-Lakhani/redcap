@@ -9,7 +9,10 @@
     * If some player leave the server after round end. The reason is the same as above._
 
   * *Q. Clan autobalance does not work for some clan mate.*
-  * *A.* _Be sure that the good tag is specified in M_CONF.py config file. If your tag is bw| you should have *clanbalanceTag = "bw|"*. If this still not works, please consider that Redcap can found a clan mate using a fake only if his main nick has the tag included. Ask to your mate to wear the tag, and then use the command *!dbnick yourclanmate* to set his official nick as main. At the first reconnect he will be recognized as a clanmate even if wearing a fake._	
+  * *A.* _Be sure that the good tag is specified in M_CONF.py config file. If your tag is (example) *bw|* you should have *clanbalanceTag = "bw|"* in your config. If this still not works, please consider that Redcap can found a clan mate using a fake only if his main nick has the tag included. Ask to your mate to wear the tag, and then use the command *!dbnick yourclanmate* to set his official nick as main. At the first reconnect he will be recognized as a clanmate even if wearing a fake._	
 
   * *Q. GEO IP Localization is not correct.*
   * *A.* _IP geolocalization is based on a free IP database offered by [http://www.maxmind.com maxmind]. If you can afford a price of 90€/month, you can replace the free database with the commercial one, increasing the accuracy a lot._
+
+  * *Q. I modified the Redcap config but there is no change in bot behaviour.*
+  * *A.* _Every time you modify (and save) the config you must restart the Redcap using the command *!restart* in order to make the modifications effective._
