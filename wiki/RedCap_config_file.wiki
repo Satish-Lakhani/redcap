@@ -168,5 +168,5 @@ For quick configuration allowing to !RedCap to run, you have to modify just the 
 
 =Remote webrank configuration=
 
-If Parameters in SECTION 2 are duty filled, RedCap will FTP send (at every restart) a HTML file to your website. You then can integrate this HTML file as you like. A _iframe_ is the better solution.
-In the HTML folder of Redcap, you can find useful script and css for webrank formatting.
+If Parameters in SECTION 2 are duty filled, !RedCap will FTP transfer (at every restart) a HTML file to your website. You then can integrate this HTML file as you like. A _iframe_ is the better solution.
+In the HTML folder of !Redcap, you can find useful script and css for webrank formatting.
