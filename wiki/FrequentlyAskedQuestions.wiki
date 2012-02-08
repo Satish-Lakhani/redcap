@@ -4,7 +4,7 @@
 
   * *Q. Autobalance doesn't work correctly.*
   * *A.* _There are some situation that autobalance routine cannot handle:
-    * During Redcap statrtup autobalance is not active because not every player is identified as red or blue.
+    * During Redcap startup autobalance is not active because not every player is identified as red or blue.
     * The first round of each map, because Redcap is not able to check before round start if someone leaved the server at the end of the previous map. OK, it could execute the balance after the beginning of the first round, but it means that the moved player will remain dead until the new round begins.
     * If some player leave the server after round end. The reason is the same as above._
 
