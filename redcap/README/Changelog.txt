@@ -1,7 +1,14 @@
-## 2012-xx-xx Redcap_1.03(2012xxxx):
+## 2012-02-xx Redcap_1.05(201202xx):
+* Bug solved: RedCap crashes when a Geolocalization string has non ASCII carachter
+* Bug solved: NameError: global name 'timestamp' is not defined
+* Webrank improved with weapon stats
+
+## 2012-02-04 Redcap_1.05(20120204):
+* Feature added: IP Geolocalization on welcome message and !z <target> command
 * Feature added: Silent mode for admins that unlike spam (just new record, kick and ban are spammed)
 * Command added: !unban <target> (look for a ID in DB and unban him)
 * Command added: !rere <record> to cancel a record (made by a cheater for instance)
+* Daily automaintenance routine improved
 * Minor bugs solved
 
 ## 2012-01-04 Redcap_1.02(20120104):
@@ -24,4 +31,3 @@
 
 ## 2011-11-28 Redcap_1.00_Beta_(20111128):
 * First RedCap 1.0_Beta release.
-
