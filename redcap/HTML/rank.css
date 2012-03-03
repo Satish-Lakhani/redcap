@@ -3,9 +3,9 @@ div.redcap {
 	height: 400px;
 }
 table.sortable {
-    width: 800px;
+    width: 98%;
     height: 200px;
-    border:2px groove #999999;
+    border:1px groove #999999;
     border-collapse: collapse;
     background-color:#383838;
     color:#e3e3e3;
