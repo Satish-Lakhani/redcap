@@ -24,18 +24,18 @@ w_login = '*******' 						#FTP login of auxiliary website
 w_password = '********' 					#FTP password of auxiliary website
 w_ftp_directory = '/httpdocs/serverstats' 	#Remote relative path of folder used by RedCap for FTP transfer
 w_directory = '/serverstats'              	#Remote relative url of folder used by RedCap for FTP transfer
-w_fullpage = True                        	#When True the output w_tabella will be a full html page to be embedded in your website using a <iframe>. When false the output is just a <table>
 w_tabella = "skilltable.htm"                #Ranking table (html format)
 w_dialoghi = "dialoghi.htm"                 #Chat log table (html format)
-w_script_url = "http://www.yoursite.com/mysafepath" #path where safe js scripts are stored (to run sortable.js) #UPDATE
+w_script_url = "http://www.yoursite.com/mysafepath" #path where safe js scripts are stored (to run sortable.js)
+w_webranktime = 4                           #time (h) between webrank updating.
 
 ### ==================================================================  ###
 ### THESE PARAMETERS *CAN* BE CONFIGURED IN ORDER TO CUSTOMIZE YOUR REDCAP   ###
 ### ==================================================================  ###
 #PLAYER
 KickForSpace = True 		#(True or False) If True RedCap kicks a spect when gameserver is full. Admins cannot be kicked.
-maxAbsence = 60             # Player not visiting the game server will be canceled from DB after 'maxAbsence' days.  #UPDATE
-maxAlias = 15               #Max n. of alias to be stored. If more then maxAlias, the older one will be canceled #UPDATE
+maxAbsence = 60             # Player not visiting the game server will be canceled from DB after 'maxAbsence' days.  
+maxAlias = 15               #Max n. of alias to be stored. If more then maxAlias, the older one will be canceled 
 maxSlap = 10 				#Max. slap number to be used with !s[num] command. If num > 10 then num = 10.
 Ttempban = 96 				#Max duration of a temporary ban (hours)
 
@@ -85,12 +85,12 @@ SV_silentmode = False           #If true RedCap runs in silentmode.
 8192: Location
 '''
 saluti = 1 + 2048 + 8192 													#Information shown at player connection
-status = 1 + 32 + 128 + 1024 + 2048 								#Information about player given to everybody
+status = 1 + 32 + 128 + 1024 + 2048 										#Information about player given to everybody
 status_adm = 1 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 2048 + 1024 + 8192 	#Information about player given to  the admins
 
 #SKILL
 Sk_penalty = 4   		#Teamkill penalty: it represents the number of additional kill you should gain in order to nullify the penalty.
-Sk_Ks_min = 5    		#(not used)
+#Sk_Ks_min = 5    		#(not used)
 Sk_Ks_not = 0    		#Kill streaks made by players with lower notoriety than this are not spammed.
 Sk_Ks_show = 5   		#Kill streaks shorter than this are not spammed by RedCap.
 Sk_Ks_showbig = 9 		#Kill streaks longer than this are spammed by RedCap in bigtext.
@@ -100,7 +100,7 @@ voteTime = 30 			#How long (seconds) vote mode is enabled
 voteType =536870986 	#Temporary vote mode (see http://www.urbanterror.info/docs/texts/123/#2.2 for value meaning)
 unvoteType = 0 			#Standard vote mode. 0 means no vote allowed (see http://www.urbanterror.info/docs/texts/123/#2.2 for value meaning).
 timeBetweenVote = 3 	#Time to elapse (minutes) before temporary mode could be enabled again.
-Tcyclemap = 12 			#Time to elapse (minutes) between two cyclemap
+Tcyclemap = 10 			#Time to elapse (minutes) between two cyclemap
 
 ##WARNING
 W_max_warns = 5.0   	#Warning level to be kicked. (warning can be assigned by RedCap or Admins)
@@ -138,7 +138,7 @@ lev_ora = 0 			#Shows server time
 lev_password = 1 		#Sets a password on the game server
 lev_recordreset = 4     #Resets a record
 lev_RCrestart = 4 		#Restart the RedCap
-lev_silent = 3              #switch between silent and verbose mode
+lev_silent = 3          #switch between silent and verbose mode
 lev_skill = 0 			#Shows plasyer's skill
 lev_slap = 1 			#Slaps a player n times
 lev_spam = 2 			#adds / cancels a message from spam list
@@ -155,6 +155,7 @@ lev_unwar = 1 			#Unload war mode setting the game server to its standard config
 ### ================================================================================================================  ###
 
 ##AUXILIARY FILES and LOGS
+activity= "activity.log"    #Redcap activity file
 badguid = "badguid.log" 	#Bad guids record file
 crashlog = "crash.log" 		#RedCap activity and crashes logfile
 commandlog = "command.log" 	#RedCap commands record file (commandlogMinLevel value specify which command should be recorded into the file)
