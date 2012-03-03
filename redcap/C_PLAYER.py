@@ -42,6 +42,7 @@ class Player:
         #self.totalplayedtime = 0                                           #tempo totale di gioco
         self.varie = []         #varie
         self.vivo = 0           #0=Sconosciuto 1=vivo, 2=morto #TODO mi interessa saperlo?
+        self.warnings = {"total": 0.0}      #warning assegnati al player da admin o per TK o thit
         self.warning = 0.0      #warning assegnati al player da admin o per TK o thit
 
     def alias_to_DB(self):

@@ -3,15 +3,15 @@
 
 #TODO fare controllo armi ammesse per team
 #TODO fare anche ban per nick
-#TODO fare manutenzioni programmate
 #TODO evitare che un crash durante cw cancelli la config war
 #TODO fare comando shuffle
 #TODO completare classifica 
 #TODO fare comando join
 #TODO fare comando rank che mostri skill dei player in game (e top skill?)
 #TODO fare comando admin che mostra gli admin in game e/o la adminlist
-#TODO geoip
 #TODO parametri per decidere cosa far vedere in silentmode?
+#TODO pulire M_AUX.web_rank
+#TODO kikka per falsi tk in fase di avvio (fatto, controllare)
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -77,7 +77,7 @@ def redcap_main():
                 elif frase[1] == "InitRound":
                     M_RC.initRound(frase[0])
                     continue
-                if M_RC.GSRV.Server_mode > 2:             #ALTRI EVENTI da processare solo a startup finito e non in war
+                if M_RC.GSRV.Server_mode > 2:             #ALTRI EVENTI da processare solo a startup finito e non in war (0 = fase avvio 2 = warmode  3 = silentmode 5 = normale)
                     if frase[1] == "Hits":
                         M_RC.hits(frase[0])                         #del tipo (['1', '0', '3', '5'], 'Hits') Vittima, Killer, Zona, Arma
                         continue
@@ -98,21 +98,26 @@ def redcap_main():
                 M_RC.cr_tbkicked()                  #da fare sempre per primo
                 M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato
                 M_RC.cr_full()                      #controllo se il server e' pieno o vuoto
-                M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotati           
+                M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotation
                 M_RC.cr_unvote()                    #controllo se c'e' un voto speciale attivo
                 M_RC.cr_warning()                   #controllo se qualcuno ha troppi warning
                 M_RC.cr_notorietycheck()            #controllo notoriety bassa da fare per ultimo
-            if int(CRON1.ticks % (M_CONF.Spamtime // M_CONF.CRON1)) == 0:       #modulo
+            if int(CRON1.ticks % (M_CONF.Spamtime // M_CONF.CRON1)) == 0:       #divisione modulo per intervallo di spam
                 M_RC.cr_spam()                      #spammo
             if CRON1.ticks == 240:                  #E' passata 1 ora circa
                 q3ut4_parse()                       #aggiorno maplist e configs (non si sa mai...)
                 CRON1.reset()
-        if CRON2.is_time():                     #ESEGUO OPERAZIONI A CRON1
+        if CRON2.is_time():                     #ESEGUO OPERAZIONI A CRON2
+            if int(CRON2.ticks % ((M_CONF.w_webranktime*3600) // M_CONF.CRON2)) == 0:       #divisione modulo per intervallo di aggiornamento classifica
+                if M_CONF.Website_ON:           #Se esiste un website di appoggio aggiorno la classifica, la trasferisco al server remoto e salvo il risultato dell'operazione nel log
+                    res = M_AUX.web_rank()
+                    if res == False:
+                        M_RC.scrivilog("WEBRANK TRANSFER FAILED", M_CONF.crashlog)
+
+
             if CRON2.get_time("Ora") == M_CONF.Control_Daily:   #all'ora prefissata eseguo operazioni giornaliere (pulizia DB, riavvio server, etc)
                 M_RC.cr_recordErase()                                       #Pulisco i record se del giorno (settimana, mese) prima.
-                M_AUX.db_clean_guid()                                       #Pulisco il DB dalle guid che non frequentano piu' il gameserver da M_CONF.maxAbsence giorni.
-                M_AUX.db_clean_alias()                                      #elimino gli alias in eccesso
-                M_AUX.cr_riavvia(M_CONF.gameserver_autorestart)             #Riavvio del server
+                M_AUX.automaintenance()                                 #automanutenzione e riavvio
                 # -= Non puo' leggere istruzioni oltre qui (riavvio server!) =-
 
 #AVVIO IL REDCAP

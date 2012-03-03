@@ -18,10 +18,9 @@ StandardMaps = [    #mappe standard incluse nello z_pack
 "ut4_snoppis","ut4_suburbs","ut4_subway",
 "ut4_swim","ut4_thingley","ut4_tombs",
 "ut4_toxic","ut4_tunis","ut4_turnpike","ut4_uptown",
-"ut4_company",      #Mappack 4.1.1
-"ut4_docks","ut4_herring","ut4_horror","ut4_ricochet",
+"ut4_company", "ut4_docks","ut4_herring",
+"ut4_horror","ut4_ricochet",
 ]
-
 
 colori = {          #colori per i dialoghi
 "0":"#00FF00","1":"#00FFFF","2":"#FFFF00","3":"#FFFFCC","4":"#006600","5":"#0066FF","6":"#330033","7":"#330033",
@@ -32,27 +31,50 @@ tabs = [            #tabelle del DB con guid
 "DATI", "DEATH", "HIT", "KILL", "LOC"
 ]
 
-def cr_riavvia(autorestart):
+def automaintenance():
+    """Esegue le operazioni di manutenzione giornaliera"""
+    timestamp = time.strftime("%Y_%b_%d", time.localtime())
+    db_clean_guid()         #elimino le guid vecchie
+    db_clean_alias()        #elimino gli alias vecchi in eccesso
+    db_backup(timestamp)             #faccio backup del database
+    log_chat_backup(timestamp)    #creo il log di chat
+    log_backup(timestamp)             #faccio il backup del log
+    web_rank()               #creo una classifica aggiornata
+    if M_CONF.Website_ON:   #se esiste un sito web di appoggio
+        web_FTPtransfer(M_CONF.NomeArchivi + "/" + timestamp + "_saylog.log", M_CONF.w_dialoghi)
+        web_FTPtransfer("HTML" + "/" + M_CONF.w_tabella, M_CONF.w_tabella)
+    cr_riavvia()
+
+
+def cr_riavvia():
     """restarto RedCap ed eventualmente il server"""
     import os
     import sys
     import M_RC
-    if log_backup():    #provo a fare il backup del log
-        M_RC.scrivilog("DAILY LOG AND DB BACKUP DONE.", M_CONF.crashlog)
-        os.remove(M_CONF.NomeFileLog)
-    if autorestart > 0:
-        M_RC.scrivilog("REDCAP and GAMESERVER DAILY RESTART.", M_CONF.crashlog)
+    if M_CONF.gameserver_autorestart > 0:
+        M_RC.scrivilog(" Redcap and UrT Server restarted.", M_CONF.activity)
         os.system("./S_full_restart.sh")
-        time.sleep(2)
+        time.sleep(5)       #aspetto che il gameserver riparta
         sys.exit()
     else:
-        M_RC.scrivilog("REDCAP DAILY RESTART.", M_CONF.crashlog)
+        M_RC.scrivilog("Redcap restarted.", M_CONF.activity)
         M_RC.SCK.cmd("exec " + M_CONF.SV_Baseconf)                   #ricarico il config TODO vedere se sufficiente per ricreare il games.log
-        time.sleep(2)
+        time.sleep(5)       #aspetto che il gameserver riparta
         sys.exit()
+
+def db_backup(timestamp):
+    import shutil
+    import M_RC
+    shutil.copy2(M_CONF.NomeDB, M_CONF.NomeArchivi + "/" + timestamp + "_" + M_CONF.NomeDB)         #Copio il DB in Archivi
+    DB.connetti()
+    DB.esegui("""VACUUM""")   #DOPO che l'ho backuppato, lo comprimo.
+    DB.salva()
+    DB.disconnetti()
+    M_RC.scrivilog("DB backup done.", M_CONF.activity)
 
 def db_clean_alias():
     """Elimino gli alias in eccedenza"""
+    import M_RC
     j2 = "  "
     DB.connetti()
     res = DB.esegui(DB.query["cleanalias"]).fetchall()
@@ -68,9 +90,11 @@ def db_clean_alias():
         DB.esegui(DB.query["cleanedalias"],(newalias, player[0]))
     DB.salva()
     DB.disconnetti()
+    M_RC.scrivilog("DB alias cleaned.", M_CONF.activity)
 
 def db_clean_guid():
-    """pulizia periodica DB"""
+    """pulizia periodica DB dai record non piu utilizzati"""
+    import M_RC
     DB.connetti()
     res = DB.esegui(DB.query["cleanoldplayers"], (time.time(), float(M_CONF.maxAbsence*86400), time.time())).fetchall()
     for guid in res:
@@ -78,6 +102,7 @@ def db_clean_guid():
             DB.esegui(DB.query["delplayer"] % (tab, guid[0]))  #Elimino guid che non frequentano piu' il gameserver da M_CONF.maxAbsence giorni.
     DB.salva()
     DB.disconnetti()
+    M_RC.scrivilog("DB old record cleaned.", M_CONF.activity)
 
 '''
 def db_delete_player(guid, tabs):
@@ -86,29 +111,27 @@ def db_delete_player(guid, tabs):
         DB.esegui(DB.query["delplayer"] % (tab, guid))
 '''
 
-def log_backup():
-    """Esegue funzioni di backup sul file di log. Utilizzata da cr_riavvia()"""
-    import shutil
+def log_backup(timestamp):
+    """Esegue il backup del file di log."""
+    import os
     import re
-    timestamp = time.strftime("%Y_%b_%d", time.localtime())
-    #leggo il log
+    import M_RC
     logfile = open(M_CONF.NomeFileLog, "r")
-    contenuto = logfile.read()
+    contenuto = logfile.read()          #leggo il log
     logfile.close()
     contenuto=re.sub(r"Item: .* ","",contenuto) #elimino le voci Item
-    #creo il file di log in Archivi
     logfile = open(M_CONF.NomeArchivi + "/" + timestamp + ".log", "w")
-    logfile.write(contenuto)
+    logfile.write(contenuto)              #creo il file di log in Archivi
     logfile.close()
-    #Copio il DB in Archivi
-    shutil.copy2(M_CONF.NomeDB, M_CONF.NomeArchivi + "/" + timestamp + "_" + M_CONF.NomeDB)
-    DB.connetti()
-    res = DB.esegui("""VACUUM""")   #DOPO che l'ho backuppato, lo comprimo.
-    DB.salva()
-    DB.disconnetti()
-    #Estraggo i dialoghi
+    M_RC.scrivilog("UrT Log backup done.", M_CONF.activity)
+    os.remove(M_CONF.NomeFileLog)   #cancello il vecchio file
+
+def log_chat_backup(timestamp):
+    """crea un file di chat"""
+    import re
+    import M_RC
     logfile = open(M_CONF.NomeFileLog, "r")
-    dialoghi = logfile.read()
+    dialoghi = logfile.read()   #Estraggo i dialoghi
     logfile.close()
     dialoghi = dialoghi.replace("<", "&lt;")
     dialoghi = dialoghi.replace(">", "&gt;")
@@ -122,33 +145,32 @@ def log_backup():
         html += "<span style='color:" + colori[say[0]] + "'>" +say[1] + "</span></td><td style='color:#bbbbbb'>" + say[2]
         html +="</td></tr>\n"
     html +="</table>"
-    #salvo il tutto in un file
-    logfile = open(M_CONF.NomeArchivi + "/" + timestamp + "_saylog.log", "w")
+    logfile = open(M_CONF.NomeArchivi + "/" + timestamp + "_saylog.log", "w")       #salvo il tutto in un file
     logfile.write(html)
     logfile.close()
-    #crea la classifica se attivato
-    if web_FTPtransfer(M_CONF.NomeArchivi + "/" + timestamp + "_saylog.log", M_CONF.w_dialoghi):
-        return "CHATFILE TRANSFER OK"
-    else:
-        return "CHATFILE TRANSFER FAILED"
-    return True
+    M_RC.scrivilog("UrT Chatlog backup done.", M_CONF.activity)
 
 def web_rank():
     """crea la classifica in formato tabella a partire dal DB"""
-
-    def cella(contenuto,  toltip = "",  cls = "",  st = ""):          #sottofunzione che crea le celle
+    def cella(contenuto,  toltip = "",  cls = "",  st = ""):            #sottofunzione che crea le celle
         return "<td title='%s' class='%s' style='%s'>%s</td>" %(toltip, cls, st, contenuto)
-
-    def striphtml(testo):   #strippo l'html
+    def striphtml(testo):                                                       #strippo l'html
         testo = testo.replace("<", "&lt;")
         testo = testo.replace(">", "&gt;")
         return testo
 
-    DB.connetti()
+    ## RECUPERO DATI DAL DB
+    DB.connetti()                                                                   #recupero i dati dal DB
     dati1 = DB.esegui(DB.query["getallorderedbyguid"]%"DATI").fetchall()
     dati2 = DB.esegui(DB.query["getallorderedbyguid"]%"HIT").fetchall()
-    dati3 = DB.esegui(DB.query["getallorderedbyguid"]%"LOC").fetchall()
+    try:                    #inserito per ovviare crash da caratteri non ASCII introdotti in DB da versioni precedenti
+        dati3 = DB.esegui(DB.query["getallorderedbyguid"]%"LOC").fetchall()
+    except:
+        DB.esegui("""UPDATE LOC SET LOCATION=''""")
+        DB.salva()
+        dati3 = DB.esegui(DB.query["getallorderedbyguid"]%"LOC").fetchall()
     dati4 = DB.esegui(DB.query["getallorderedbyguid"]%"KILL").fetchall()
+    DB.disconnetti()
     i=0
     cicli = len(dati1)
     tmp = []
@@ -160,32 +182,41 @@ def web_rank():
 
     #DATI: #0: GUID    # 1: Nick    # 2: Skill    # 3: Round    # 4: Lastconnection    # 5: Level    # 6: Tempban    # 7: Reputation    # 8: Firstconnect    # 9: streak    # 10: alias    # 11: varie
     #HIT: #12: head    # 13: torso    # 14: arms    # 15: legs    # 16: body    #LOC: #17: IP    # 18: provider    # 19: location    # 20: oldip    #KILL: #21-38: kills #39: deaths
+
+    ## PREPARO LA PAGINA HTML
     lasttableupdate = str(time.strftime("%d.%b&nbsp;%H:%M",time.localtime()))
-    table_ini = ""
-    table_end = "</tbody></table>"              #parte finale della table
-    wz_tooltip_path = "http://" +M_CONF.w_url + M_CONF.w_directory + "/"
-    if M_CONF.w_fullpage:                       #richiedo una pagina html completa
-        table_ini = "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><link href='rank.css' rel='stylesheet' type='text/css' /><script src='%s/sorttable.js'></script></head><body><div class=\"redcap\">" %M_CONF.w_script_url
-        table_end += "</div></body></html>"
-        wz_tooltip_path = ""
-    table_ini += "<script type='text/javascript' src='%swz_tooltip.js'></script><table class=\"sortable\"><tbody>" %(wz_tooltip_path) #parte iniziale della table
-    header = "<tr title=\"Last update: %s\"><th>ID</th><th>NICK</th><th>SKILL</th><th>STREAK</th><th>ROUNDS</th><th title='Headshots'>HS</th><th>LAST IP</th><th>LAST VISIT</th></tr>" %lasttableupdate #Header (SKILL, NICK, STREAK, ROUNDS, HIT, IP, LASTVISIT)
+    table_ini = "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><link href='rank.css' rel='stylesheet' type='text/css' />" +\
+    "<script src='%s/sorttable.js'></script></head><body><div class=\"redcap\"><script type='text/javascript' src='wz_tooltip.js'></script><table class=\"sortable\"><tbody>" %M_CONF.w_script_url
+    table_end = "</tbody></table></div></body></html>"
+    header = "<tr title=\"Last update: %s\">" %lasttableupdate +\
+    "<th>ID</th>"+\
+    "<th>NICK</th>"+\
+    "<th>SKILL</th>"+\
+    "<th>STREAK</th>"+\
+    "<th>ROUNDS</th>"+\
+    "<th title='Headshots'>HS</th>"+\
+    "<th>LR</th>"+"<th>SR</th>"+"<th>M4</th>"+"<th>g36</th>"+"<th>AK</th>"+"<th>NG</th>"+"<th>PS</th>"+"<th>HK</th>"+"<th>BL</th>"+"<th>MP</th>"+\
+    "<th>UM</th>"+"<th>SP</th>"+"<th>DE</th>"+"<th>BE</th>"+"<th>NA</th>"+"<th>KN</th>"+\
+    "<th>LAST IP</th>"+\
+    "<th>LAST VISIT</th>"+\
+    "</tr>"  
     TABLE = table_ini + header                  #contenuto della table
     i_id = 1
     for guid in Dump:                           #CREO LA RIGA ed i suoi span. RIGHE CON TOOLTIP: <a href="#" onmouseover="TagToTip('Span2')" onmouseout="UnTip()">Homepage </a>
+        tot_kills = sum(guid[21:38])         #kill totali fatte dal player
         #*** Cella ID ***************
         ID = cella(str(i_id), "", "", "")
         i_id += 1
         #*** Cella SKILL ************
         if guid[39] <> 0:   #evito divisione per 0
-            tooltip_SKILL = "K/D:"+ str(round(sum(guid[21:38]) / float(guid[39]),2))
+            tooltip_SKILL = "K/D:"+ str(round(tot_kills / float(guid[39]),2))
         if guid[2] < 0:
             colore = "color:red"
         else:
             colore = "color:green"
         SKILL = cella(str(round(guid[2],1)), tooltip_SKILL, "", colore)
         #*** Cella NICK ************
-        #_________ TOOLTIP
+        #_________ TOOLTIP_____________
         rc_nick = "<div class='rc_nick'>%s</div>" %striphtml(str(guid[1]))  #nick
         masked_guid = guid[0][0:6] + "***"
         aff = round(guid[3] / M_CONF.Nt_roundXpoint + ((guid[4]-guid[8])/87400) / M_CONF.Nt_dayXpoint + guid[7], 1)
@@ -220,7 +251,7 @@ def web_rank():
         rc_col3 = "<div class='rc_col3'>%s</div>" %rc_col3_txt
         rc_tip = rc_nick + rc_col1 + rc_col2 + rc_col3
         NICK_tooltip ="<div class='rc_tip'>%s</div>" %rc_tip
-        #_________ CELLA
+        #_________ CELLA___________
         id = "sp%s" %guid[0][0:8]
         txt = '<span onmouseover="TagToTip(\'%s\')" onmouseout="UnTip()">%s</span>' %(id , striphtml(str(guid[1])))
         cls = ""
@@ -248,6 +279,24 @@ def web_rank():
         else:
             colore = ""
         HSHOTS = cella(hs1, tooltip_HS, "", colore)
+        #*** Celle WEAPONS ************
+        Lr = cella(str(round(float(guid[27])*100/tot_kills,1)), "Lr300", "", "color:#EEE8AA")
+        Sr8 = cella(str(round(float(guid[34])*100/tot_kills,1)), "SR8", "", "color:#EEE8AA")
+        M4 = cella(str(round(float(guid[37])*100/tot_kills,1)), "M4", "", "color:#EEE8AA")
+        G36 = cella(str(round(float(guid[28])*100/tot_kills,1)), "G36", "", "color:#EEE8AA")
+        Ak = cella(str(round(float(guid[35])*100/tot_kills,1)), "AK103", "", "color:#EEE8AA")
+        Neg = cella(str(round(float(guid[36])*100/tot_kills,1)), "Negev", "", "color:#EEE8AA")
+        Psg = cella(str(round(float(guid[29])*100/tot_kills,1)), "Psg1", "", "color:#EEE8AA")
+        Hk = cella(str(round(float(guid[30])*100/tot_kills,1)), "H&K69", "", "color:#EEE8AA")
+        Bled = cella(str(round(float(guid[31])*100/tot_kills,1)), "Bleeding", "", "color:#FFA500")
+        Mp5 = cella(str(round(float(guid[26])*100/tot_kills,1)), "Mp5K", "", "color:#87CEEB")
+        Ump = cella(str(round(float(guid[25])*100/tot_kills,1)), "Ump45", "", "color:#87CEEB")
+        Spas = cella(str(round(float(guid[24])*100/tot_kills,1)), "Spas", "", "color:#87CEEB")
+        De = cella(str(round(float(guid[23])*100/tot_kills,1)), "DE", "", "color:#88CC88")
+        Ber = cella(str(round(float(guid[22])*100/tot_kills,1)), "Beretta", "", "color:#88CC88")
+        Nade = cella(str(round(float(guid[33])*100/tot_kills,1)), "Nade", "", "color:#FFA500")
+        Knife = cella(str(round(float(guid[21])*100/tot_kills,1)), "Knife", "", "color:#88CC88")
+        ARMI = Lr + Sr8 + M4 + G36 + Ak + Neg + Psg + Hk + Bled + Mp5 + Ump + Spas + De + Ber + Nade + Knife
         #*** Cella IP ****************
         if guid[17]:
             b = guid[17].split(".")
@@ -261,7 +310,7 @@ def web_rank():
         l_conn = "%d g. : %d h." % (day, hrs % 24)
         LASTVISIT = cella(l_conn, "", "", "")
         #*** CREO LA RIGA ************
-        riga_txt = ID + NICK + SKILL + STREAK + ROUNDS + HSHOTS + IP + LASTVISIT
+        riga_txt = ID + NICK + SKILL + STREAK + ROUNDS + HSHOTS + ARMI + IP + LASTVISIT
         riga = "<tr>%s</tr>" %riga_txt
         #_________ AGGIUNGO I TOOLTIPS
         riga += NICK_SPAN
@@ -274,17 +323,13 @@ def web_rank():
     htmlfile = open("HTML" + "/" + M_CONF.w_tabella, "w")
     htmlfile.write(TABLE)
     htmlfile.close()
-    #trasferisco
-    if web_FTPtransfer("HTML" + "/" + M_CONF.w_tabella, M_CONF.w_tabella):
-        return True
-    else:
-        return False
 
 #web_rank()
 
 def web_FTPtransfer(filefrom, fileto):
     """trasferisce un file sul webserver ausiliario"""
     esito = True
+    import M_RC
     from ftplib import FTP
     htmlfile = open(filefrom, "rb")
     try:
@@ -294,12 +339,15 @@ def web_FTPtransfer(filefrom, fileto):
         connessione.storbinary('STOR ' + fileto, htmlfile)
         connessione.quit()
     except:
-        htmlfile.close()
         esito = False
-        #return esito
     finally:
         htmlfile.close()
-        return esito
+        if esito:
+            M_RC.scrivilog("File %s transfer OK." %filefrom, M_CONF.activity)
+        else:
+           M_RC.scrivilog("File %s transfer not achieved." %filefrom, M_CONF.activity)
+
+#automaintenance()
 
 class Cronometro:
     """classe per controlli a tempo"""

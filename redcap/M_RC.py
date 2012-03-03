@@ -10,10 +10,10 @@ import C_SOCKET     #Classe socket per comunicazione con UrT
 import M_CMD        #Lista comandi
 import M_CONF       #Carico le configurazioni programma
 import M_SAYS       #dati ausiliari per gestire i say ed i comandi
-import geoip      #geolocalizzazione
+import GEOIP.geoip      #geolocalizzazione
 exec("import M_%s" %M_CONF.RC_lang)            #importo modulo localizzazione linguaggio
 
-versione = "1.05_(20120201)" 	#RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING OF THE SCRIPT OUTSIDE OF THIS CONFIGURATION FILE. !!!
+versione = "1.06_(20120204)" 	#RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING OF THE SCRIPT OUTSIDE OF THIS CONFIGURATION FILE. !!!
 
 
 #Carico i moduli di lingua
@@ -25,7 +25,7 @@ Killz = eval("M_%s.RC_kills" %M_CONF.RC_lang)
 SCK = C_SOCKET.Sock()                                                                   #Istanzio il socket
 GSRV = C_GSRV.Server()                                                                 #Istanzio il gameserver
 DB = C_DB.Database(M_CONF.NomeDB)                                         #Istanzio il DB
-GLC = geoip.GeoIP('GEOIP/GeoLiteCity.dat')                                #istanzio il geolocator
+GLC = GEOIP.geoip.GeoIP('GEOIP/GeoLiteCity.dat')                           #istanzio il geolocator
 
 #DB.connetti()
 #GSRV.Banlist= (DB.esegui("""SELECT * FROM BAN""")).fetchall()   #carico la banlist #TODO da scaricare periodicamente (spostare in modulo apposito?)
@@ -106,8 +106,8 @@ def clientuserinfo(info):                       #info (0=slot_id, 1=ip, 2=guid)
         GSRV.player_NEW(newplayer, info[0], time.time())    #lo aggiungo alla PlayerTable ed ai TeamMember
     if GSRV.PT[info[0]].justconnected:              #Se e un nuovo player
         GSRV.player_ADDINFO(info)                   #gli aggiungo GUID e IP e location
-        geoinfo = GLC.record_by_addr(info[1])
-        GSRV.PT[info[0]].location = ("%s - %s") %(geoinfo["city"], geoinfo["country_code3"])
+        geoinfo = get_geoinfo(info[1])                  #recupero le geoinfo
+        GSRV.PT[info[0]].location = ("%s - %s") %(geoinfo[0], geoinfo[1])   #geoinfo[0]=citta', geoinfo[1]=paese
     elif info[2] <> GSRV.PT[info[0]].guid:          #cambio guid durante il gioco.
         if GSRV.Server_mode <> 2:                   #non attivo esclusivamente in warmode
             GSRV.PT[info[0]].notoriety += M_CONF.Nt_guidchange    #gli abbasso la notoriety in proporzione
@@ -116,7 +116,7 @@ def clientuserinfo(info):                       #info (0=slot_id, 1=ip, 2=guid)
 
 def clientuserinfochanged(info):                #info (0=id, 1=nick, 2=team)
     res = GSRV.player_USERINFOCHANGED(info)     #Aggiorno NICK e TEAM (se res True, il player ha cambiato nick (o e' nuovo)
-    if GSRV.Server_mode == 0:           #controllo se ï¿½ finito lo startup
+    if GSRV.Server_mode == 0:           #controllo se e' finito lo startup
         if GSRV.TeamMembers[0] == 0:
             if M_CONF.SV_silentmode:
                 GSRV.Server_mode = 3    #Silentmode
@@ -259,15 +259,15 @@ def cr_recordErase():
     if int(time.strftime("%j", time.localtime(GSRV.TopScores["Day"][0]))) <> int(time.strftime("%j", time.localtime())):     #il daily record e piu vecchio di un giorno
         GSRV.TopScores["Day"] = [0.0, 0, " "]
         DB.esegui(DB.query["saverecords"], ("0.0", "0", " ", "Day"))
-        scrivilog("Daily record cleaned", M_CONF.crashlog)
+        scrivilog("Daily record cleaned", M_CONF.activity)
     if int(time.strftime("%U", time.localtime(GSRV.TopScores["Week"][0]))) <> int(time.strftime("%U", time.localtime())):     #il weekly record e piu vecchio di una settimana
         GSRV.TopScores["Week"] = [0.0, 0, " "]
         DB.esegui(DB.query["saverecords"], ("0.0", "0", " ", "Week"))
-        scrivilog("Weekly record cleaned", M_CONF.crashlog)
+        scrivilog("Weekly record cleaned", M_CONF.activity)
     if int(time.strftime("%m", time.localtime(GSRV.TopScores["Month"][0]))) <> int(time.strftime("%m", time.localtime())):     #il monthly record e piu vecchio di un mese
         GSRV.TopScores["Month"] = [0.0, 0, " "]
         DB.esegui(DB.query["saverecords"], ("0.0", "0", " ", "Month"))
-        scrivilog("Monthly record cleaned", M_CONF.crashlog)
+        scrivilog("Monthly record cleaned", M_CONF.activity)
     DB.salva()
     DB.disconnetti()
 
@@ -377,6 +377,17 @@ def endRound(frase):
     if GSRV.Server_mode > 2:                                       #solo in modalita normale e silent. No war e no startup
         if GSRV.BalanceMode > 1 or GSRV.BalanceRequired:           #eseguo bilanciamento automatico o su richiesta
             res = balance_do()
+
+def get_geoinfo(IP):
+    """Ritorna Citta' e Paese"""
+    #à,á,ä,è,é,ë,ì,í,ï,ò,ó,ö,ù,ú,ü,ñ,ç
+    repl = {"\xe0":"a",  "\xe1":"a", "\xe4":"a", "\xe8":"e", "\xe9":"e", "\xeb":"e", "\xec":"i", "\xed":"i", "\xef":"i", "\xf2":"o", "\xf3":"o", "\xf6":"o", "\xf9":"u", "\xfa":"u", "\xfc":"u","\xf1":"n","\xe7":"c"}       #sostituisco le lettere non ASCII
+    ginfo = GLC.record_by_addr(IP)      #recupero le info dall'IP
+    for L in repl:
+        if L in ginfo["city"]:
+            ginfo["city"] = ginfo["city"].replace(L, repl[L])
+    b = unicode(ginfo["city"], errors='ignore')                     #se la lettera non ASCII non e' nel replacer, la ignoro.
+    return (str(b), ginfo["country_code3"])
 
 def hits(frase):                                                #del tipo ['1', '0', '3', '5'] Vittima, Killer, Zona, Arma (per il momento arma non e' utilizzato)
     if frase[0] not in GSRV.PT or frase[1] not in GSRV.PT:                         #in rari casi il player puo' essere hittato dopo clientdisconnect
@@ -563,6 +574,7 @@ def saluta(modo, id):
     while opzioni:
         opz = opzioni.pop()
         saluto += Status[opz]%stat[opz]
+    #scrivilog("saluto: %s"%saluto,M_CONF.crashlog)  #DEBUG
     say(saluto, 0)
 
 def say(testo,modo):
@@ -950,7 +962,9 @@ def recordreset(richiedente, parametri):
     DB.disconnetti()
 
 def silent(richiedente, parametri):
-    if M_CONF.SV_silentmode:
+    if GSRV.Server_mode == 0:
+        tell(richiedente, Lang["noavailcmd"])
+    elif M_CONF.SV_silentmode:
         M_CONF.SV_silentmode = False
         GSRV.Server_mode = 5
         say(Lang["silentmode"]%"OFF", 2)
