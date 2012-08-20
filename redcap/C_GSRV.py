@@ -17,7 +17,6 @@ class Server:
         self.FloodControl = M_CONF.SV_FloodControl                      #Flood control abilitato
         self.Full = 1                                                   #0 = vuoto, 1= c'e gente 2= pieno (da usare per kikkare gli spect o cose simili)
         self.Gametype = ""                                              #gametype
-        #self.KsMin = M_CONF.Sk_Ks_min                                   #minima streak affinche' il bot segnali la killstreak #TODO non usata?
         self.KsNot = M_CONF.Sk_Ks_not                                   #minima notoriety per segnalazione killstreak
         self.Ks_show = M_CONF.Sk_Ks_show                                #minima ks per segnalazione in chat
         self.Ks_showbig = M_CONF.Sk_Ks_showbig                          #minima ks per segnalazione in bigtext
@@ -58,7 +57,6 @@ class Server:
         self.WarnAdm = M_CONF.W_adm_warn                                #valore di uno warn dato da un admin
         self.WarnTk = M_CONF.W_tk_warn                                  #valore di uno warn causato da un tk (in realta' un tk vale circa tk_warn + 3 hit_warn
         self.WarnHit = M_CONF.W_hit_warn                                #valore di uno warn dato da un team hit
-        self.z_profiler = { }                                           #DEBUG
 
     def is_kstreak(self, K, V, ora):
         """gestisce la killstreak"""
@@ -113,29 +111,13 @@ class Server:
     def is_thit(self, K, V):
         """verifica se e stato fatto un thit e procede di conseguenza"""
         if self.PT[K].team == self.PT[V].team:
-            '''
-            if self.PT[V].slot_id in self.PT[K].warnings:
-				self.PT[K].warnings[self.PT[V].slot_id] += self.WarnHit
-            else:
-                self.PT[K].warnings.append([self.PT[V].slot_id, self.WarnHit])
-            self.PT[K].warnings["total"] += self.WarnHit
-            print self.PT[K].warnings   #DEBUG
-            '''
-            self.PT[K].warning += self.WarnHit                           #aumento il warning #TODO da togliere se funziona warnings
+            self.PT[K].warn(V, self.WarnHit)
             return True
 
     def is_tkill(self, K, V):
         """verifica se e stato fatto un tkill e procede di conseguenza"""
         if self.PT[K].team == self.PT[V].team:
-            '''
-            if self.PT[V].slot_id in self.PT[K].warnings:
-                self.PT[K].warnings[self.PT[V].slot_id] += self.WarnTk
-            else:
-                self.PT[K].warnings.append([self.PT[V].slot_id, self.WarnTk])
-            self.PT[K].warnings["total"] += self.WarnTk
-            print self.PT[K].warnings   #DEBUG
-            '''
-            self.PT[K].warning += self.WarnTk                           #aumento il warning #TODO da togliere se funziona warnings
+            self.PT[K].warn(V, self.WarnTk)
             self.PT[K].skill -= self.Sk_penalty /  self.Sk_Kpp          #penalizzo la skill
             self.PT[K].ks = 0                                           #gli azzero la streak
             return True

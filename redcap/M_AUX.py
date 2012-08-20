@@ -34,13 +34,13 @@ tabs = [            #tabelle del DB con guid
 def automaintenance():
     """Esegue le operazioni di manutenzione giornaliera"""
     timestamp = time.strftime("%Y_%b_%d", time.localtime())
-    db_clean_guid()         #elimino le guid vecchie
-    db_clean_alias()        #elimino gli alias vecchi in eccesso
-    db_backup(timestamp)             #faccio backup del database
-    log_chat_backup(timestamp)    #creo il log di chat
-    log_backup(timestamp)             #faccio il backup del log
-    web_rank()               #creo una classifica aggiornata
-    if M_CONF.Website_ON:   #se esiste un sito web di appoggio
+    db_clean_guid()                 #elimino le guid vecchie
+    db_clean_alias()                #elimino gli alias vecchi in eccesso
+    db_backup(timestamp)            #faccio backup del database
+    log_chat_backup(timestamp)      #creo il log di chat
+    log_backup(timestamp)           #faccio il backup del log
+    web_rank()                      #creo una classifica aggiornata
+    if M_CONF.Website_ON:           #se esiste un sito web di appoggio
         web_FTPtransfer(M_CONF.NomeArchivi + "/" + timestamp + "_saylog.log", M_CONF.w_dialoghi)
         web_FTPtransfer("HTML" + "/" + M_CONF.w_tabella, M_CONF.w_tabella)
     cr_riavvia()
@@ -181,7 +181,7 @@ def web_rank():
     Dump = sorted(tmp, key=lambda dato: dato[2], reverse=True)    #record ordinati per skill decrescente
 
     #DATI: #0: GUID    # 1: Nick    # 2: Skill    # 3: Round    # 4: Lastconnection    # 5: Level    # 6: Tempban    # 7: Reputation    # 8: Firstconnect    # 9: streak    # 10: alias    # 11: varie
-    #HIT: #12: head    # 13: torso    # 14: arms    # 15: legs    # 16: body    #LOC: #17: IP    # 18: provider    # 19: location    # 20: oldip    #KILL: #21-38: kills #39: deaths
+    #HIT: #12: head    # 13: torso    # 14: arms    # 15: legs    #LOC: #16: IP    # 17: provider    # 18: location    # 19: oldip    #KILL: #20-37: kills #38: deaths
 
     ## PREPARO LA PAGINA HTML
     lasttableupdate = str(time.strftime("%d.%b&nbsp;%H:%M",time.localtime()))
@@ -203,13 +203,13 @@ def web_rank():
     TABLE = table_ini + header                  #contenuto della table
     i_id = 1
     for guid in Dump:                           #CREO LA RIGA ed i suoi span. RIGHE CON TOOLTIP: <a href="#" onmouseover="TagToTip('Span2')" onmouseout="UnTip()">Homepage </a>
-        tot_kills = sum(guid[21:38])         #kill totali fatte dal player
+        tot_kills = sum(guid[20:37])         #kill totali fatte dal player
         #*** Cella ID ***************
         ID = cella(str(i_id), "", "", "")
         i_id += 1
         #*** Cella SKILL ************
-        if guid[39] <> 0:   #evito divisione per 0
-            tooltip_SKILL = "K/D:"+ str(round(tot_kills / float(guid[39]),2))
+        if guid[38] <> 0:   #evito divisione per 0
+            tooltip_SKILL = "K/D:"+ str(round(tot_kills / float(guid[38]),2))
         if guid[2] < 0:
             colore = "color:red"
         else:
@@ -240,8 +240,8 @@ def web_rank():
         rc_col2 = "<div class='rc_col2'>%s</div>" %rc_col2_txt
         #colonna3
         rc_col3_txt = "<b>IP:</b><br />"
-        if guid[20]:
-            ips = guid[20].split(" ")
+        if guid[19]:
+            ips = guid[19].split(" ")
             for ip in ips:
                 b = ip.split(".")
                 masked_ip = ".".join([b[0],b[1],b[2],"***"])
@@ -266,13 +266,13 @@ def web_rank():
         #*** Cella ROUNDS ************
         ROUNDS = cella(str(guid[3]), "", "", "")
         #*** Cella HSHOTS ************
-        hits = float(guid[12] + guid[13] +guid[14] + guid[15] + guid[16])
+        hits = float(guid[12] + guid[13] +guid[14] + guid[15])
         hs = round((guid[12]/hits)*100, 1)
         tr = round((guid[13]/hits)*100, 1)
         ar = round((guid[14]/hits)*100, 1)
         lg = round((guid[15]/hits)*100, 1)
-        bo = round((guid[16]/hits)*100, 1)
-        tooltip_HS = "Torso:%s Arms:%s Legs:%s Body:%s" %(str(tr), str(ar), str(lg), str(bo))
+        #bo = round((guid[16]/hits)*100, 1)
+        tooltip_HS = "Torso:%s Arms:%s Legs:%s" %(str(tr), str(ar), str(lg))
         hs1 = "%s&#37;" %str(hs)
         if hs > 16:
             colore = "color:red"
@@ -280,26 +280,26 @@ def web_rank():
             colore = ""
         HSHOTS = cella(hs1, tooltip_HS, "", colore)
         #*** Celle WEAPONS ************
-        Lr = cella(str(round(float(guid[27])*100/tot_kills,1)), "Lr300", "", "color:#EEE8AA")
-        Sr8 = cella(str(round(float(guid[34])*100/tot_kills,1)), "SR8", "", "color:#EEE8AA")
-        M4 = cella(str(round(float(guid[37])*100/tot_kills,1)), "M4", "", "color:#EEE8AA")
-        G36 = cella(str(round(float(guid[28])*100/tot_kills,1)), "G36", "", "color:#EEE8AA")
-        Ak = cella(str(round(float(guid[35])*100/tot_kills,1)), "AK103", "", "color:#EEE8AA")
-        Neg = cella(str(round(float(guid[36])*100/tot_kills,1)), "Negev", "", "color:#EEE8AA")
-        Psg = cella(str(round(float(guid[29])*100/tot_kills,1)), "Psg1", "", "color:#EEE8AA")
-        Hk = cella(str(round(float(guid[30])*100/tot_kills,1)), "H&K69", "", "color:#EEE8AA")
-        Bled = cella(str(round(float(guid[31])*100/tot_kills,1)), "Bleeding", "", "color:#FFA500")
-        Mp5 = cella(str(round(float(guid[26])*100/tot_kills,1)), "Mp5K", "", "color:#87CEEB")
-        Ump = cella(str(round(float(guid[25])*100/tot_kills,1)), "Ump45", "", "color:#87CEEB")
-        Spas = cella(str(round(float(guid[24])*100/tot_kills,1)), "Spas", "", "color:#87CEEB")
-        De = cella(str(round(float(guid[23])*100/tot_kills,1)), "DE", "", "color:#88CC88")
-        Ber = cella(str(round(float(guid[22])*100/tot_kills,1)), "Beretta", "", "color:#88CC88")
-        Nade = cella(str(round(float(guid[33])*100/tot_kills,1)), "Nade", "", "color:#FFA500")
-        Knife = cella(str(round(float(guid[21])*100/tot_kills,1)), "Knife", "", "color:#88CC88")
+        Lr = cella(str(round(float(guid[26])*100/tot_kills,1)), "Lr300", "", "color:#EEE8AA")
+        Sr8 = cella(str(round(float(guid[33])*100/tot_kills,1)), "SR8", "", "color:#EEE8AA")
+        M4 = cella(str(round(float(guid[36])*100/tot_kills,1)), "M4", "", "color:#EEE8AA")
+        G36 = cella(str(round(float(guid[27])*100/tot_kills,1)), "G36", "", "color:#EEE8AA")
+        Ak = cella(str(round(float(guid[34])*100/tot_kills,1)), "AK103", "", "color:#EEE8AA")
+        Neg = cella(str(round(float(guid[35])*100/tot_kills,1)), "Negev", "", "color:#EEE8AA")
+        Psg = cella(str(round(float(guid[28])*100/tot_kills,1)), "Psg1", "", "color:#EEE8AA")
+        Hk = cella(str(round(float(guid[29])*100/tot_kills,1)), "H&K69", "", "color:#EEE8AA")
+        Bled = cella(str(round(float(guid[30])*100/tot_kills,1)), "Bleeding", "", "color:#FFA500")
+        Mp5 = cella(str(round(float(guid[25])*100/tot_kills,1)), "Mp5K", "", "color:#87CEEB")
+        Ump = cella(str(round(float(guid[24])*100/tot_kills,1)), "Ump45", "", "color:#87CEEB")
+        Spas = cella(str(round(float(guid[23])*100/tot_kills,1)), "Spas", "", "color:#87CEEB")
+        De = cella(str(round(float(guid[22])*100/tot_kills,1)), "DE", "", "color:#88CC88")
+        Ber = cella(str(round(float(guid[21])*100/tot_kills,1)), "Beretta", "", "color:#88CC88")
+        Nade = cella(str(round(float(guid[32])*100/tot_kills,1)), "Nade", "", "color:#FFA500")
+        Knife = cella(str(round(float(guid[20])*100/tot_kills,1)), "Knife", "", "color:#88CC88")
         ARMI = Lr + Sr8 + M4 + G36 + Ak + Neg + Psg + Hk + Bled + Mp5 + Ump + Spas + De + Ber + Nade + Knife
         #*** Cella IP ****************
         if guid[17]:
-            b = guid[17].split(".")
+            b = guid[16].split(".")
             masked_ip = ".".join([b[0],b[1],b[2],"***"])
         else:
             masked_ip = "UNKNOWN"

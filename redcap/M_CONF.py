@@ -5,29 +5,27 @@
 ### THESE PARAMETERS ***MUST*** BE CONFIGURED OR REDCAP WILL NOT RUN PROPERLY!!!   ###
 ### =======================================================================  ###
 
-NomeFileLog = "../games.log"    				#Relative path of gameserver log
-AdminGuids = ["****************************"] 	#Guid in this field is automatically enabled to the highest admin level (level 100)
-SV_Baseconf = "server.cfg"  					#Name of gameserver base config file.
-SV_UrtPath = "../../../q3ut4"    				#Relative path of Urban Terror  q3ut4 folder
-SV_MapCycle =  "mapcycle.txt"    				#Name of cyclemap config file
-Sck_ServerRcon = "********"   					#Gameserver rcon password
-Sck_ServerIP =  "***.***.***.***"      			#Gameserver IP address
-Sck_ServerPort = 27960 							#Gameserver IP port
+NomeFileLog = "../games.log"                      #Relative path of gameserver log
+AdminGuids = ["2BCDAC16716F40BEA3CA284102584FFB","4E4085DEBF0163EEA52049BAEA97D22F"] #Guid in this field is automatically enabled to the highest admin level (level 100) 
+SV_Baseconf = "server.cfg"                        #Name of gameserver base config file.
+SV_UrtPath = "../../../q3ut4"                     #Relative path of Urban Terror  q3ut4 folder
+SV_MapCycle =  "mycycle.txt"                      #Name of cyclemap config file
+Sck_ServerRcon = "g4l4h4d"                        #Gameserver rcon password
+Sck_ServerIP =  "217.199.3.253"                   #Gameserver IP address
+Sck_ServerPort = 27960                            #Gameserver IP port
 
 ### =============================================================================================  ###
 ### THESE PARAMETERS **MUST** BE CONFIGURED IF  *** Website_ON = True *** OR REDCAP WILL NOT RUN PROPERLY!!!   ###
 ### =============================================================================================  ###
 
-Website_ON = False 							#(True or False) True if you want to use RedCap web features (rank and chatlog  FTP transfer to auxiliary website)
-w_url = 'www.yoursite.com'      			#FTP url of auxiliary website
-w_login = '*******' 						#FTP login of auxiliary website
-w_password = '********' 					#FTP password of auxiliary website
+Website_ON = True                         	#(True or False) True if you want to use RedCap web features (rank and chatlog  FTP transfer to auxiliary website)
+w_url = 'www.bravewarriors.eu'            	#FTP url of auxiliary website
+w_login = 'bravewarriors'                     	#FTP login of auxiliary website
+w_password = 'urb4nt3rr0r'                  	#FTP password of auxiliary website
 w_ftp_directory = '/httpdocs/serverstats' 	#Remote relative path of folder used by RedCap for FTP transfer
 w_directory = '/serverstats'              	#Remote relative url of folder used by RedCap for FTP transfer
-w_tabella = "skilltable.htm"                #Ranking table (html format)
-w_dialoghi = "dialoghi.htm"                 #Chat log table (html format)
-w_script_url = "http://www.yoursite.com/mysafepath" #path where safe js scripts are stored (to run sortable.js)
-w_webranktime = 4                           #time (h) between webrank updating.
+w_script_url = "http://www.bravewarriors.eu/Themes/default/scripts/" #path where trusted js scripts are stored
+w_webranktime = 3                           #time (h) between webrank updating.
 
 ### ==================================================================  ###
 ### THESE PARAMETERS *CAN* BE CONFIGURED IN ORDER TO CUSTOMIZE YOUR REDCAP   ###
@@ -44,6 +42,7 @@ MinPlayers = 4 				#Min. number of active players for registering a record
 MinNotoriety = 0 			#Min. notoriety level required to a player for registering a record
 
 #CONSOLE SPAMS
+EndmapSpam = True     		#Shows stats at map end
 RecordSpam = True 			#(True or False) If True, Redcap periodically spams records in chat
 CustomSpam = True 			#(True or False) If True, Redcap periodically spams sentences stored in spam.txt,
 Spamtime = 150 				#Time between two consecutive spams
@@ -51,7 +50,7 @@ Spamtime = 150 				#Time between two consecutive spams
 #REDCAP
 botname = "^8RC| " 				#prefix of Redcap outputs (#TODO not used yet)
 clanbalanceTag = "bw|"			#prefix of Home clan
-RC_lang = "ITA" 				#Language localization for RedCap. ITA only #TODO (ENG FRA and others. See M_ITA.py for translation procedure)
+RC_lang = "ITA" 				#Language localization for RedCap. ITA ENG only (See M_ITA.py for translation procedure)
 gameserver_autorestart = 2 		#Automatically restart the Gameserver: 0: no restart 1: daily restart 2: restart when empty.
 
 ##SERVER
@@ -65,7 +64,7 @@ SV_AntiFake = True              #(True or False) If True RedCap assign a reliabi
 SV_goodNick = r"[a-zA-Z]"   	#Regex that player nick must satisfy to be allowed to play in the game server.
 SV_minNick = 3   				#Min length allowed for a player nick
 SV_ShowHeadshots = True  		#(True or False) If True headshot are displayed in upper gameserver chat
-SV_silentmode = False           #If true RedCap runs in silentmode.
+SV_silentmode = False           	#If true RedCap runs in silentmode.
 
 ##STATUS Sum the values of each information you want to be shown
 '''
@@ -114,17 +113,20 @@ Control_Daily = 6 		#Hour (0-24) when daily maintenance activities will start
 w_minRounds = 60 		#Rounds to play before a player is shown in webrank
 
 #COMMANDS LEVEL (Max lev = 100). Player can execute all the commands having a level lower or equal to their own level. Redcap automatically assign level 0 to each new player, unless a different level has been assigned by some admin.:
+# NOTE: assign value = -1 disable a command
 lev_alias = 1 			#Shows player's alias
 lev_admin = 1 			#All the players having this level or higher are considered gameserver admins. Admins receives more detailed information about other players. Presence of an admin could enable or disable some Redcap features.
 lev_balancemode = 1 	#Switches team autobalance ON/MANUAL/OFF
 lev_balance = 0 		#Ask to RedCap for a teambalance at round end
-lev_ban = 3 			#Permanently bans a player
+lev_ban = 3 			#Permanently bans/unbans a player
 lev_callvote = 1 		#Enables vote mode "voteType" for "voteTime" seconds.
 lev_cycle = 2 			#Cycles immediately to the next map
-lev_dbfind = 2          #find a player in DB (for future use) #UPDATE
+lev_dbfind = 2          #find a player in DB 
 lev_dbnick = 3 			#Set the actual player's nick as his main nick. Main nick is the one displayed in records and webrank
 lev_esegui = 4 			#Executes an rcon command
 lev_force = 1 			#Moves a player to Red, Blue or Spect
+lev_forgive = 0         #forgive a player for thit or tkill
+lev_forgiveall = 3      #fully forgive a player
 lev_info = 0 			#Shows some info about game server and RedCap itself
 lev_kick = 1 			#Kicks a player
 lev_level = 4 			#Assign a level to a player
@@ -141,6 +143,7 @@ lev_RCrestart = 4 		#Restart the RedCap
 lev_silent = 3          #switch between silent and verbose mode
 lev_skill = 0 			#Shows plasyer's skill
 lev_slap = 1 			#Slaps a player n times
+lev_smite = 3           #Kill a player
 lev_spam = 2 			#adds / cancels a message from spam list
 lev_spamlist = 0 		#Lists all spam messages
 lev_status = 0 			#Gives several details about player(s). Details depends from applicant level
@@ -157,7 +160,7 @@ lev_unwar = 1 			#Unload war mode setting the game server to its standard config
 ##AUXILIARY FILES and LOGS
 activity= "activity.log"    #Redcap activity file
 badguid = "badguid.log" 	#Bad guids record file
-crashlog = "crash.log" 		#RedCap activity and crashes logfile
+crashlog = "crash.log" 		#RedCap crashes logfile
 commandlog = "command.log" 	#RedCap commands record file (commandlogMinLevel value specify which command should be recorded into the file)
 NomeArchivi = "Archivi" 	#Gamelogs and database backup folder
 NomeDB = "Rc_DB.sqlite" 	#name of DB file
@@ -165,19 +168,21 @@ socketlog = "socket.log" 	#Not sent command logfile
 SpamFile = "spam.txt"   	#Custom spams here
 SV_Basewar = "basewar.cfg"  #Basic CW config that RedCap loads if nothing else is specified
 SV_Logfolder = "logs"   	#Log folder
+w_tabella = "skilltable.htm"#Ranking table (html format)
+w_dialoghi = "dialoghi.htm" #Chat log table (html format)
 
 ##NOTORIETY:  If player notoriety is lower than Nt_MinNot_toplay, the player is immediately kicked from gameserver.
 Nt_badguid = -20    		#Notoriety penalty for bad formatted guid
 Nt_dayXpoint = 5    		#Guid age (days) giving 1 notoriety point
-Nt_fakepenalty = -1         #min penalty for using a new fake   #UPDATE
+# Nt_fakepenalty = -1         #min penalty for using a new fake   #UPDATE
 Nt_floodpenalty = -0.2  	#Notoriety penalty for flooding
 Nt_guidchange = -50 		#Notoriety penalty for guid change in game
-Nt_MinNot_toplay = 0.8      #Min. notoriety  to play in the gameserver. New player's notoriety is 0
+Nt_MinNot_toplay = 0.0      #Min. notoriety  to play in the gameserver. New player's notoriety is 0
 Nt_roundXpoint = 200    	#N. of round to be played giving 1 notoriety point
 Nt_warnpenalty = -1 		#Notoriety penalty for a kick from RedCap
 
 ##SKILL parameters
-#EXAMPLE: appoximative score that a 1000 skill player should obtain to keep his skill unchanged:
+#EXAMPLE: approximative score that a 1000 skilled player should obtain to keep his skill unchanged:
 #Sk_range=300: score: 785-1;
 #Sk_range=500: score 55-1;
 #Sk_range=600: score 28-1;
