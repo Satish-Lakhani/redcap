@@ -13,10 +13,10 @@ class Player:
         self.flood = 0          #numero di say in TempoControllo1
         self.guid = None        #(string) GUID
         self.guidage = 0        #eta della guid che sta usando
-        self.hits = {"0":0, "1":0, "2":0, "3":0, "4":0, "5":0, "6":0, "total":0}   #hit fatte dal player (0:head 1:helmet 2:torso 3:kevlar 4:arms 5:legs 6:body)
+        self.hits = {"0":0, "1":0, "2":0, "3":0, "4":0, "5":0, "6":0, "7":0, "8":0, "9":0, "total":0}   #hit fatte dal player (0:unknown 1:head 2:unknown 3:unknown 4:helmet 5:torso 6:vest 7:left arm 8:right arm 9:legs)
         self.ip = ""            #(string) IP
         self.isinDB = False     #Player esistente in DB.
-        self.kills = {"12":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"24":0,"25":0,"28":0,"30":0,"35":0,"38":0,"40":0}   #kill fatte dal player
+        self.kills = {"12":0,"13":0,"14":0,"15":0,"16":0,"17":0,"18":0,"19":0,"20":0,"21":0,"22":0,"23":0,"24":0,"25":0,"27":0,"29":0,"30":0,"33":0,"35":0,"36":0,"37":0,"39":0}   #kill fatte dal player
         self.ks = 0             #killstreak
         self.ksmax = 0          #max killstreak
         self.lastconnect = 0    #data dell'ultimo connect
@@ -34,7 +34,7 @@ class Player:
         #self.rusher =0         #tempo totale di vita sul gameserver / tempo totale (da un'idea della bravura e camperosita)
         self.skill = 0.0        #skill
         self.skill_coeff = 1.0  #coefficiente di moltiplicazione skill che tende a 1 a round infiniti coeff = 1+[A/(round^C+B)]
-        self.skill_var = 0.0    #variazione skill durante la mappa corrente?
+        self.skill_var = 0.0    #variazione skill durante la mappa corrente
         self.slot_id = None     #(string) slot id
         self.team = 0           #(string) 0=Sconosciuto 1=red, 2=blue, 3=spect
         self.tempban = 0        #data dell'ultimo tempban
@@ -42,8 +42,8 @@ class Player:
         #self.totalplayedtime = 0                                           #tempo totale di gioco
         self.varie = []         #varie
         self.vivo = 0           #0=Sconosciuto 1=vivo, 2=morto #TODO mi interessa saperlo?
-        self.warnings = {"total": 0.0}      #warning assegnati al player da admin o per TK o thit
-        self.warning = 0.0      #warning assegnati al player da admin o per TK o thit
+        self.warnings = {"total": 0.0}      #warning assegnati al player
+        self.warning = 0.0      #warning assegnati al player da admin o per TK o thit (TODO da togliere se funziona warnings)
 
     def alias_to_DB(self):
         """prepara gli alias per scrittura in db"""
@@ -132,6 +132,8 @@ class Player:
         4096: aliases,
         8192: self.location
         }
+        if self.level == 100:       #maschero gli admin
+            X[512] = 0
         return X
 
     def varie_to_DB(self):
@@ -140,3 +142,12 @@ class Player:
         for item in self.varie:
             varie += item + " "
         return varie.rstrip()           #tolgo gli spazi finali
+
+    def warn(self, richiedente, valore):
+        """aggiunge o toglie warning"""
+        if richiedente in self.warnings:
+            self.warnings[richiedente] += valore
+        else:
+            self.warnings[richiedente] = valore
+        self.warnings["total"] += valore
+
