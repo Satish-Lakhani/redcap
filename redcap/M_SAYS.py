@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 #tupla di regex per individuare le parole da censurare
-censura=["n[o0]+b",
-"n(iu|u|[a@])bb[o0]",
-"\bc[a@][mn]p",
-"l[a@]m(ah|er)",
-"c[o0]gl[i1][o0]n",
+censura=[
+#"n[o0]+b",
+#"n(iu|u|[a@])b+[zo0]",
+#"l[a@]m(ah|er)",
+#"c[o0]gl[i1][o0]n",
 "b[o0](cc|kk)hin",
 "m[o0]r[0o]n",
 "p[o0]mp[i1]n",
@@ -17,17 +17,19 @@ censura=["n[o0]+b",
 "m[3e]rd",
 "tr[o0][yi][a@]",
 "putt[a@]n[a@]",
-"che[a@]t",
-"\bci(t+)",
-"h[a@]ck",
-"a[1i]mb",
+#"che[a@]t",
+#"\bci(t+)",
+#"^wh$",
+#"h[a@]ck",
+#"a[1i]mb",
+"[i1]d[i1][o0]t",
 "str[o0]nz",
 "tu[@a] m[a@]dr[3e]",
 "(k(u|o)|qu?)rw(a|o|y)?",
 "s?pierd(ala(j|j?my)|ol(a|ic|ec)?)",
 "f[i1]gl[i1][o0] d[1i]",
 "[a@]ff[a@]n[ck]u",
-"c[a@]mp[3e]r$"
+#"c[a@]mp[3e]r$"
 ]
 
 

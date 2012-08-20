@@ -5,13 +5,16 @@
 #TODO fare anche ban per nick
 #TODO evitare che un crash durante cw cancelli la config war
 #TODO fare comando shuffle
-#TODO completare classifica 
 #TODO fare comando join
-#TODO fare comando rank che mostri skill dei player in game (e top skill?)
 #TODO fare comando admin che mostra gli admin in game e/o la adminlist
 #TODO parametri per decidere cosa far vedere in silentmode?
-#TODO pulire M_AUX.web_rank
-#TODO kikka per falsi tk in fase di avvio (fatto, controllare)
+#TODO eliminazione automatica password a server vuoto non va (ma va con !unwar) (fatto da verificare)
+#TODO verificare che località sia updatata ogni volta con nuovo IP
+#TODO aggiustare classifica html (non c'è più body hit) (fatto, da verificare)
+#TODO comando kill utilizzando smite (fatto, da verificare)
+#TODO comando help che mostra i comandi utilizzabili
+#TODO vedere come mai da ancora messaggio record a record=0
+#TODO utilizzare g_blueteamlist and g_redteamlist
 
 import sys
 import C_PARSER         #Classe che rappresenta il parser
@@ -32,7 +35,7 @@ def crashlog(t, v, tra):
 
 sys.excepthook = crashlog                                       #abilito il log dei crash
 
-PARSER = C_PARSER.Parser(M_CONF.NomeFileLog)   #Istanzio il Parser
+PARSER = C_PARSER.Parser(M_CONF.NomeFileLog)    #Istanzio il Parser
 CRON1 = M_AUX.Cronometro(M_CONF.CRON1)          #Istanzio il cron1
 CRON2 = M_AUX.Cronometro(M_CONF.CRON2)          #Istanzio il cron2
 
@@ -42,16 +45,14 @@ def init_jobs():
     M_RC.ini_clientlist()           #recupero i client gia presenti sul server
     M_RC.ini_recordlist()           #recupero i record dal server
     M_RC.ini_spamlist()             #carico la spamlist
-    if M_CONF.Website_ON and not M_CONF.SV_silentmode:           #Se esiste un website di appoggio aggiorno la classifica, la trasferisco al server remoto e salvo il risultato dell'operazione nel log
+    if M_CONF.Website_ON:           #Se esiste un website di appoggio aggiorno la classifica, la trasferisco al server remoto e salvo il risultato dell'operazione nel log
         M_RC.say("^4Webrank updating...", 2)
         res = M_AUX.web_rank()
         if res == False:
             M_RC.scrivilog("WEBRANK TRANSFER FAILED", M_CONF.crashlog)
-    if not M_CONF.SV_silentmode:
-        M_RC.say("^4Q3ut4 parsing...", 2)
+    M_RC.say("^4Q3ut4 parsing...", 2)
     q3ut4_parse()
-    if not M_CONF.SV_silentmode:
-        M_RC.say("^2Main routine started. Wait for players identification...", 2)
+    M_RC.say("^2Main routine started. Wait for players identification...", 2)
     redcap_main()                   #LANCIO LA PROCEDURA PRINCIPALE
 
 def q3ut4_parse():
@@ -97,11 +98,11 @@ def redcap_main():
             if M_RC.GSRV.Server_mode > 2:          #controlli fatti solo in modalita' normale o silent.
                 M_RC.cr_tbkicked()                  #da fare sempre per primo
                 M_RC.cr_floodcontrol()              #controllo se qualcuno ha floodato
-                M_RC.cr_full()                      #controllo se il server e' pieno o vuoto
                 M_RC.cr_nickrotation()              #controllo se qualcuno fa nickrotation
                 M_RC.cr_unvote()                    #controllo se c'e' un voto speciale attivo
                 M_RC.cr_warning()                   #controllo se qualcuno ha troppi warning
                 M_RC.cr_notorietycheck()            #controllo notoriety bassa da fare per ultimo
+            M_RC.cr_full()                          #controllo se il server e' pieno o vuoto (questo controllo va fatto sempre)
             if int(CRON1.ticks % (M_CONF.Spamtime // M_CONF.CRON1)) == 0:       #divisione modulo per intervallo di spam
                 M_RC.cr_spam()                      #spammo
             if CRON1.ticks == 240:                  #E' passata 1 ora circa
@@ -110,11 +111,8 @@ def redcap_main():
         if CRON2.is_time():                     #ESEGUO OPERAZIONI A CRON2
             if int(CRON2.ticks % ((M_CONF.w_webranktime*3600) // M_CONF.CRON2)) == 0:       #divisione modulo per intervallo di aggiornamento classifica
                 if M_CONF.Website_ON:           #Se esiste un website di appoggio aggiorno la classifica, la trasferisco al server remoto e salvo il risultato dell'operazione nel log
-                    res = M_AUX.web_rank()
-                    if res == False:
-                        M_RC.scrivilog("WEBRANK TRANSFER FAILED", M_CONF.crashlog)
-
-
+                    M_AUX.web_rank()
+                    M_AUX.web_FTPtransfer("HTML" + "/" + M_CONF.w_tabella, M_CONF.w_tabella)
             if CRON2.get_time("Ora") == M_CONF.Control_Daily:   #all'ora prefissata eseguo operazioni giornaliere (pulizia DB, riavvio server, etc)
                 M_RC.cr_recordErase()                                       #Pulisco i record se del giorno (settimana, mese) prima.
                 M_AUX.automaintenance()                                 #automanutenzione e riavvio

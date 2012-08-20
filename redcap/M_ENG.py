@@ -26,6 +26,9 @@ RC_outputs = {
 "dbnick":"^5%s ^3assigned as main nick",
 "mapskill": " ^5%s^3 map skill: ^6%s",
 "executed": "^3Command ^6%s ^3executed",
+"forgiven": "^3Player ^5%s ^3forgiven",
+"forgivenall": "^3All teammates forgiven",
+"forgivenone": "^3Nothing to forgive to ^5%s",
 "flood": "^5%s ^1kicked for flooding",
 "guidchange": "^1CHEATER FOUND: ^5%s ^1in game GUID change. ^1Kicked",
 "headshot": "^5%s ^7%s HS ^3(^6%s o/o^3)",
@@ -68,6 +71,7 @@ RC_outputs = {
 "salvoplayer": "^3Saving ^5%s data...",
 "silentmode": "^3Silent mode ^6%s",
 "skill": "^3Skill: ^7%s ^3Map skill: ^7%s ^3Kill streak: ^7%s ",
+"smited": "^3Godwill hit ^5%s",
 "space":"^3Server full. ^5%s ^3enter in game or you will be kicked.",
 "spacekicked": "^3Server full. Spectator ^5%s ^3kicked.",
 "spamadded":"^3Message added.",
@@ -92,7 +96,7 @@ RC_outputs = {
 "warloaded": "^2Practice war mode ON. ^3Loading %s ...",
 "warning":"^5%s ^1kicked for reaching of warning limit",
 "warunloaded": "^2War ended. ^3Reloading %s ...",
-"wrongcmd":"^1Unknown ^2RedCap command.",
+"wrongcmd":"^1I'm ^2RedCap^1, not B3 or some other bot!.",
 }
 
 RC_kills = {        #messaggi di killstreak
@@ -120,7 +124,7 @@ RC_kills = {        #messaggi di killstreak
 21 : '^5%s^3 21 kills...i can\'t believe it! :-(',
 22 : '^5%s^3 22 kills? 1337!',
 23 : '^5%s^3 23 kill? ^4ok guys, John Rambo is here',
-24 : '^5%s^3 24 corpses... ^4bigger massacre than waco!',
+24 : '^5%s^3 24 corpses... ^4bigger massacre than Waco!',
 25 : '^5%s^3Kills counter is OVER! ^3U^4N^6B^1E^7L^8I^9E^0V^1A^3B^5L^3E^6!',
 }
 

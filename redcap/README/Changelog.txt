@@ -1,7 +1,13 @@
-## 2012-02-xx Redcap_1.05(201202xx):
+## 2012-03-xx Redcap_1.05(201202xx):
+* Webrank improved with weapon stats
+* Command added: !fp [playername] (forgive one or all teammates for tkill or thits to you)
+* Command added: !fall <playername> (forgive a player for all his tkill or thits to everybody)
+* Feature added: commands disabling (setting lev_command= -1 in config)
+* Feature added: End map stats toggling ON/OFF (setting EndmapSpam=True/False in config)
+* Antifake system now works only if player has al least M_CONF.maxAlias different alias
 * Bug solved: RedCap crashes when a Geolocalization string has non ASCII carachter
 * Bug solved: NameError: global name 'timestamp' is not defined
-* Webrank improved with weapon stats
+* Bug solved: webrank was not periodically updated
 
 ## 2012-02-04 Redcap_1.05(20120204):
 * Feature added: IP Geolocalization on welcome message and !z <target> command

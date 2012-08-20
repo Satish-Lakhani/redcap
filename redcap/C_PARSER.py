@@ -22,7 +22,7 @@ class Parser:
             self.nuovotesto = logfile.read()            #leggo le novita
             logfile.close()
             self.dim = os.path.getsize(self.NomeFile)        #aggiorno la dimensione log
-            self.parsa()                                #se trovo novita faccio il parsing delle novita'�
+            self.parsa()                                #se trovo novita faccio il parsing delle novita'
             return True                                 #e ritorno True
         elif os.path.getsize(self.NomeFile) < self.dim:      #se il log e' diminuito (cancellazione o simili)
             self.dim = os.path.getsize(self.NomeFilepathfile)
@@ -49,12 +49,16 @@ class Parser:
             elif x.find("ClientUserinfo:") !=  -1:                                                 #trovo tutti i CLIENTUSERINFO
                 res = re.search(r"ClientUserinfo: (?P<id>\d+)", x)              #Recupero l'ID
                 res1 = re.search(r"\\ip\\(?P<ip>\d*\.\d*\.\d*\.\d*)",x)         #Recupero l'IP
+                if not res1:
+					IP = "123.123.123.123"		#Necessario per i server con bot
+                else:
+                    IP = res1.group("ip")
                 res2 = re.search(r"cl_guid\\(?P<guid>.*?)(\\|$)",x)             #Recupero la GUID
                 if not res2:                                                                                      #se non ha la guid gli assegno una fittizia e verra' kikkato
                     GUID = "NOGUID"
                 else:
                     GUID = res2.group("guid")
-                frase = [res.group("id"), res1.group("ip"), GUID]
+                frase = [res.group("id"), IP, GUID]
                 self.outputs.append((frase, "ClientUserinfo"))
             elif x.find("ClientUserinfoChanged:") !=  -1:                                          #trovo tutti i CLIENTUSERINFOCHANGED
                 res = re.search(r"ClientUserinfoChanged: (?P<id>\d+)", x)

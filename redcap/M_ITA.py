@@ -26,6 +26,9 @@ RC_outputs = {
 "dbnick":"^3Assegnato ^5%s ^3come nick principale",
 "mapskill": " ^5%s^3 skill di mappa: ^6%s",
 "executed": "^3Comando ^6%s ^3eseguito",
+"forgiven": "^3Player ^5%s ^3perdonato",
+"forgivenall": "^3Tutti i compagni sono stati perdonati",
+"forgivenone": "^3Non hai niente da perdonare a ^5%s",
 "flood": "^5%s ^1kikkato per flooding",
 "guidchange": "^1CHEATER FOUND: ^5%s ^1cambio GUID in game. ^1Kicked",
 "headshot": "^5%s ^7%s HS ^3(^6%s o/o^3)",
@@ -68,6 +71,7 @@ RC_outputs = {
 "salvoplayer": "^3Salvo i dati di ^5%s",
 "silentmode": "^3Modalita' silenziosa ^6%s",
 "skill": "^3Skill: ^7%s ^3Instantanea: ^7%s ^3Streak: ^7%s ",
+"smited": "^3La forza del destino ha colpito ^5%s",
 "space":"^3Slots pieni. ^5%s ^3entra in gioco o sarai kikkato.",
 "spacekicked": "^3Server pieno. Spettatore ^5%s ^3kikkato.",
 "spamadded":"^3Frase aggiunta",
@@ -92,7 +96,7 @@ RC_outputs = {
 "warloaded": "^2Modalita' war. ^3Carico %s ...",
 "warning":"^5%s ^1kikkato per somma di warning",
 "warunloaded": "^2Fine WAR. ^3Ricarico %s ...",
-"wrongcmd":"^1Comando non riconosciuto dal bot ^2RedCap",
+"wrongcmd":"^1Sono ^2RedCap, ^1non (b3) o qualche altro bot!",
 }
 
 RC_kills = {        #messaggi di killstreak
