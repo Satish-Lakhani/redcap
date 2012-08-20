@@ -6,11 +6,11 @@
 ### =======================================================================  ###
 
 NomeFileLog = "../games.log"                      #Relative path of gameserver log
-AdminGuids = ["2BCDAC16716F40BEA3CA284102584FFB","4E4085DEBF0163EEA52049BAEA97D22F"] #Guid in this field is automatically enabled to the highest admin level (level 100) 
+AdminGuids = ["",""] #Guid in this field is automatically enabled to the highest admin level (level 100)
 SV_Baseconf = "server.cfg"                        #Name of gameserver base config file.
 SV_UrtPath = "../../../q3ut4"                     #Relative path of Urban Terror  q3ut4 folder
 SV_MapCycle =  "mycycle.txt"                      #Name of cyclemap config file
-Sck_ServerRcon = "g4l4h4d"                        #Gameserver rcon password
+Sck_ServerRcon = ""                        #Gameserver rcon password
 Sck_ServerIP =  "217.199.3.253"                   #Gameserver IP address
 Sck_ServerPort = 27960                            #Gameserver IP port
 
@@ -20,8 +20,8 @@ Sck_ServerPort = 27960                            #Gameserver IP port
 
 Website_ON = True                         	#(True or False) True if you want to use RedCap web features (rank and chatlog  FTP transfer to auxiliary website)
 w_url = 'www.bravewarriors.eu'            	#FTP url of auxiliary website
-w_login = 'bravewarriors'                     	#FTP login of auxiliary website
-w_password = 'urb4nt3rr0r'                  	#FTP password of auxiliary website
+w_login = ''                     	#FTP login of auxiliary website
+w_password = ''                  	#FTP password of auxiliary website
 w_ftp_directory = '/httpdocs/serverstats' 	#Remote relative path of folder used by RedCap for FTP transfer
 w_directory = '/serverstats'              	#Remote relative url of folder used by RedCap for FTP transfer
 w_script_url = "http://www.bravewarriors.eu/Themes/default/scripts/" #path where trusted js scripts are stored
