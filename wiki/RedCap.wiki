@@ -1,4 +1,5 @@
 #summary Redcap requirement and features list
+#labels Phase-Requirements
 [http://code.google.com/p/redcap/ <back to homepage]
 = !RedCap requirements=
 _if your server do not comply requirements 1, 2, 3, it will be *not* possible to run !RedCap unless your server Provider install it for you._
@@ -40,26 +41,29 @@ _Most of these features are customizable and can be switched on or off._
   * DB Maintenance: automatic clean of unused guids
   * DB Maintenance: automatic clean of older alias when more than maxAlias
   * DB Maintenance: automatic daily compression by VACUUM statement to keep DB size as small as possible.
-  * *NO* automatic ban. Ban is the heaviest in game penalty, then !RedCap philosophy is to leave this decision to an human admin.
+  * *NO automatic ban*. Ban is the heaviest in game penalty, then !RedCap philosophy is to leave this decision to an human admin.
 
 = TO DO List=
   # ~~Player geolocalization~~
   # Player identification after IP and GUID change (euristic)
   # IrC integration
+  # ~~Forgive commands.~~
+  # ~~Silent mode~~
   # Web interface for !RedCap configuration.
   # Granular gameserver allowed weapon choice
-  # Complete the optimization for modes other than Team Survivor
+  # Complete the optimization for modes other than Team Survivor (IN PROGRESS)
   # Language localization other than ENG and ITA (you are welcome ;))
+  # ~~UrT 4.2 update~~
 
 Sample of remote webrank:
 [http://www.bravewarriors.eu/EXT_IMG/stats.png]
 
 = Credits & Licence =
-RedCap has been developed from scratch by bw|Lebbra!
+RedCap has been developed from scratch by bw|Lebbra! *NO copy and paste from other sources!*
 
 Download and use of RedCap is free of charge for non-commercial use under GNU/GPL 2
 
-Copyright (C) 2011 Alessandro Verdoni
+Copyright (C) 2012 Alessandro Verdoni
 
 _This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
