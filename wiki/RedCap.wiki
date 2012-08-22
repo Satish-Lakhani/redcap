@@ -43,6 +43,9 @@ _Most of these features are customizable and can be switched on or off._
   * DB Maintenance: automatic daily compression by VACUUM statement to keep DB size as small as possible.
   * *NO automatic ban*. Ban is the heaviest in game penalty, then !RedCap philosophy is to leave this decision to an human admin.
 
+Sample of remote webrank:
+[http://www.bravewarriors.eu/EXT_IMG/stats.png]
+
 = TO DO List=
   # ~~Player geolocalization~~
   # Player identification after IP and GUID change (euristic)
@@ -54,9 +57,6 @@ _Most of these features are customizable and can be switched on or off._
   # Complete the optimization for modes other than Team Survivor (IN PROGRESS)
   # Language localization other than ENG and ITA (you are welcome ;))
   # ~~UrT 4.2 update~~
-
-Sample of remote webrank:
-[http://www.bravewarriors.eu/EXT_IMG/stats.png]
 
 = Credits & Licence =
 RedCap has been developed from scratch by bw|Lebbra! *NO copy and paste from other sources!*
