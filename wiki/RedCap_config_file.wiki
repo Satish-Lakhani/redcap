@@ -14,7 +14,7 @@ M_CONF.py is a python text file and it can be edited with whatever text editor. 
 *_Do not_* forgot to save M_CONF.py with _*.py*_ extension. A different extension like .txt or .doc will prevent !RedCap to start.
 
 =Localization=
-All the messages used by !RedCap can be set in Italian or English language and they stored in two files called *M_ITA.py* and *M_ENG.py*. 
+All the messages used by !RedCap can be set in Italian or English language and they are stored in two files called *M_ITA.py* and *M_ENG.py*. 
 At the moment I have no time to translate it in other languages. If you wish to do it you are welcome (and please send me a copy :-)).
 
   * Make a copy of M_ITA.py and save it as M_XXX.py, where XXX represent the new language (i.e. FRA, GER, NET, etc..)
@@ -51,18 +51,24 @@ For quick configuration allowing to !RedCap to run, you have to modify just the 
 ||{{{w_password}}}||'xxxxxxx'||_FTP password of auxiliary website_||
 ||{{{w_ftp_directory}}}||'/httpdocs/serverstats'||_#Remote relative path of folder used by !RedCap for FTP transfer_||
 ||{{{w_directory}}}||'/serverstats'||_Remote relative url of folder used by !RedCap for FTP transfer_||
+||{{{w_script_url}}}||'http://www.mywebsite.eu/myscripts/'||_path (if any) where trusted js scripts are stored_||
+||{{{w_webranktime}}}||'3'||_time (h) between webrank updating._||
 
 * SECTION 3: THESE PARAMETERS SHOULD BE CONFIGURED IN ORDER TO CUSTOMIZE YOUR REDCAP *
 ||VARIABLE||EXAMPLE VALUE||DESCRIPTION||
 ||{{{KickForSpace}}}|| True ||_(True or False) If True !RedCap kicks a spect when gameserver is full. Admins cannot be kicked._||
+||{{{maxAbsence}}}|| 60||_Player not visiting the game server will be canceled from DB after 'maxAbsence' days._||
+||{{{maxAlias }}}|| 15||_Max n. of alias to be stored. If more then maxAlias, the older one will be canceled._||
 ||{{{maxSlap}}}||10||_Max. slap number to be used with !s{{{[num]}}} command. If num > 10 then num = 10._||
 ||{{{Ttempban}}}||96||_Max duration of a temporary ban (hours)_||
 ||{{{MinPlayers}}}||4||_Min. number of active players for registering a record_||
-||{{{MinNotoriety}}}||0||_#Min. notoriety level required to a player for registering a record_||
+||{{{MinNotoriety}}}||0||_Min. notoriety level required to a player for registering a record_||
+||{{{EndmapSpam }}}|| True ||_Shows stats at map end_||
 ||{{{RecordSpam}}}||True||_(True or False) If True, !Redcap periodically spams records in chat_||
-||{{{CustomSpam}}}|| True||_(True or False) If True, !Redcap periodically spams sentences stored in spam.txt._||
+||{{{CustomSpam}}}||True||_(True or False) If True, !Redcap periodically spams sentences stored in spam.txt._||
 ||{{{Spamtime}}}||140||_Time between two consecutive spams._||
 ||{{{botname}}}||"^8RC: "||_prefix of !Redcap outputs (#TODO not used yet)._||
+||{{{clanbalanceTag}}}||"xXx"||_tag of your clan_||
 ||{{{RC_lang }}}||"ITA"||_Language localization for !RedCap. ITA, ENG only (#TODO FRA and others. See M_ITA.py for translation procedure)._||
 ||{{{gameserver_autorestart}}}|| 2||_#Automatically restart the Gameserver: 0: no restart 1: daily restart 2: restart when empty._||
 ||{{{SV_AliasDuration}}}||90||_How long (days) a player alias is hold on by !RedCap before it is removed because unused_||
@@ -71,9 +77,12 @@ For quick configuration allowing to !RedCap to run, you have to modify just the 
 ||{{{SV_FloodControl}}}||True||_(True or False) If True, !Redcap will kick players that spams more than {{{SV_MaxFlood}}} chat lines in less then15 sec._||
 ||{{{SV_MaxFlood}}}||6||_Max number of chat lines in 15 sec. Active only when {{{SV_FloodControl = True}}}_||
 ||{{{SV_MaxNickChanges}}}||3||_Max nick changes in 15 sec._||
+||{{{SV_AntiFake }}}|| True ||_If True RedCap assign a reliability penalty when player uses a new fake_||
 ||{{{SV_goodNick}}}||{{{r"[a-zA-Z]"}}}||_Regex that player nick must satisfy to be allowed to play in the game server._||
 ||{{{SV_minNick}}}||3||_Min length allowed for a player nick._||
-||{{{SV_ShowHeadshots}}}||True||_(True or False) If True headshot are displayed in upper gameserver chat._||
+||{{{SV_ShowHeadshots}}}|| True ||_(True or False) If True headshot are displayed in upper gameserver chat._||
+||{{{SV_silentmode}}}|| False ||_If true RedCap runs in silentmode, displaying a very few messages._||
+
 ||_STATUS LEGEND_||_Sum of values_  ||_1: Welcome %nick 2: Skill 4: Map skill 8: Highest streak 16: Played rounds 32: Reliability 64: Player slot number 128: Official nick 256: IP 512: Player level 1024: Received warnings 2048: Players last visit 4096: Players alias 8192: IP Geolocalization_||
 ||{{{saluti}}}||2049||_Information shown at player connection (i.e. 1 + 2048 + 8192)_||
 ||{{{status}}}||3233||_Information about player given to everybody (i.e. 1 + 32 + 128 + 1024 + 2048)_||
