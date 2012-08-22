@@ -17,7 +17,6 @@
 *A.* _Be sure that the good tag is specified in M_CONF.py config file. If your tag is (example) *bw|* you should have *clanbalanceTag = "bw|"* in your config. If this still not works, please consider that Redcap can found a clan mate in two ways_:
      * He is wearing your clan tag.
      * He is using a fake but his his main nick in database has the tag included. In that case ask to your mate for wearing the tag, and then use the command *!dbnick yourclanmate* to set his official nick as main. At the first reconnect he will be recognized as a clanmate even if wearing a fake.
-	
 
 *Q. GEO IP Localization is not correct.*
 
@@ -27,14 +26,18 @@
 
 *A.* _Every time you modify (and save) the config you must restart the Redcap using the command *!restart* in order to make the modifications effective._
 
-*Q. Which are the differences between !RedCap and [B3]? Why !RedCap doesn't have the same syntax and/or features as [B3] bot?
+*Q. Which are the differences between !RedCap and B3? Why !RedCap doesn't have the same syntax and/or features as B3 bot?
 
-*A.* _Remember that !RedCap *is not* [B3]. It has been developed in a totally separated way from different people._
+*A.* _Remember that !RedCap *is not* B3. It has been developed in a totally separated way from different people._
     * *Similarity:*
       * Both scripts are written in python.
-      * Syntax of some command is similar because they are obvious (_!help, !teams_), because I used the same syntax (not code!) to make use easier for players used to [b3] (_!fp, !ban, or the use of "!" itself as command identifier_) or because [B3] adopted the same existing !RedCap command (_!sk_)
+      * Syntax of some command is similar because they are obvious (_!help, !teams_), because I used the same syntax (not code!) to make use easier for players used to [b3] (_!fp, !ban, or the use of "!" itself as command identifier_) or because B3 adopted the same existing !RedCap command (_!sk_)
     * *Differences:*
-      * [B3] is much more featured than !RedCap and uses a plugin system; !RedCap has no plugins: all available features are included in the main package.
-      * [B3] can manage different gameserver and different games with one installation; !RedCap is aimed to be installed as a part of the gameserver, so it manage one gameserver with one installation
-      * !RedCap uses a stand alone and portable SQLite DB file; [B3] need a mySQL server DB to work
-      * !RedCap is lighter and need less memory resources than [B3] (test on my server only!)
+      * B3 is much more featured than !RedCap and uses a plugin system; !RedCap has no plugins: all available features are included in the main package.
+      * B3 can manage different gameserver and different games with one installation; !RedCap is aimed to be installed as a part of the gameserver, so it manage one gameserver with one installation
+      * !RedCap uses a stand alone and portable SQLite DB file; B3 need a mySQL server DB to work
+      * !RedCap is lighter and need less memory resources than B3 (test on my server only!).
+
+*Q. Where I could try this bot?
+
+*A.* _This bot is always running on Brave Warriors bw|Server 2 (IP *217.199.3.245:27960*)._
