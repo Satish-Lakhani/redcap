@@ -47,6 +47,9 @@ we obtain:
 
 *Dsk_V = -(Nr/Nb)^0,75^(T VTbv+(1-T) Vbv)(1 + (1000/(Rv^1.2^ + 60)))*    Victim's skill variation
 
+*Skill variation depending by players skill difference*:
+[http://www.bravewarriors.eu/EXT_IMG/sk_var.png]
+
 =Newcomers coefficient=
 When a new, unregistered player arrive on server, !RedCap has no idea about his skill level, so initial skill level is 0; this could lead to wrong skill evaluation for him and for other players. 
 
@@ -57,3 +60,6 @@ Suppose that this _New_urt_player_ is a pro gamer that just reinstall UrT: a kil
 *SK_aging = 1 + 1000/(rounds^1.2 + 60)
 
 This coefficient allows a _rapid_ skill variation in the first rounds, slowing down after some round, when _New_urt_player_'s skill is going to be defined.
+
+*Skill aging coefficient to avoid newcomers effect*:
+[http://www.bravewarriors.eu/EXT_IMG/sk_cor.png]
