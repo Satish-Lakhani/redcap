@@ -13,7 +13,7 @@ _if your server do not comply requirements 1, 2, 3, it will be *not* possible to
 = Features list=
 _Most of these features are customizable and can be switched on or off._
 
-  * Exhaustive chat command set with *more than 35 different commands* (See [RedCap_User_guide full command list]). 
+  * Exhaustive chat command set with *40 different commands* (See [RedCap_User_guide full command list]). 
   * *Fully customizable configuration file* (See [RedCap_config_file full configuration guide]).
   * *Anticheat log control*: !RedCap kicks for bad guid, in game guid change, nick rotation hack. In case of automatic kick IP and GUID are recorded in a separate log file for further use.
   * *Webranking and stats* with automatic FTP transfer on your clan website as full HTML document or HTML table
