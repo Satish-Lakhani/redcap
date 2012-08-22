@@ -47,5 +47,13 @@ we obtain:
 
 *Dsk_V = -(Nr/Nb)^0,75^(T VTbv+(1-T) Vbv)(1 + (1000/(Rv^1.2^ + 60)))*    Victim's skill variation
 
+=Newcomers coefficient=
+When a new, unregistered player arrive on server, !RedCap has no idea about his skill level, so initial skill level is 0; this could lead to wrong skill evaluation for him and for other players. 
 
-*TO BE CONTINUED*
+Suppose that this _New_urt_player_ is a pro gamer that just reinstall UrT: a kill from him will result in a skill lost greater than necessary. Viceversa if _New_urt_player_ is really a noob, killing him you will gain more skill than necessary.
+
+!RedCap skill system minimize this problem applying an _aging coefficient_ to skill variation: 
+
+*SK_aging = 1 + 1000/(rounds^1.2 + 60)
+
+This coefficient allows a _rapid_ skill variation in the first rounds, slowing down after some round, when _New_urt_player_'s skill is going to be defined.
