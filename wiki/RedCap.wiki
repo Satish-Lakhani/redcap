@@ -3,9 +3,9 @@
 = !RedCap requirements=
 _if your server do not comply requirements 1, 2, 3, it will be *not* possible to run !RedCap unless your server Provider install it for you._
 
-  # Python >2.5 installed on the server (It is standard on Linux based gameserver, to be verified on Windows based server)
-  # Remote FTP access to the server
-  # Possibility to remote start a script on the game server, or at least to modify the existing script starting Urban Terror.
+  # <font color="red">Python >2.5 installed on the server (It is standard on Linux based gameserver, to be verified on Windows based server)</font>
+  # <font color="red">Remote FTP access to the server</font>
+  # <font color="red">Possibility to remote start a script on the game server, or at least to modify the existing script starting Urban Terror.</font>
   # Console remote access to the game server (ssh type) is *not* a must but it helps a lot.
   # *No* need of MySQL
 
