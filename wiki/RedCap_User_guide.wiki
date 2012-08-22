@@ -20,7 +20,11 @@ Not all the commands are available to everybody. An appropriate level can be ass
 == Command list ==
   * *!al {{{<target>}}}* : List all the alias previously used by the player.
 
-  * *!ab* : Switches balance mode between AUTO/MAN/OFF/CLAN. When AUTO, balance is automatically executed at round end if needed. When MAN, balance is executed at round end if previously called by *!tm* command. When OFF no balance is allowed. When CLAN, all players belonging to home clan will be grouped toghether (keeping teams even, of course). 
+  * *!ab* : Cycle balance mode between AUTO/MAN/OFF/CLAN. 
+     * _*AUTO*_ balance is automatically executed at round end if needed. 
+     * _*MAN*_ balance is executed at round end if previously called by *!tm* or *!teams* command.
+     * _*OFF*_  means no balance is allowed. 
+     * _*CLAN*_ means that all players belonging to home clan will be grouped toghether (if possible keeping teams even, of course). 
 
   * *!ban {{{<target>}}}* : Permanently ban the target player by IP and GUID.
 
@@ -32,7 +36,11 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!f{{{<team>}}}{{{[rbs]}}} {{{<target>}}}* : Forces the target player to join the specified team (ex: _*!fr joh*_ will force player johnny to join red team).
 
-  * *!find {{{<target>}}}* : Find _target_ in DB and shows info (up to 4 different records)
+  * *!fall {{{<target>}}}* : All the kills or hits did by _target_ to everybody are forgiven _(Suggested level: Admin or trusted player)_.
+
+  * *!find {{{<target>}}}* : Find _target_ in DB and shows info (as _target_ you can also use part of a nick ans !RedCap will return up to 4 different records).
+
+  * *!fp {{{[target]}}}* : You forgive all the kills or hits did by _target_ to you. If _target_ is missed you forgive all the players in game for kills or hits did by _everybody_ to you.
 
   * *!info* or *!help* : give some information about !Redcap itself and the gameserver.
 
@@ -66,6 +74,8 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!sk {{{[target]}}}* : displays skill information about target player. If no target is specified, applicant skill will be displayed.
 
+  * *!smite {{{<target>}}}* : Instantly kill the target _(Suggested level: Admin or trusted player)_.
+
   * *!spam {{{<text>}}}* : add the text _text_ to the spamlist (you can use {{{^1 - ^}}}9 for colours).
 
   * *!spamlist* : lists all the spam MESSAGES saved in !RedCap memory.
@@ -74,11 +84,11 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!top* : display alltime, monthly, weekly and daily kill records.
 
-  * *!tm* or *!teams* : Ask for a automatic balance at round end. It works only if autobalance mode is MAN.
+  * *!tm* or *!teams* : Ask for a automatic balance at round end. It works only if autobalance mode is MAN. _NOTE: Balance is executed at round end in TS mode and immediately in CTF or TDM modes_.
 
   * *!trust{{{[num]}}} {{{<target>}}}* : increase target player notoriety by _num_. Useful to allow a player to immediately enter onto the gameserver even if he has a fresh guid.
 
-  * *!unban {{{<ID>}}}* : Unban the player ID (even if not in game). Use !find to found player ID in database and unban him.
+  * *!unban {{{<ID>}}}* : Unban the player ID (even if not in game). Use _*!find*_ command to found player ID in database and unban him.
 
   * *!unspam {{{<num>}}}* : delete the sentence number _num_ from spamlist.
 
@@ -88,6 +98,6 @@ Not all the commands are available to everybody. An appropriate level can be ass
 
   * *!v* : Enable vote for _X_ seconds. When vote is enabled vote mode is changed to "_voteType_" instead to "_unvoteType_". X, voteType and unvoteType can be set in config file.
 
-  * *!war{{{[cfg]}}}* : set the gameserver in matchmode loading the specifide configuration file. _cfg_ can be a valid config name or part of it. If no _cfg_ is specified. !RedCap will use its own standard war config file (similar to Urban Zone TS config file). Once the server remains empty for a few seconds, the warmode will be unset and base usual config reloaded.
+  * *!war{{{[cfg]}}}* : set the gameserver in matchmode loading the specifide configuration file. _cfg_ can be a valid config name or part of it. If no _cfg_ is specified. !RedCap will use its own standard war config file (similar to Urban Zone TS config file). Once the server remains empty for a few seconds, the warmode will be unset and normal server config reloaded. You can also unset warmode using _*!unwar*_ command.
 
   * *!z {{{[target]}}}* : displays some info about target player. Different detail level can be set in config file for normal players and admins. If no target is specified !RedCap will show information (lesser detail) about all the players in game.
