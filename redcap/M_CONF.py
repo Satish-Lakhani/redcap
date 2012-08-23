@@ -6,25 +6,25 @@
 ### =======================================================================  ###
 
 NomeFileLog = "../games.log"                      #Relative path of gameserver log
-AdminGuids = ["",""] #Guid in this field is automatically enabled to the highest admin level (level 100)
+AdminGuids = ["xxxxxxxxxx","xxxxxxxxxxxxx"] #Guid in this field is automatically enabled to the highest admin level (level 100) #TBC
 SV_Baseconf = "server.cfg"                        #Name of gameserver base config file.
 SV_UrtPath = "../../../q3ut4"                     #Relative path of Urban Terror  q3ut4 folder
-SV_MapCycle =  "mycycle.txt"                      #Name of cyclemap config file
-Sck_ServerRcon = ""                        #Gameserver rcon password
-Sck_ServerIP =  "217.199.3.253"                   #Gameserver IP address
-Sck_ServerPort = 27960                            #Gameserver IP port
+SV_MapCycle =  "mapcycle.txt"                      #Name of cyclemap config file         #TBC
+Sck_ServerRcon = "xxxxxx"                        #Gameserver rcon password             #TBC
+Sck_ServerIP =  "xxx.xxx.xxx.xxx"                   #Gameserver IP address                #TBC
+Sck_ServerPort = 27960                            #Gameserver IP port                   #TBC
 
 ### =============================================================================================  ###
 ### THESE PARAMETERS **MUST** BE CONFIGURED IF  *** Website_ON = True *** OR REDCAP WILL NOT RUN PROPERLY!!!   ###
 ### =============================================================================================  ###
 
 Website_ON = True                         	#(True or False) True if you want to use RedCap web features (rank and chatlog  FTP transfer to auxiliary website)
-w_url = 'www.bravewarriors.eu'            	#FTP url of auxiliary website
-w_login = ''                     	#FTP login of auxiliary website
-w_password = ''                  	#FTP password of auxiliary website
-w_ftp_directory = '/httpdocs/serverstats' 	#Remote relative path of folder used by RedCap for FTP transfer
-w_directory = '/serverstats'              	#Remote relative url of folder used by RedCap for FTP transfer
-w_script_url = "http://www.bravewarriors.eu/Themes/default/scripts/" #path where trusted js scripts are stored
+w_url = 'www.mywebsite.eu'            	#FTP url of auxiliary website               #TBC
+w_login = 'xxxxxxxxxx'                   #FTP login of auxiliary website             #TBC
+w_password = 'xxxxxxxxx'                  #FTP password of auxiliary website          #TBC
+w_ftp_directory = '/httpdocs/mypath' 	#Remote relative path of folder used by RedCap for FTP transfer         #TBC
+w_directory = '/mypath'              	#Remote relative url of folder used by RedCap for FTP transfer          #TBC
+w_script_url = "http://www.mywebsite.eu/scripts/" #path where trusted js scripts are stored      #TBC
 w_webranktime = 3                           #time (h) between webrank updating.
 
 ### ==================================================================  ###
@@ -49,8 +49,8 @@ Spamtime = 150 				#Time between two consecutive spams
 
 #REDCAP
 botname = "^8RC| " 				#prefix of Redcap outputs (#TODO not used yet)
-clanbalanceTag = "bw|"			#prefix of Home clan
-RC_lang = "ITA" 				#Language localization for RedCap. ITA ENG only (See M_ITA.py for translation procedure)
+clanbalanceTag = "|xXx|"			#prefix of Home clan                                                                            #TBC
+RC_lang = "ENG" 				#Language localization for RedCap. ITA ENG only (See M_ITA.py for translation procedure)        #TBC
 gameserver_autorestart = 2 		#Automatically restart the Gameserver: 0: no restart 1: daily restart 2: restart when empty.
 
 ##SERVER
@@ -64,7 +64,9 @@ SV_AntiFake = True              #(True or False) If True RedCap assign a reliabi
 SV_goodNick = r"[a-zA-Z]"   	#Regex that player nick must satisfy to be allowed to play in the game server.
 SV_minNick = 3   				#Min length allowed for a player nick
 SV_ShowHeadshots = True  		#(True or False) If True headshot are displayed in upper gameserver chat
-SV_silentmode = False           	#If true RedCap runs in silentmode.
+SV_silentmode = False           #If true RedCap runs in silentmode.
+SV_war_password = "redcap"      #standard password used by redcap when it is asked to put a pwd and nothing is specified (i.e !war or !pwd without config or password specified)    #TBC
+SV_war_hostname = "^8war -^2 in progress"                   #standard server name when use !war without any config specification #TBC
 
 ##STATUS Sum the values of each information you want to be shown
 '''
@@ -127,6 +129,7 @@ lev_esegui = 4 			#Executes an rcon command
 lev_force = 1 			#Moves a player to Red, Blue or Spect
 lev_forgive = 0         #forgive a player for thit or tkill
 lev_forgiveall = 3      #fully forgive a player
+lev_help = 0            #Shows help
 lev_info = 0 			#Shows some info about game server and RedCap itself
 lev_kick = 1 			#Kicks a player
 lev_level = 4 			#Assign a level to a player
@@ -166,7 +169,7 @@ NomeArchivi = "Archivi" 	#Gamelogs and database backup folder
 NomeDB = "Rc_DB.sqlite" 	#name of DB file
 socketlog = "socket.log" 	#Not sent command logfile
 SpamFile = "spam.txt"   	#Custom spams here
-SV_Basewar = "basewar.cfg"  #Basic CW config that RedCap loads if nothing else is specified
+SV_Basewar = "basewar.cfg"  #Basic CW config that RedCap loads if nothing else is specified #TODO vedere se serve ancora
 SV_Logfolder = "logs"   	#Log folder
 w_tabella = "skilltable.htm"#Ranking table (html format)
 w_dialoghi = "dialoghi.htm" #Chat log table (html format)
@@ -174,7 +177,6 @@ w_dialoghi = "dialoghi.htm" #Chat log table (html format)
 ##NOTORIETY:  If player notoriety is lower than Nt_MinNot_toplay, the player is immediately kicked from gameserver.
 Nt_badguid = -20    		#Notoriety penalty for bad formatted guid
 Nt_dayXpoint = 5    		#Guid age (days) giving 1 notoriety point
-# Nt_fakepenalty = -1         #min penalty for using a new fake   #UPDATE
 Nt_floodpenalty = -0.2  	#Notoriety penalty for flooding
 Nt_guidchange = -50 		#Notoriety penalty for guid change in game
 Nt_MinNot_toplay = 0.0      #Min. notoriety  to play in the gameserver. New player's notoriety is 0
@@ -198,7 +200,7 @@ Sk_range = 800   			#Theoric skill ceil value.
 
 ## SOCKET
 Sck_ServerTimeout = 1   	#Waiting time for an answer from gameserver (sec)
-Sck_Tsleep = 0.8     		#Delay between two consecutive rcon commands (sec)
+Sck_Tsleep = 0.7     		#Delay between two consecutive rcon commands (sec)
 Sck_ServerLog =  SV_Logfolder + "/" + socketlog #Path to socketlog
 
 ##TEMPI
@@ -207,4 +209,4 @@ CRON2 = 3600 				#Cron2 frequency in seconds (slow timer)
 TempoCiclo = 0.5 			#Gameserver log control frequency in seconds
 
 #SERVIZIO
-GameServerDown = 20 		#Waiting time before considering gameserver down (not used)
+GameServerDown = 20 		#Waiting time (sec) before checking for gameserver down
