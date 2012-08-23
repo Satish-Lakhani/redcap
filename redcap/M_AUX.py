@@ -27,24 +27,30 @@ colori = {          #colori per i dialoghi
 "8":"#FF6600","9":"#FF66FF","10":"#FF66FF","11":"#969696","12":"#99CC99","13":"#FFCCCC","14":"#6699FF"
 }
 
-tabs = [            #tabelle del DB con guid
-"DATI", "DEATH", "HIT", "KILL", "LOC"
-]
+tabs = ["DATI", "DEATH", "HIT", "KILL", "LOC"]   #tabelle del DB con guid
 
 def automaintenance():
     """Esegue le operazioni di manutenzione giornaliera"""
     timestamp = time.strftime("%Y_%b_%d", time.localtime())
-    db_clean_guid()                 #elimino le guid vecchie
-    db_clean_alias()                #elimino gli alias vecchi in eccesso
-    db_backup(timestamp)            #faccio backup del database
-    log_chat_backup(timestamp)      #creo il log di chat
-    log_backup(timestamp)           #faccio il backup del log
-    web_rank()                      #creo una classifica aggiornata
-    if M_CONF.Website_ON:           #se esiste un sito web di appoggio
+    db_clean_guid()                                                                                     #elimino le guid vecchie
+    db_clean_alias()                                                                                    #elimino gli alias vecchi in eccesso
+    db_backup(timestamp)                                                                                #faccio backup del database
+    log_chat_backup(timestamp)                                                                          #creo il log di chat
+    log_backup(timestamp)                                                                               #faccio il backup del log
+    web_rank()                                                                                          #creo una classifica aggiornata
+    if M_CONF.Website_ON:                                                                               #se esiste un sito web di appoggio
         web_FTPtransfer(M_CONF.NomeArchivi + "/" + timestamp + "_saylog.log", M_CONF.w_dialoghi)
         web_FTPtransfer("HTML" + "/" + M_CONF.w_tabella, M_CONF.w_tabella)
     cr_riavvia()
 
+def check_coherence():
+    """debug function"""
+    import M_RC
+    if len(M_RC.ini_clientlist()) - sum(M_RC.GSRV.TeamMembers):
+        M_RC.scrivilog("DISCORDANCE: Effettivi %s - Calcolati %s"%(len(M_RC.ini_clientlist()),sum(M_RC.GSRV.TeamMembers)),M_CONF.crashlog)
+        for item in M_RC.ini_clientlist():
+            M_RC.scrivilog("Client: %s"%item,M_CONF.crashlog)
+        M_RC.scrivilog("TeamMembers: %s, %s, %s, %s"%(M_RC.GSRV.TeamMembers[0],M_RC.GSRV.TeamMembers[1],M_RC.GSRV.TeamMembers[2],M_RC.GSRV.TeamMembers[3]),M_CONF.crashlog)
 
 def cr_riavvia():
     """restarto RedCap ed eventualmente il server"""
@@ -54,20 +60,20 @@ def cr_riavvia():
     if M_CONF.gameserver_autorestart > 0:
         M_RC.scrivilog(" Redcap and UrT Server restarted.", M_CONF.activity)
         os.system("./S_full_restart.sh")
-        time.sleep(5)       #aspetto che il gameserver riparta
+        time.sleep(5)                                                                                   #aspetto che il gameserver riparta
         sys.exit()
     else:
         M_RC.scrivilog("Redcap restarted.", M_CONF.activity)
-        M_RC.SCK.cmd("exec " + M_CONF.SV_Baseconf)                   #ricarico il config TODO vedere se sufficiente per ricreare il games.log
-        time.sleep(5)       #aspetto che il gameserver riparta
+        M_RC.SCK.cmd("exec " + M_CONF.SV_Baseconf)                                                      #ricarico il config
+        time.sleep(5)                                                                                   #aspetto che il gameserver riparta
         sys.exit()
 
 def db_backup(timestamp):
     import shutil
     import M_RC
-    shutil.copy2(M_CONF.NomeDB, M_CONF.NomeArchivi + "/" + timestamp + "_" + M_CONF.NomeDB)         #Copio il DB in Archivi
+    shutil.copy2(M_CONF.NomeDB, M_CONF.NomeArchivi + "/" + timestamp + "_" + M_CONF.NomeDB)             #Copio il DB in Archivi
     DB.connetti()
-    DB.esegui("""VACUUM""")   #DOPO che l'ho backuppato, lo comprimo.
+    DB.esegui("""VACUUM""")                                                                             #DOPO che l'ho backuppato, lo comprimo.
     DB.salva()
     DB.disconnetti()
     M_RC.scrivilog("DB backup done.", M_CONF.activity)
@@ -91,6 +97,8 @@ def db_clean_alias():
     DB.salva()
     DB.disconnetti()
     M_RC.scrivilog("DB alias cleaned.", M_CONF.activity)
+
+    #TODO fare clean old ip sulla falsariga di clean alias.
 
 def db_clean_guid():
     """pulizia periodica DB dai record non piu utilizzati"""
@@ -145,40 +153,43 @@ def log_chat_backup(timestamp):
         html += "<span style='color:" + colori[say[0]] + "'>" +say[1] + "</span></td><td style='color:#bbbbbb'>" + say[2]
         html +="</td></tr>\n"
     html +="</table>"
-    logfile = open(M_CONF.NomeArchivi + "/" + timestamp + "_saylog.log", "w")       #salvo il tutto in un file
+    logfile = open(M_CONF.NomeArchivi + "/" + timestamp + "_saylog.log", "w")                           #salvo il tutto in un file
     logfile.write(html)
     logfile.close()
     M_RC.scrivilog("UrT Chatlog backup done.", M_CONF.activity)
 
 def web_rank():
     """crea la classifica in formato tabella a partire dal DB"""
-    def cella(contenuto,  toltip = "",  cls = "",  st = ""):            #sottofunzione che crea le celle
+    def cella(contenuto,  toltip = "",  cls = "",  st = ""):                                            #sottofunzione che crea le celle
         return "<td title='%s' class='%s' style='%s'>%s</td>" %(toltip, cls, st, contenuto)
-    def striphtml(testo):                                                       #strippo l'html
+    def striphtml(testo):                                                                               #strippo l'html
         testo = testo.replace("<", "&lt;")
         testo = testo.replace(">", "&gt;")
         return testo
-
-    ## RECUPERO DATI DAL DB
-    DB.connetti()                                                                   #recupero i dati dal DB
+                                                                                                        ## RECUPERO DATI DAL DB
+    DB.connetti()                                                                                       #recupero i dati dal DB
+    #DATI1:
     dati1 = DB.esegui(DB.query["getallorderedbyguid"]%"DATI").fetchall()
+    #DATI2:
     dati2 = DB.esegui(DB.query["getallorderedbyguid"]%"HIT").fetchall()
-    try:                    #inserito per ovviare crash da caratteri non ASCII introdotti in DB da versioni precedenti
+    #DATI3:
+    try:                                                                                                #inserito per ovviare crash da caratteri non ASCII introdotti in DB da versioni precedenti
         dati3 = DB.esegui(DB.query["getallorderedbyguid"]%"LOC").fetchall()
     except:
-        DB.esegui("""UPDATE LOC SET LOCATION=''""")
+        DB.esegui("""UPDATE LOC SET LOCATION=''""")                                                     #in caso di caratteri non ASCII pulisco il campo
         DB.salva()
         dati3 = DB.esegui(DB.query["getallorderedbyguid"]%"LOC").fetchall()
+    #DATI4:
     dati4 = DB.esegui(DB.query["getallorderedbyguid"]%"KILL").fetchall()
-    DB.disconnetti()
-    i=0
-    cicli = len(dati1)
-    tmp = []
+    DB.disconnetti()                                                                                    #dati recuperati
+    i=0                                                                                                 #comincio a ordinarli e parsarli
+    cicli = len(dati1)                                                                                  #*MAI* cancellare un record a mano da una sola tabella del DB o sballa tutto!!!
+    tmp = []                                                                                            #vettore temporaneo per appenderci i dati
     while i < cicli:
-        if dati1[i][3] > M_CONF.w_minRounds:
+        if dati1[i][3] > M_CONF.w_minRounds:                                                            #metto in classifica solo i player con almeno w_minRound rounds giocati
             tmp.append(dati1[i] + dati2[i][1:len(dati2[i])] + dati3[i][1:len(dati3[i])] + dati4[i][1:len(dati4[i])])
         i+=1
-    Dump = sorted(tmp, key=lambda dato: dato[2], reverse=True)    #record ordinati per skill decrescente
+    Dump = sorted(tmp, key=lambda dato: dato[2], reverse=True)                                          #record ordinati per skill decrescente
 
     #DATI: #0: GUID    # 1: Nick    # 2: Skill    # 3: Round    # 4: Lastconnection    # 5: Level    # 6: Tempban    # 7: Reputation    # 8: Firstconnect    # 9: streak    # 10: alias    # 11: varie
     #HIT: #12: head    # 13: torso    # 14: arms    # 15: legs    #LOC: #16: IP    # 17: provider    # 18: location    # 19: oldip    #KILL: #20-37: kills #38: deaths
@@ -298,7 +309,7 @@ def web_rank():
         Knife = cella(str(round(float(guid[20])*100/tot_kills,1)), "Knife", "", "color:#88CC88")
         ARMI = Lr + Sr8 + M4 + G36 + Ak + Neg + Psg + Hk + Bled + Mp5 + Ump + Spas + De + Ber + Nade + Knife
         #*** Cella IP ****************
-        if guid[17]:
+        if guid[16]:
             b = guid[16].split(".")
             masked_ip = ".".join([b[0],b[1],b[2],"***"])
         else:

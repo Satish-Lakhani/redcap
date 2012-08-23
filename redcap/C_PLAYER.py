@@ -75,15 +75,15 @@ class Player:
             self.alias.append(al)
         self.varie = dati[11].split()
 
-    def load_loc(self, loc):                    #loc = (guid, IP, provider, location, old_ip)
+    def load_loc(self, loc):                                    #loc = (guid, IP, provider, location, old_ip)
         """aggiorna i dati presi dalla tabella loc"""
         if not loc[4] and self.ip:                              #campo vuoto
             self.oldIP = self.ip
             return
         else:
-            self.oldIP = loc[4]                     #carico i vecchi IP
-            if self.oldIP.find(self.ip) == -1:      #se non c'e l'IP lo aggiungo
-                self.oldIP += " %s" %(self.ip)
+            self.oldIP = loc[4]                                 #carico i vecchi IP
+            if self.oldIP.find(self.ip) == -1:                  #se non c'e l'IP lo aggiungo
+                self.oldIP += " %s" %self.ip
 
     def invalid_guid(self):
         """verifica se la guid del player NON e' corretta"""
