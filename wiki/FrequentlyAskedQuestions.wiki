@@ -38,6 +38,10 @@
       * !RedCap uses a stand alone and portable SQLite DB file; B3 need a mySQL server DB to work
       * !RedCap is lighter and need less memory resources than B3 (test on my server only!).
 
-*Q. Where could I try this bot?
+*Q. Where could I have a try of this bot?
 
 *A.* _This bot is always running on Brave Warriors bw|Server 2 (IP *217.199.3.245:27960*)._
+
+*Q. Redcap is running but it has no reaction to chat commands.
+
+*A.* _First be sure that games.log exists and it is regularly updated from the gameserver. If OK, check if !RedCap is pointing to the right logfile. You can find the path in M_CONF.NomeFileLog. If you recently loaded a special server config (i.e. a CW config or similar) maybe g_log var has been redirected to an other log file _
