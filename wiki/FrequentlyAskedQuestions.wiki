@@ -44,4 +44,4 @@
 
 *Q. Redcap is running but it has no reaction to chat commands.
 
-*A.* _First be sure that games.log exists and it is regularly updated from the gameserver. If OK, check if !RedCap is pointing to the right logfile. You can find the path in M_CONF.NomeFileLog. If you recently loaded a special server config (i.e. a CW config or similar) maybe g_log var has been redirected to an other log file _
+*A.* _First be sure that games.log exists and it is regularly updated from the gameserver. If OK, check if !RedCap is pointing to the right logfile. You can find the path in M_CONF.NomeFileLog. Be careful that if you recently loaded a special server config (i.e. a CW config or similar) maybe g_log var has been redirected to an other log file _
