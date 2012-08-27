@@ -11,6 +11,7 @@ class Player:
         self.DBnick = ""        #(string) nick di registrazione in DB
         self.deaths = 0         #morti subite dal player (non incluso il changeteam)
         self.flood = 0          #numero di say in TempoControllo1
+        self.gear = ""          #armi scelte
         self.guid = None        #(string) GUID
         self.guidage = 0        #eta della guid che sta usando
         self.hits = {"0":0, "1":0, "2":0, "3":0, "4":0, "5":0, "6":0, "7":0, "8":0, "9":0, "total":0}   #hit fatte dal player (0:unknown 1:head 2:unknown 3:unknown 4:helmet 5:torso 6:vest 7:left arm 8:right arm 9:legs)
@@ -41,9 +42,9 @@ class Player:
         self.tobekicked = 0     #player da kikkare al prossimo controllo
         #self.totalplayedtime = 0                                           #tempo totale di gioco
         self.varie = []         #varie
-        self.vivo = 0           #0=Sconosciuto 1=vivo, 2=morto #TODO mi interessa saperlo?
+        self.vivo = 0           #0=Sconosciuto 1=vivo, 2=morto
         self.warnings = {"total": 0.0}      #warning assegnati al player
-        self.warning = 0.0      #warning assegnati al player da admin o per TK o thit (TODO da togliere se funziona warnings)
+        #self.warning = 0.0      #warning assegnati al player da admin o per TK o thit (TODO da togliere se funziona warnings)
 
     def alias_to_DB(self):
         """prepara gli alias per scrittura in db"""

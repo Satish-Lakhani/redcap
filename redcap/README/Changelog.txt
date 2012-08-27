@@ -1,4 +1,15 @@
-## 2012-03-xx Redcap_1.05(201202xx):
+## 2012-xx-xx Redcap_1.xx(2012xxxx):
+* Command added: !help [cmd] (shows allowed command list and detailed help on each command)
+* Feature added: base war config is automatically added to q3ut4 folder. No more need to manually copy and paste it at installation time
+* Feature added: Death sentence: team killers are in turn, killed (config option)
+* Feature added: Radio messages are now counted in flooding.
+
+## 2012-08-21 Redcap_1.20(20120821):
+* parser and other functions updated to protocol 70 (UrT 4.2 version)
+* Command added: !sm <playername> (instantly kill a player
+* Some minor bug solved
+
+## 2012-03-xx Redcap_1.05(20120210):
 * Webrank improved with weapon stats
 * Command added: !fp [playername] (forgive one or all teammates for tkill or thits to you)
 * Command added: !fall <playername> (forgive a player for all his tkill or thits to everybody)
