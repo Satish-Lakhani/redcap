@@ -49,8 +49,8 @@ def check_coherence():
     if len(M_RC.ini_clientlist()) - sum(M_RC.GSRV.TeamMembers):
         M_RC.scrivilog("DISCORDANCE: Effettivi %s - Calcolati %s"%(len(M_RC.ini_clientlist()),sum(M_RC.GSRV.TeamMembers)),M_CONF.crashlog)
         for item in M_RC.ini_clientlist():
-            M_RC.scrivilog("Client: %s"%item,M_CONF.crashlog)
-        M_RC.scrivilog("TeamMembers: %s, %s, %s, %s"%(M_RC.GSRV.TeamMembers[0],M_RC.GSRV.TeamMembers[1],M_RC.GSRV.TeamMembers[2],M_RC.GSRV.TeamMembers[3]),M_CONF.crashlog)
+            M_RC.scrivilog("Client: %s"%item, M_CONF.crashlog)
+        M_RC.scrivilog("TeamMembers: %s, %s, %s, %s"%(M_RC.GSRV.TeamMembers[0],M_RC.GSRV.TeamMembers[1],M_RC.GSRV.TeamMembers[2],M_RC.GSRV.TeamMembers[3]), M_CONF.crashlog)
 
 def cr_riavvia():
     """restarto RedCap ed eventualmente il server"""

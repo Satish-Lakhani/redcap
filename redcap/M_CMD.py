@@ -16,6 +16,7 @@ comandi = [
 ["forceteam",r"!f(?P<team>[rbs]) (?P<target>.*)",M_CONF.lev_force, "f"],
 ["forgive",r"^!fp\s*(?P<target>.*)", M_CONF.lev_forgive, "fp"],
 ["forgiveall",r"!fall (?P<target>.*)", M_CONF.lev_forgiveall, "fall"],
+["gears",r"!gears\s*(?P<gears>.*)",M_CONF.lev_gears, "gears"]
 ["help", r"!help\s*(?P<cmd>.*)", M_CONF.lev_help, "help"],
 ["info",r"!info", M_CONF.lev_info, "info"],
 #["join",r": (?P<rich>\d+) .*?: !join (?P<target>.*)", RCconf.lev_join],

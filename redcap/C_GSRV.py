@@ -17,6 +17,7 @@ class Server:
         self.FloodControl = M_CONF.SV_FloodControl                      #Flood control abilitato
         self.Full = 1                                                   #0 = vuoto, 1= c'e gente 2= pieno (da usare per kikkare gli spect o cose simili)
         self.Gametype = ""                                              #gametype
+        self.Gears = []                                                 #allowed gears
         self.KsNot = M_CONF.Sk_Ks_not                                   #minima notoriety per segnalazione killstreak
         self.Ks_show = M_CONF.Sk_Ks_show                                #minima ks per segnalazione in chat
         self.Ks_showbig = M_CONF.Sk_Ks_showbig                          #minima ks per segnalazione in bigtext
@@ -32,6 +33,7 @@ class Server:
         self.Nick_is_length = M_CONF.SV_minNick                         #Lunghezza minima nick
         self.Nukemode = False                                           #Se True nuko tutti a random
         self.LastMapChange = 0.0                                        #Time al quale e' stato chiesto un cambio mappa
+        self.LastShuffle = 0.0                                          #Time al quale e' stato chiesto l'ultimo shuffle
         self.LastVote = 0.0                                             #Time al quale e' stato chiesto l'ultimo voto
         self.Logfolder = M_CONF.SV_Logfolder                            #cartella dei logs
         self.PT = {}                                                    #PlayerTable: dizionario che rappresenta i players presenti sul server e le loro caratteristiche
@@ -61,41 +63,41 @@ class Server:
     def is_kstreak(self, K, V, ora):
         """gestisce la killstreak"""
         res = 0
-        self.PT[K].ks += 1                      #aggiorno streak del killer
+        if self.PT[V].ks >= self.Ks_showbig:
+            res += 128                                                  #eventuale killstreak stop in bigtext
+        elif self.PT[V].ks >= self.Ks_show:
+            res += 256                                                  #eventuale killstreak stop in console
+        self.PT[K].ks += 1                                              #aggiorno streak del killer
+        self.PT[V].ks = 0                                               #metto a zero la ks della vittima. Se K=V (suicidio) la streak si interrompe.
         if self.PT[K].ks >= self.Ks_showbig:
-            res +=  1                           #killstreak da annuncio in bigtext
+            res +=  1                                                   #killstreak da annuncio in bigtext
         elif self.PT[K].ks >= self.Ks_show:
-            res += 2                            #killstreak da Annuncio in console
+            res += 2                                                    #killstreak da Annuncio in console
         if self.PT[K].ks > self.PT[K].ksmax and self.tot_players(1) >= M_CONF.MinPlayers:
             self.PT[K].ksmax = self.PT[K].ks
-            res += 4                            #killstreak personal record
-        if self.PT[V].ks >= self.Ks_showbig:
-           res += 128                           #killstreak stop in bigtext
-        elif self.PT[V].ks >= self.Ks_show:
-           res += 256                           #killstreak stop in console
-        self.PT[V].ks = 0                       #metto a zero la ks della vittima
+            res += 4                                                    #killstreak personal record
         dati = [ora, self.PT[K].ks, self.PT[K].DBnick]
-        if self.PT[K].ks > int(self.TopScores["Day"][1]) and self.tot_players(1) < M_CONF.MinPlayers:     #pochi players
+        if self.PT[K].ks > int(self.TopScores["Day"][1]) and self.tot_players(1) < M_CONF.MinPlayers:       #pochi players
             res += 1024
         elif self.PT[K].ks > int(self.TopScores["Day"][1]) and self.PT[K].notoriety < M_CONF.MinNotoriety:  #Notoriety troppo bassa
             res += 512
         elif self.PT[K].ks > int(self.TopScores["Alltime"][1]):
-            self.TopScores["Alltime"] = dati    #killstreak: alltime record
+            self.TopScores["Alltime"] = dati                            #killstreak: alltime record
             self.TopScores["Month"] = dati
             self.TopScores["Week"] = dati
             self.TopScores["Day"] = dati
             res += 8
         elif self.PT[K].ks > int(self.TopScores["Month"][1]):
-            self.TopScores["Month"] = dati      #killstreak: monthly record
+            self.TopScores["Month"] = dati                              #killstreak: monthly record
             self.TopScores["Week"] = dati
             self.TopScores["Day"] = dati
             res += 16
         elif self.PT[K].ks > int(self.TopScores["Week"][1]):
-            self.TopScores["Week"] = dati       #killstreak: weekly record
+            self.TopScores["Week"] = dati                               #killstreak: weekly record
             self.TopScores["Day"] = dati
             res += 32
         elif self.PT[K].ks > int(self.TopScores["Day"][1]):
-            self.TopScores["Day"] = dati        #killstreak: daily record
+            self.TopScores["Day"] = dati                                #killstreak: daily record
             res += 64
         return res
 

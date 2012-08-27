@@ -38,7 +38,7 @@ maxSlap = 10 				#Max. slap number to be used with !s[num] command. If num > 10 
 Ttempban = 96 				#Max duration of a temporary ban (hours)
 
 #RECORD
-MinPlayers = 4 				#Min. number of active players for registering a record
+MinPlayers = 4 				#Min. number of active players for registering a record or start skill system
 MinNotoriety = 0 			#Min. notoriety level required to a player for registering a record
 
 #CONSOLE SPAMS
@@ -57,7 +57,9 @@ gameserver_autorestart = 2 		#Automatically restart the Gameserver: 0: no restar
 SV_AliasDuration = 90      		#How long (days) a player alias is hold on by RedCap before it is removed because unused
 SV_AntiReconInterval = 0    	#Anti reconnect delay in sec. If SV_AntiReconInterval = X a player cannot reconnect to the game server before X seconds from the first connect.
 SV_BalanceMode = 2          	#Team balance mode 0: disabled, 1: manually enabled (to be called by !tm command),  2: automatic balance when a team has 2 players more than the other one 3: clan balance
+SV_Death_punish = 1             #Team killer is also killed (0=disabled, 1=immediately, 2=at next round begin (option 2 is still not used).
 SV_FloodControl = True     		#(True or False) If True, Redcap will kick players that spams more than SV_MaxFlood chat lines in less then15 sec.
+SV_Gears = "FGHIJKLMNZaceOQRSTUVWX" #allowed weapon at server start (i.e. on SR8 only server use SV_Gears = "ZRSTUVWX" or "ZSUVWX" if kevlar and medikit are not allowed)
 SV_MaxFlood = 6    				#Max number of chat lines in 15 sec. Active only when SV_FloodControl = True
 SV_MaxNickChanges = 3    		#Max nick changes in 15 sec.
 SV_AntiFake = True              #(True or False) If True RedCap assign a reliability penalty when player uses a new fake.#UPDATE
@@ -113,6 +115,7 @@ W_hit_warn = 0.3       	#Value of a warning caused by a teamhit
 commandlogMinLevel = 2 	#All the commands with level equal or above this value are recorded in command log.
 Control_Daily = 6 		#Hour (0-24) when daily maintenance activities will start
 w_minRounds = 60 		#Rounds to play before a player is shown in webrank
+TimeBetweenShuffle = 60 #Time between two shuffle commands
 
 #COMMANDS LEVEL (Max lev = 100). Player can execute all the commands having a level lower or equal to their own level. Redcap automatically assign level 0 to each new player, unless a different level has been assigned by some admin.:
 # NOTE: assign value = -1 disable a command
@@ -129,6 +132,7 @@ lev_esegui = 4 			#Executes an rcon command
 lev_force = 1 			#Moves a player to Red, Blue or Spect
 lev_forgive = 0         #forgive a player for thit or tkill
 lev_forgiveall = 3      #fully forgive a player
+lev_gears = 1           #Set gears 0=all snip spas auto or string
 lev_help = 0            #Shows help
 lev_info = 0 			#Shows some info about game server and RedCap itself
 lev_kick = 1 			#Kicks a player

@@ -4,17 +4,16 @@
 #TODO fare controllo armi ammesse per team
 #TODO fare anche ban per nick
 #TODO evitare che un crash durante cw cancelli la config war
-#TODO fare comando shuffle
+#TODO fare comando shuffle (in progress)
 #TODO fare comando join
 #TODO fare comando admin che mostra gli admin in game e/o la adminlist
 #TODO eliminazione automatica password a server vuoto non va (ma va con !unwar) (fatto da verificare)
 #TODO verificare che località sia updatata ogni volta con nuovo IP
 #TODO aggiustare classifica html (non c'è più body hit) (fatto, da verificare)
-#TODO comando help che mostra i comandi utilizzabili e separarlo da !info
+#TODO comando help che mostra i comandi utilizzabili e separarlo da !info (fatto da verificare)
 #TODO vedere come mai da ancora messaggio record a record=0 (fatto da provare)
-#TODO utilizzare g_blueteamlist and g_redteamlist
-#TODO caricare la config basewar leggendola da un file py, perchè se no l'utente deve spostarla a mano in q3ut4
-#TODO skill variation attiva solo con min players
+#TODO skill variation attiva solo con min players (fatto da verificare)
+#TODO news list for admin: quando si connettono il server li avvisa di cosa è successo.
 
 import sys
 import C_PARSER                                                                             #Classe che rappresenta il parser
@@ -92,6 +91,9 @@ def redcap_main():
                         continue
                     elif frase[1] == "Says":                                                #SAY frase[0] (0,0=id, 0,1=testo)
                         M_RC.says(frase[0])
+                        continue
+                    elif frase[1] == "Radio":                                                #SAY frase[0] (0,0=id, 0,1=msg del tipo "x - y")
+                        M_RC.radio(frase[0])
                         continue
                     elif frase[1] == "Kills":                                               #del tipo (['0', '0', '10'], 'Kills')
                         M_RC.kills(frase[0])

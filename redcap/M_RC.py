@@ -13,8 +13,7 @@ import M_SAYS                                           #dati ausiliari per gest
 import GEOIP.geoip                                      #geolocalizzazione
 exec("import M_%s" %M_CONF.RC_lang)                     #importo modulo localizzazione linguaggio
 
-versione = "1.21_(20120826)" 	                        #RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING IN THE SCRIPT!!!
-
+versione = "1.22_(20120826)" 	                        #RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING IN THE SCRIPT!!!
 
 #Carico i moduli di lingua
 Lang = eval( "M_%s.RC_outputs" %M_CONF.RC_lang)
@@ -103,7 +102,7 @@ def clientdisconnect(id):
     DB.disconnetti()
     GSRV.player_DEL(id)
 
-def clientuserinfo(info):                                                                               #info (0=slot_id, 1=ip, 2=guid)
+def clientuserinfo(info):                                                                               #info (0=slot_id, 1=ip, 2=guid 3=gears)
     if info[0] not in GSRV.PT:                                                                          #Se e un nuovo client
         newplayer = C_PLAYER.Player()                                                                   #lo creo
         GSRV.player_NEW(newplayer, info[0], time.time())                                                #lo aggiungo alla PlayerTable ed ai TeamMember
@@ -111,7 +110,7 @@ def clientuserinfo(info):                                                       
         GSRV.player_ADDINFO(info)                                                                       #gli aggiungo GUID, IP e location
         geoinfo = get_geoinfo(info[1])                                                                  #recupero le geoinfo
         GSRV.PT[info[0]].location = ("%s - %s") %(geoinfo[0], geoinfo[1])                               #geoinfo[0]=citta', geoinfo[1]=paese
-    elif info[2] <> GSRV.PT[info[0]].guid:                                                              #cambio guid durante il gioco.
+    elif info[2] <> GSRV.PT[info[0]].guid:                                                              #CAMBIO GUID durante il gioco.
         if GSRV.Server_mode <> 2:                                                                       #non attivo esclusivamente in warmode
             GSRV.PT[info[0]].notoriety += M_CONF.Nt_guidchange                                          #gli abbasso la notoriety in proporzione
             scrivilog(" GUID CHANGE: Nick: " + str(GSRV.PT[info[0]].nick) + " DB Nick: " + str(GSRV.PT[info[0]].DBnick)  + " IP: " + str(GSRV.PT[info[0]].ip) + " Location: " + str(GSRV.PT[info[0]].location) +  " GUID: " + GSRV.PT[info[0]].guid + " CHANGED TO: " + info[2], M_CONF.badguid)
@@ -534,7 +533,7 @@ def kills(frase):                                                               
     GSRV.PT[frase[1]].vivo = 2                                                                          #in ogni caso setto la vittima a "morto"
     if frase[2] == '10':                                                                                #CHANGETEAM  #TODO gestire il changeteam  se necessario
         return
-    elif frase[2] in adminkill:                                                                         #Killato da ADMIN todo da gestire
+    elif frase[2] in adminkill:                                                                         #Killato da ADMIN #todo da gestire
         return
     elif frase[2] in accident:                                                                          #INCIDENTE
         GSRV.PT[frase[1]].deaths += 1                                                                   #aumento di 1 le deaths alla vittima
@@ -547,17 +546,22 @@ def kills(frase):                                                               
     elif frase[2] in normalKills :                                                                      #KILL NORMALE DA ARMA
         GSRV.PT[frase[1]].deaths += 1                                                                   #aumento di 1 le deaths alla vittima
         if GSRV.is_tkill(frase[0], frase[1]):
-            tell(GSRV.PT[frase[0]].slot_id, Lang["tkill"] %str(GSRV.PT[frase[0]].warnings["total"]))    #TEAMKILL
+            if M_CONF.SV_Death_punish == 1 and GSRV.PT[frase[0]].vivo:                                  #applico death punish solo a player vivi
+                smite("Redcap", frase[0], Lang["punishtodeath"]%(GSRV.PT[frase[0]].nick, GSRV.PT[frase[1]].nick))                                        #condanno a morte :-)
+            tell(GSRV.PT[frase[0]].slot_id, Lang["tkill"] %str(GSRV.PT[frase[0]].warnings["total"]))    #Annuncia penalità per TK
+            GSRV.PT[frase[0]].ks = 0                                                                    #gli interrompo la kstreak
             return
-        GSRV.skill_variation(frase[0],frase[1])                                                         #funzione che calcola ed assegna la variazione skill ai due players
+        if GSRV.tot_players(1) >= M_CONF.MinPlayers:                                                    #Skill attiva solo se ci sono abbastanza players
+            GSRV.skill_variation(frase[0],frase[1])                                                     #funzione che calcola ed assegna la variazione skill ai due players
         GSRV.PT[frase[0]].kills[frase[2]] += 1                                                          #aggiungo la kill alle statistiche
     else:
         return
+    #TODO semplificare questa parte usando if GSRV.tot_players(1) >= M_CONF.MinPlayers
     res0 = GSRV.is_kstreak(frase[0],frase[1], time.time())                                              #calcolo variazioni kstreak (eventuale spam)
     res = option_checker(res0)                                                                          #Separo le opzioni di ritorno
     kz = GSRV.PT[frase[0]].ks                                                                           #n. della frase di kstreak da spammare
-    if kz > len(Killz)-1:                                                                               #streak piu lunga del vettore commenti
-        kz = len(Killz)-1
+    if kz > len(Killz)-1:                                                                               #streak piu lunga del vettore "commenti alle kill"
+        kz = len(Killz)-1                                                                               #uso l'ultima stringa.
     if 1 in res:                                                                                        #spammo ks in bigtext
         if not M_CONF.SV_silentmode:
             say(Killz[kz]%GSRV.PT[frase[0]].nick, 2)
@@ -583,7 +587,7 @@ def kills(frase):                                                               
         if not M_CONF.SV_silentmode:
             say(Lang["record_no_not"]%str(GSRV.PT[frase[0]].nick), 0)                                   #notoriety bassa
     elif 1024 in res:
-        if not M_CONF.SV_silentmode and int(GSRV.TopScores["Day"][1])> 0:                               #Evito di ripetere la frase quando non esiste record
+        if not M_CONF.SV_silentmode and int(GSRV.TopScores["Day"][1])> 0:                               #Evito di ripetere la frase quando non esiste record #todo verificare se funziona
             say(Lang["record_no_ppl"]%(M_CONF.MinPlayers, str(GSRV.PT[frase[0]].nick)), 0)              #poca gente
     if 128 in res:
         if not M_CONF.SV_silentmode:
@@ -641,8 +645,6 @@ def says(frase):                 #frase (0=id, 1=testo)
     if censura(frase[1]):                              #ho trovato un insulto
         GSRV.PT[frase[0]].warn("Redcap", 1)      #lo warno
         grace = GSRV.WarnMax - GSRV.PT[frase[0]].warnings["total"] #warning rimasti
-        #GSRV.PT[frase[0]].warning += 1      #lo warno #TODO da togliere se funziona warnings
-        #grace = GSRV.WarnMax - GSRV.PT[frase[0]].warning #warning rimasti #TODO da togliere se funziona warnings
         slap("Redcap", (1, frase[0]), Lang["insults"]%grace)   #lo slappo
 
 def scrivilog(evento, nomelog):          
@@ -886,6 +888,25 @@ def help(richiedente, parametri):
             return
         tell(richiedente, answ)
 
+#Lista armi:
+gearlist = [1, 2, 3, 4, 5, 6, 8, 9, 10, 14, 15, 17, 19]                                                 #lista delle hit
+def gears(richiedente, parametri):
+    """definisce quali armi e possibile utilizzare"""
+                                              #TODO (poi fare gearcontrol che all'infochange controlla se hai preso armi non ammesse)
+    scelta = parametri.group("gears")
+    if not scelta:
+        pass #todo specificare che deve scegliere
+    elif "sn" in scelta:                                                                                #Sniper only
+        GSRV.Gears = ""
+    elif "aut" in scelta:                                                                               #Auto only
+        pass
+    elif "pis" in scelta:                                                                               #Pistols only
+        pass
+    elif "kn" in scelta:                                                                                #Knives only
+        pass
+    else:                                                                                               #Stringa armi
+        pass
+
 def info(richiedente, parametri):          #FUNZIONA
     """parametri vari server:IP admin, nextmap,ecc"""
     version = "^2I'm RedCap ^4%s " %versione
@@ -1015,6 +1036,11 @@ def password(richiedente, parametri):  #FUNZIONA
     SCK.cmd("g_password " + parametri.group("pwd"))
     tell(richiedente, Lang["pwdset"])
 
+def radio(frase):                                                                                       #frase (0=id, 1=radio msg (x - y))
+    if frase[0]not in GSRV.PT:                                                                          #potrebbero partire dei radio prima del ClientBegin, dando errore "KeyError: '0'
+        return
+    GSRV.PT[frase[0]].flood += 1                                                                        #Incremento il flood (#todo vedere se gestire i msg)
+
 def rcrestart(richiedente, parametri =""):
     """restarta il RedCap"""
     say(Lang["restart"], 2)
@@ -1067,14 +1093,36 @@ def recordreset(richiedente, parametri):
 
 def shuffle(richiedente, parametri):
     """shuffla in base alla skill_var"""
+    past = (time.time() - GSRV.LastShuffle)/60
     if GSRV.Server_mode < 3:
-        pass        #shuffle solo in modalita normale o silent.
-        return
-    lista = []
-    for PL in GSRV.PT:
-        if GSRV.PT[PL].team <> 3:       #se non e spect
-            lista.append(PT, GSRV.PT["PL"].skill_var)
-            #TODO da finire
+        pass                                                                                            #shuffle solo in modalita normale o silent.
+    elif GSRV.tot_players(1) < 3:
+        pass                                                                                            #non ha senso shufflare con due persone
+    elif past < M_CONF.TimeBetweenShuffle:                                                                 #controllo se e' passato tempo sufficiente
+        pass
+    else:
+        lista = []
+        red_list = []
+        blue_list = []
+        for PL in GSRV.PT:
+            if GSRV.PT[PL].team <> 3:                                                                   #se non e spect
+                lista.append([GSRV.PT["PL"].skill_var, PL])
+                forceteam("Redcap", [PL," spectator"])                              #todo: vedere se si può utilizzare rcon /pause per evitare il round end
+        lista.sort()                                                                                    #ottengo la lista e la ordino per skill var
+        forceteam("Redcap", [lista.pop()[1]," red"])                                                    #sistemo i primi 3 a mano
+        forceteam("Redcap", [lista.pop()[1]," blue"])
+        forceteam("Redcap", [lista.pop()[1]," blue"])
+        tag = "red"
+        while lista:                                                                                    #poi continuo in automatico
+            if tag == "red":
+                forceteam("Redcap", [lista.pop()[1]," red"])
+                tag = "blue"
+            else:
+                forceteam("Redcap", [lista.pop()[1]," blue"])
+                tag = "red"
+
+
+
 
 
 
@@ -1112,31 +1160,32 @@ def slap(richiedente, parametri, reason=""): #FUNZIONA
                 volte = M_CONF.maxSlap
         else:
             volte = 1
-    if target.isdigit():                                            #se ho trovato lo slot
+    if target.isdigit():                                                                                #se ho trovato lo slot
         if reason <> "":
             tell(target, reason)
-        for i in range(int(volte)): #Invio al buffer il comando un numero "param[1]" di volte
+        for i in range(int(volte)):                                                                     #Invio al buffer il comando un numero "param[1]" di volte
             SCK.cmd("slap " + target)
 
-def smite(richiedente, parametri, reason = ""):  #FUNZIONA
+def smite(richiedente, parametri, reason = ""):                                                         #FUNZIONA
     """Killa un player sul server (solo 4.2)"""
-    if richiedente == "Redcap":                                 #smite richiesto direttamente dal RedCap
+    if richiedente == "Redcap":                                                                         #smite richiesto direttamente dal RedCap
         target = parametri
     else:
         target = trovaslotdastringa(richiedente, parametri.group("target"))
-    if target.isdigit():                                                   #se ho trovato lo slot
+    if target.isdigit():                                                                                #se ho trovato lo slot
         if reason <> "":
             if not M_CONF.SV_silentmode:
                 say(reason, 0)
                 time.sleep(2)
-        SCK.cmd("smite " + target)                                 #Invio al socket il comando smite
-        say(Lang["smited"]%GSRV.PT[target].nick,0)
+        SCK.cmd("smite " + target)                                                                      #Invio al socket il comando smite
+        if not richiedente == "Redcap":
+            say(Lang["smited"]%GSRV.PT[target].nick,0)
 
 def spam(richiedente, parametri):       
     """inserisce/disinserisce frasi di spam)"""
-    if parametri.group("un").lower() == "un":                   #sto cancellando
+    if parametri.group("un").lower() == "un":                                                           #sto cancellando
         if parametri.group("frase").isdigit():
-            if GSRV.SpamList[int(parametri.group("frase"))].endswith("#"):  #non posso cancellare un record
+            if GSRV.SpamList[int(parametri.group("frase"))].endswith("#"):                              #non posso cancellare un record
                 tell(richiedente, Lang["norecorderase"])
                 return
             del(GSRV.SpamList[int(parametri.group("frase"))])
