@@ -27,13 +27,12 @@ colori = {          #colori per i dialoghi
 "8":"#FF6600","9":"#FF66FF","10":"#FF66FF","11":"#969696","12":"#99CC99","13":"#FFCCCC","14":"#6699FF"
 }
 
-tabs = ["DATI", "DEATH", "HIT", "KILL", "LOC"]   #tabelle del DB con guid
-
 def automaintenance():
     """Esegue le operazioni di manutenzione giornaliera"""
     timestamp = time.strftime("%Y_%b_%d", time.localtime())
     db_clean_guid()                                                                                     #elimino le guid vecchie
     db_clean_alias()                                                                                    #elimino gli alias vecchi in eccesso
+    db_clean_IP()                                                                                       #elimino i vecchi IP
     db_backup(timestamp)                                                                                #faccio backup del database
     log_chat_backup(timestamp)                                                                          #creo il log di chat
     log_backup(timestamp)                                                                               #faccio il backup del log
@@ -43,14 +42,10 @@ def automaintenance():
         web_FTPtransfer("HTML" + "/" + M_CONF.w_tabella, M_CONF.w_tabella)
     cr_riavvia()
 
-def check_coherence():
-    """debug function"""
+def check_gameserver():
+    """Check if gameserver is on"""
     import M_RC
-    if len(M_RC.ini_clientlist()) - sum(M_RC.GSRV.TeamMembers):
-        M_RC.scrivilog("DISCORDANCE: Effettivi %s - Calcolati %s"%(len(M_RC.ini_clientlist()),sum(M_RC.GSRV.TeamMembers)),M_CONF.crashlog)
-        for item in M_RC.ini_clientlist():
-            M_RC.scrivilog("Client: %s"%item, M_CONF.crashlog)
-        M_RC.scrivilog("TeamMembers: %s, %s, %s, %s"%(M_RC.GSRV.TeamMembers[0],M_RC.GSRV.TeamMembers[1],M_RC.GSRV.TeamMembers[2],M_RC.GSRV.TeamMembers[3]), M_CONF.crashlog)
+    M_RC.ini_clientlist()
 
 def cr_riavvia():
     """restarto RedCap ed eventualmente il server"""
@@ -98,8 +93,27 @@ def db_clean_alias():
     DB.disconnetti()
     M_RC.scrivilog("DB alias cleaned.", M_CONF.activity)
 
-    #TODO fare clean old ip sulla falsariga di clean alias.
+def db_clean_IP():
+    """Elimino gli alias in eccedenza"""
+    import M_RC
+    j2 = " "
+    DB.connetti()
+    res = DB.esegui(DB.query["cleanIP"]).fetchall()
+    for player in res:
+        newIP = ""
+        IPs = player[1].split(j2)
+        IPs.reverse()
+        IPs = IPs[0:15]                                                                                 #Limito a 15 IP memorizzati
+        for IP in IPs:
+            newIP += (IP + j2)
+        newIP = newIP.rstrip()
+        DB.esegui(DB.query["cleanedIP"],(newIP, player[0]))
+    DB.salva()
+    DB.disconnetti()
+    M_RC.scrivilog("Old IP cleaned.", M_CONF.activity)
 
+
+tabs = ["DATI", "DEATH", "HIT", "KILL", "LOC"]                                                          #tabelle del DB con guid
 def db_clean_guid():
     """pulizia periodica DB dai record non piu utilizzati"""
     import M_RC
@@ -158,6 +172,31 @@ def log_chat_backup(timestamp):
     logfile.close()
     M_RC.scrivilog("UrT Chatlog backup done.", M_CONF.activity)
 
+#smtp = ["smtp.gmail.com", 587, "av250866@gmail.com", "4l3554ndr0"]
+#recipient = "av250866@ngi.it"
+#msg = "questa è una prova"
+
+def mail_sender(smtp, recipient, msg):                                                                       #smtp [server, port, user, password]
+    import smtplib
+
+    fromaddr = 'av250866@gmail.com'
+    toaddrs  = 'av250866@ngi.it'
+    msg = 'There was a terrible error that occured and I wanted you to know!'
+
+    # Credentials (if needed)
+    username = 'av250866@gmail.com'
+    password = 'open sesamo!'
+
+    # The actual mail send
+    smtplib.debuglevel = 1
+    server = smtplib.SMTP('smtp.gmail.com:587','','',10)
+    server.starttls()
+    server.login(username,password)
+    server.sendmail(fromaddr, toaddrs, msg)
+    server.quit()
+
+#mail_sender(smtp, recipient, msg)
+
 def web_rank():
     """crea la classifica in formato tabella a partire dal DB"""
     def cella(contenuto,  toltip = "",  cls = "",  st = ""):                                            #sottofunzione che crea le celle
@@ -211,15 +250,17 @@ def web_rank():
     "<th>LAST IP</th>"+\
     "<th>LAST VISIT</th>"+\
     "</tr>"  
-    TABLE = table_ini + header                  #contenuto della table
+    TABLE = table_ini + header                                                                          #contenuto della table
     i_id = 1
-    for guid in Dump:                           #CREO LA RIGA ed i suoi span. RIGHE CON TOOLTIP: <a href="#" onmouseover="TagToTip('Span2')" onmouseout="UnTip()">Homepage </a>
-        tot_kills = sum(guid[20:37])         #kill totali fatte dal player
+    for guid in Dump:                                                                                   #CREO LA RIGA ed i suoi span. RIGHE CON TOOLTIP: <a href="#" onmouseover="TagToTip('Span2')" onmouseout="UnTip()">Homepage </a>
+        if guid[6] > time.time():
+            continue                                                                                    #non mostro i bannati in classifica
+        tot_kills = sum(guid[20:37])                                                                    #kill totali fatte dal player
         #*** Cella ID ***************
         ID = cella(str(i_id), "", "", "")
         i_id += 1
         #*** Cella SKILL ************
-        if guid[38] <> 0:   #evito divisione per 0
+        if guid[38] <> 0:                                                                               #evito divisione per 0
             tooltip_SKILL = "K/D:"+ str(round(tot_kills / float(guid[38]),2))
         if guid[2] < 0:
             colore = "color:red"
@@ -228,7 +269,7 @@ def web_rank():
         SKILL = cella(str(round(guid[2],1)), tooltip_SKILL, "", colore)
         #*** Cella NICK ************
         #_________ TOOLTIP_____________
-        rc_nick = "<div class='rc_nick'>%s</div>" %striphtml(str(guid[1]))  #nick
+        rc_nick = "<div class='rc_nick'>%s</div>" %striphtml(str(guid[1]))                              #nick
         masked_guid = guid[0][0:6] + "***"
         aff = round(guid[3] / M_CONF.Nt_roundXpoint + ((guid[4]-guid[8])/87400) / M_CONF.Nt_dayXpoint + guid[7], 1)
         affid = aff
@@ -329,7 +370,7 @@ def web_rank():
         #*** AGGIUNGO LA RIGA ALLA TABELLA ************
         TABLE += riga
 
-    TABLE += table_end  #Completo la table
+    TABLE += table_end                                                                                  #Completo la table
     #Salvo in locale
     htmlfile = open("HTML" + "/" + M_CONF.w_tabella, "w")
     htmlfile.write(TABLE)
