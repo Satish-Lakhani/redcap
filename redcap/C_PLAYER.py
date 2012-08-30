@@ -128,7 +128,7 @@ class Player:
         128: self.DBnick,
         256: self.ip,
         512: self.level,
-        1024: self.warning,
+        1024: self.warnings["total"],
         2048: self.lastconnect,
         4096: aliases,
         8192: self.location

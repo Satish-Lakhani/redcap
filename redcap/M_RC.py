@@ -13,7 +13,7 @@ import M_SAYS                                           #dati ausiliari per gest
 import GEOIP.geoip                                      #geolocalizzazione
 exec("import M_%s" %M_CONF.RC_lang)                     #importo modulo localizzazione linguaggio
 
-versione = "1.22_(20120826)" 	                        #RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING IN THE SCRIPT!!!
+versione = "1.23_(20120829)" 	                        #RedCap Version. !!! PLEASE ADD "-MOD by YOURNAME" TO THE VERSION NUMBER IF YOU MODIFY SOMETHING IN THE SCRIPT!!!
 
 #Carico i moduli di lingua
 Lang = eval( "M_%s.RC_outputs" %M_CONF.RC_lang)
@@ -432,15 +432,25 @@ def ini_addcfg(cfg):
     destfile.close()
 
 def ini_clientlist():
-    """trova i client gia collegati"""
-    list = []
+    """Verifica che il gameserver sia attivo e trova i client gia collegati"""
+    #list = []                                                                                          #TODO togliere se non serve
     Res = SCK.cmd("clientlist")
-    if Res[1] == False:                                                                                         #verifico se il server risponde
-        scrivilog("NO ANSWER FROM GAMESERVER", M_CONF.crashlog)
+    if not Res[1]:                                                                                      #IL SERVER NON RISPONDE
+        if GSRV.Attivo:                                                                                 #e' la prima volta che non risponde, lo metto a false e gli concedo 20 sec.
+            GSRV.Attivo = False
+            scrivilog("NO ANSWER FROM GAMESERVER", M_CONF.crashlog)
+        else:                                                                                           #non risponde da almeno 20 sec
+            GSRV.Server_mode = 0                                                                        #rimetto il server in configurazione di avvio
+            for pl in GSRV.PT:
+                clientdisconnect(GSRV.PT[pl].id)                                                        #disconnetto tutti i players
+        GSRV.Attivo = False
         sleep(20)                                                                                       #aspetto 20 secondi e riprovo
-        ini_clientlist()
-        return list
-    else:
+        ini_clientlist()                                                                                #LOOP finchè non riceve risposta
+        #return list                                                                                    #TODO togliere se non serve
+    else:                                                                                               #IL SERVER HA RISPOSTO
+        if not GSRV.Attivo:
+            scrivilog("GAMESERVER IS RUNNING", M_CONF.crashlog)
+            GSRV.Attivo = True
         list = Res[0].split("\n")                                                                       #List = GUID, SLOT, NICK
         if len(list) > 2:
             del(list[0])                                                                                #pulisco la risposta
@@ -448,7 +458,7 @@ def ini_clientlist():
             del(list[0])
             return list
         else:
-            return []                                                                           #non ci sono players
+            return False                                                                        #non ci sono players ma è attivo
 
 def ini_clientadd(list):
     """aggiunge i players trovati con ini_clientlist"""
@@ -587,8 +597,9 @@ def kills(frase):                                                               
         if not M_CONF.SV_silentmode:
             say(Lang["record_no_not"]%str(GSRV.PT[frase[0]].nick), 0)                                   #notoriety bassa
     elif 1024 in res:
-        if not M_CONF.SV_silentmode and int(GSRV.TopScores["Day"][1])> 0:                               #Evito di ripetere la frase quando non esiste record #todo verificare se funziona
-            say(Lang["record_no_ppl"]%(M_CONF.MinPlayers, str(GSRV.PT[frase[0]].nick)), 0)              #poca gente
+        if not M_CONF.SV_silentmode:                                                                    #Evito di ripetere la frase quando non esiste record #todo verificare se funziona
+            if GSRV.TopScores["Day"][1] > 0:
+                say(Lang["record_no_ppl"]%(M_CONF.MinPlayers, str(GSRV.PT[frase[0]].nick)), 0)          #poca gente
     if 128 in res:
         if not M_CONF.SV_silentmode:
             say(Killz[0]%(str(GSRV.PT[frase[0]].nick), str(GSRV.PT[frase[1]].nick)), 2)                 #spammo stop ks in bigtext
@@ -1098,36 +1109,21 @@ def shuffle(richiedente, parametri):
         pass                                                                                            #shuffle solo in modalita normale o silent.
     elif GSRV.tot_players(1) < 3:
         pass                                                                                            #non ha senso shufflare con due persone
-    elif past < M_CONF.TimeBetweenShuffle:                                                                 #controllo se e' passato tempo sufficiente
+    elif past < M_CONF.TimeBetweenShuffle:                                                              #controllo se e' passato tempo sufficiente
         pass
     else:
-        lista = []
         red_list = []
         blue_list = []
         for PL in GSRV.PT:
-            if GSRV.PT[PL].team <> 3:                                                                   #se non e spect
-                lista.append([GSRV.PT["PL"].skill_var, PL])
-                forceteam("Redcap", [PL," spectator"])                              #todo: vedere se si può utilizzare rcon /pause per evitare il round end
+            if GSRV.PT[PL].team == 1:                                                                   #red
+                red_list.append([GSRV.PT["PL"].skill_var, PL])
+            elif GSRV.PT[PL].team == 2:                                                                 #blue
+                blue_list.append([GSRV.PT["PL"].skill_var, PL])
         lista.sort()                                                                                    #ottengo la lista e la ordino per skill var
         forceteam("Redcap", [lista.pop()[1]," red"])                                                    #sistemo i primi 3 a mano
-        forceteam("Redcap", [lista.pop()[1]," blue"])
-        forceteam("Redcap", [lista.pop()[1]," blue"])
-        tag = "red"
-        while lista:                                                                                    #poi continuo in automatico
-            if tag == "red":
-                forceteam("Redcap", [lista.pop()[1]," red"])
-                tag = "blue"
-            else:
-                forceteam("Redcap", [lista.pop()[1]," blue"])
-                tag = "red"
-
-
-
-
-
 
 def silent(richiedente, parametri):
-    if GSRV.Server_mode == 0:
+    if not GSRV.Server_mode:
         tell(richiedente, Lang["noavailcmd"])
     elif M_CONF.SV_silentmode:
         M_CONF.SV_silentmode = False

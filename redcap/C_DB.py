@@ -15,6 +15,8 @@ class Database:
         "cercaloc":"""SELECT * FROM LOC WHERE GUID = ?""",                      #cerca nella tab LOC in base alla GUID
         "cleanalias":"""SELECT GUID,ALIAS FROM DATI""",                         #recupera tutti i player ed i loro alias
         "cleanedalias":"""UPDATE DATI SET ALIAS=? WHERE GUID=?""",              #sostituisce i vecchi alias con quelli puliti
+        "cleanIP":"""SELECT GUID,OLD_IP FROM LOC""",                            #recupera tutti i player ed i loro IP
+        "cleanedIP":"""UPDATE LOC SET OLD_IP=? WHERE GUID=?""",                 #sostituisce i vecchi IP con quelli puliti
         "cleanoldplayers":"""SELECT GUID FROM DATI WHERE ? - LASTCONN > ? AND TEMPBAN < ?""",   #elimina i player con guid inutilizzate
         "delplayer":"""DELETE FROM %s WHERE GUID = '%s'""",                     #elimina una guid da una tabella
         "findplayer":"""SELECT rowid,NICK,ALIAS FROM DATI WHERE ALIAS LIKE ?""", #trova i player con il nick richiesto

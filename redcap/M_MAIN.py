@@ -9,11 +9,9 @@
 #TODO fare comando admin che mostra gli admin in game e/o la adminlist
 #TODO eliminazione automatica password a server vuoto non va (ma va con !unwar) (fatto da verificare)
 #TODO verificare che località sia updatata ogni volta con nuovo IP
-#TODO aggiustare classifica html (non c'è più body hit) (fatto, da verificare)
-#TODO comando help che mostra i comandi utilizzabili e separarlo da !info (fatto da verificare)
-#TODO vedere come mai da ancora messaggio record a record=0 (fatto da provare)
+#TODO vedere come mai da ancora messaggio record a record=0 (fatto, da verificare)
 #TODO skill variation attiva solo con min players (fatto da verificare)
-#TODO news list for admin: quando si connettono il server li avvisa di cosa è successo.
+#TODO news list for admin: quando si connettono (o via mail?) il server li avvisa di cosa è successo.
 
 import sys
 import C_PARSER                                                                             #Classe che rappresenta il parser
@@ -42,7 +40,8 @@ def init_jobs():
     """attivita' da fare all'avvio di redcap"""
     M_RC.say("^2Starting RedCap...", 2)
     lista = M_RC.ini_clientlist()                                                           #recupero i client gia presenti sul server
-    M_RC.ini_clientadd(lista)                                                               #li aggiungo
+    if lista:
+        M_RC.ini_clientadd(lista)                                                               #li aggiungo
     M_RC.ini_recordlist()                                                                   #recupero i record dal server
     M_RC.ini_spamlist()                                                                     #carico la spamlist
     if M_CONF.Website_ON:                                                                   #Se esiste un website di appoggio aggiorno la classifica, la trasferisco al server remoto e salvo il risultato dell'operazione nel log
@@ -63,9 +62,7 @@ def q3ut4_parse():
     PARSER.q3ut4_check(M_CONF.SV_UrtPath, M_RC.GSRV.Q3ut4, M_RC.GSRV.MapCycle)              #recupero mappe e cfg.
 
 def redcap_main():
-    """
-
-    """
+    """Routine principale"""
     no_news = 0                                                                             #sensore di inattività serve
     while 1:
         M_RC.sleep(M_CONF.TempoCiclo)                                                       #wait for a cycletime
@@ -128,7 +125,7 @@ def redcap_main():
                 M_AUX.automaintenance()                                                                 #automanutenzione e riavvio
                 # -= Non puo' leggere istruzioni oltre qui (riavvio server e redcap!) =-
         if no_news > M_CONF.GameServerDown:                                                             #il gameserver non da notizie da circa 60 sec
-            M_AUX.check_coherence()                                                                     #DEBUG per vedere se a volte il server è considerato vuoto e non lo è o viceversa
+            M_AUX.check_gameserver()                                                                    #il log è fermo. controllo se il gameserver è up.
             no_news = 0
 
 #AVVIO IL REDCAP

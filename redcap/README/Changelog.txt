@@ -1,8 +1,11 @@
-## 2012-xx-xx Redcap_1.xx(2012xxxx):
+## 2012-xx-xx Redcap_1.23(2012xxxx):
 * Command added: !help [cmd] (shows allowed command list and detailed help on each command)
-* Feature added: base war config is automatically added to q3ut4 folder. No more need to manually copy and paste it at installation time
-* Feature added: Death sentence: team killers are in turn, killed (config option)
-* Feature added: Radio messages are now counted in flooding.
+* Feature added: basic war config is automatically added to q3ut4 folder. No more need to manually copy and paste it at installation time
+* Feature added: death sentence: team killers are then killed from RedCap (Default: disabled in config)
+* Feature added: radio messages are now included in flooding.
+* Bug solved: if gameserver crashes, RedCap simulate a clientdisconnect event for each player, avoiding then to consider "ghost" players as still in game.
+* Bug solved: banned or tempbanned players are now not included in webrank.
+* DB Maintenance: automatic clean of old IP (just newest 15 are kept in DB)
 
 ## 2012-08-21 Redcap_1.20(20120821):
 * parser and other functions updated to protocol 70 (UrT 4.2 version)
@@ -42,8 +45,8 @@
 * Feature added: Automatic balance by team tag.
 * Feature added: Immediate balance if called when CTF mode.
 * Localization added: English.
-* command !k changed in !kk (because of typing mistakes with !sk).
-* command !b changed in !tmpban (because of typing mistakes with !ban).
+* command !k changed in !kk (because of several typing mistakes with !sk).
+* command !b changed in !tmpban (because of several typing mistakes with !ban).
 * Some minor bug fixed.
 
 ## 2011-11-28 Redcap_1.00_Beta_(20111128):

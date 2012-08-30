@@ -8,7 +8,7 @@ class Server:
     """Rappresenta il gameserver"""
     def __init__(self):
         self.AntiReconInterval = M_CONF.SV_AntiReconInterval            #Tempo minimo fra due connessioni
-        self.Attivo = True                                              #TODO: da gestire. Presuppongo che il server sia up finche non provo il contrario
+        self.Attivo = True                                              #True se il gameserver risponde ai comandi
         self.BalanceMode = M_CONF.SV_BalanceMode                        #modalita' di bilanciamento 0=disattivato 1=manuale 2=automatico 3=clan
         self.BalanceRequired = False                                    #e' stato richiesto un balance se True
         self.Baseconf = M_CONF.SV_Baseconf                              #config di base
