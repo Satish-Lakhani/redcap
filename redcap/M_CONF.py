@@ -213,4 +213,4 @@ CRON2 = 3600 				#Cron2 frequency in seconds (slow timer)
 TempoCiclo = 0.5 			#Gameserver log control frequency in seconds
 
 #SERVIZIO
-GameServerDown = 20 		#Waiting time (sec) before checking for gameserver down
+GameServerDown = 30 		#Waiting time (sec) before checking for gameserver down
