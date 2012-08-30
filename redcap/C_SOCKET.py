@@ -49,12 +49,12 @@ class Sock:
         except:
             return False
 
-    def __cmd_error(self,cmd): #TODO vedere se portare fuori da socket
+    def __cmd_error(self,cmd):
         """scrive il comando non inviato nel file di log di RedCap"""
-        cmd = (time.strftime("%d.%b %H.%M.%S", time.localtime()) + " NOT SENT: " + cmd + "\r\n")
-        f = open(self.log, "a")
-        f.write(cmd)
-        f.close()
+        import M_RC
+        if M_RC.GSRV.Attivo:
+            M_RC.scrivilog("NOT SENT: %s"%cmd, M_CONF.socketlog)
+
 
 
 
