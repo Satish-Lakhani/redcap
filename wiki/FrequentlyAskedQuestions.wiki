@@ -2,7 +2,7 @@
 [http://code.google.com/p/redcap/ <back to homepage]
 = REDCAP F.A.Q. =
 
-*Q. GeoLiteCity.dat file is missing from download*
+*Q. Geolitecity.dat file is missing from download*
 
 *A.* _In order to avoid to Redcap working with a old database, *GEOIP database not included*. It MUST be downloaded from here:
 http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
