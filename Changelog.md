@@ -1,0 +1,60 @@
+## CHANGELOG from 1.0\_beta ##
+
+
+**2012-xx-xx Redcap\_1.23(2012xxxx) _UNDER DEVELOPMENT (check [sources](http://code.google.com/p/redcap/source/browse/redcap) for this features)_:**
+
+  * Command added: `!help [cmd]` (shows allowed command list and detailed help on each command)
+  * Feature added: basic war config is automatically added to q3ut4 folder. No more need to manually copy and paste it at installation time
+  * Feature added: death sentence: team killers are then killed from RedCap (Default: disabled in config)
+  * Feature added: radio messages are now included in flooding.
+  * Bug solved: if gameserver crashes, RedCap simulate a clientdisconnect event for each player, avoiding then to consider "ghost" players as still in game.
+  * Bug solved: banned or tempbanned players are now not included in webrank.
+  * DB Maintenance: automatic clean of old IP (just newest 15 are kept in DB)
+
+**2012-08-21 Redcap\_1.20(20120821):**
+
+  * parser and other functions updated to protocol 70 (UrT 4.2 version)
+  * Command added: `!sm <playername>` (instantly kill a player
+  * Some minor bug solved
+
+**2012-03-01 Redcap\_1.05(20120210):**
+
+  * Webrank improved with weapon stats
+  * Command added: `!fp [playername]` (forgive one or all teammates for tkill or thits to you)
+  * Command added: `!fall <playername>` (forgive a player for all his tkill or thits to everybody)
+  * Feature added: commands disabling (setting lev\_command= -1 in config)
+  * Feature added: End map stats toggling ON/OFF (setting `EndmapSpam=True/False` in config)
+  * Antifake system now works only if player has al least M\_CONF.maxAlias different alias
+  * Bug solved: RedCap crashes when a Geolocalization string has non ASCII carachter
+  * Bug solved: `NameError`: global name 'timestamp' is not defined
+  * Bug solved: webrank was not periodically updated
+
+**2012-02-04 Redcap\_1.05(20120204):**
+
+  * Feature added: IP Geolocalization on welcome message and `!z <target>` command
+  * Feature added: Silent mode for admins that unlike spam (just new record, kick and ban are spammed)
+  * Command added: `!unban <target>` (look for a ID in DB and unban him)
+  * Command added: `!rere <record>` to cancel a record (made by a cheater for instance)
+  * Daily automaintenance routine improved
+  * Minor bugs solved
+
+**2012-01-04 Redcap\_1.02(20120104):**
+
+  * Feature added: Antifake system. Using a new fake reduces player's reliability. If reliability falls below `Nt_MinNot_toplay`, player is not allowed to play on gameserver until his notoriety rise up again.
+  * Feature added: Webrank output as complete html page if M\_CONF.w\_fullpage = True (html table if w\_fullpage = False )
+  * Command added: `!find <target>` (look for a nick in DB and retrieves infos)
+  * Added mappack 4.1.1 in maplist
+  * DB Maintenance: automatic clean of unused guids
+  * DB Maintenance: automatic clean of older alias when more than maxAlias
+  * DB Maintenance: automatic daily compression by VACUUM statement to keep DB size as small as possible.
+  * Bug fix: password was not automatically cleaned up when server empty.
+
+_2011-12-04 Redcap\_1.00\_Beta**(20111203):**
+
+  * Feature added: Automatic balance by team tag.
+  * Feature added: Immediate balance if called when CTF mode.
+  * Localization added: English.
+  * command `!k changed` in `!kk` (because of several typing mistakes with `!sk`).
+  * command `!b changed` in `!tmpban` (because of several typing mistakes with `!ban`).
+  * Some minor bug fixed._
+

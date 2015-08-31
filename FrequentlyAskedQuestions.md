@@ -1,0 +1,52 @@
+[<back to homepage](http://code.google.com/p/redcap/)
+# REDCAP F.A.Q. #
+
+**Q. Geolitecity.dat file is missing from download**
+
+**A.** _In order to avoid to Redcap working with a old database, **GEOIP database not included**. It MUST be downloaded from here:
+http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+and unzipped in GEOIP folder_
+
+**Q. Autobalance doesn't work correctly.**
+
+**A.** _There are some situation that autobalance routine cannot handle_:
+
+  * During Redcap startup autobalance is not active because not every player is identified as belonging to red or blue teams.
+
+  * The first round of each map, because Redcap is not able to check **before** round start if someone leaved the server at the end of the previous map. Yes, it could execute the balance **after** the beginning of the first round, but it means that the moved player will remain dead until the new round begins.
+
+  * If some player leave the server after round end. The reason is the same as above.
+
+**Q. Clan autobalance does not work for some clan mate.**
+
+**A.** _Be sure that the good tag is specified in M\_CONF.py config file. If your tag is (example) **bw|** you should have **clanbalanceTag = "bw|"** in your config. If this still not works, please consider that Redcap can found a clan mate in two ways_:
+  * He is wearing your clan tag.
+  * He is using a fake but his his main nick in database has the tag included. In that case ask to your mate for wearing the tag, and then use the command **!dbnick yourclanmate** to set his official nick as main. At the first reconnect he will be recognized as a clanmate even if wearing a fake.
+
+**Q. GEO IP Localization is not correct.**
+
+**A.** _IP geolocalization is based on a free IP database offered by [maxmind](http://www.maxmind.com). If you can afford a price of 90€/month, you can replace the free database with the commercial one, increasing the accuracy a lot._
+
+**Q. I modified the Redcap config but there is no change in bot behaviour.**
+
+**A.** _Every time you modify (and save) the config you must restart the Redcap using the command **!restart** in order to make the modifications effective._
+
+**Q. Which are the differences between RedCap and B3? Why RedCap doesn't have the same syntax and/or features as B3 bot?**
+
+**A.** _Remember that RedCap **is not** B3. It has been developed in a totally separated way from different people._
+  * **Similarity:**
+    * Both scripts are written in python.
+    * Syntax of some command is similar because they are obvious (_!help, !teams_), because I used the same syntax (not code!) to make use easier for players used to b3 (_!fp, !ban, or the use of "!" itself as command identifier_) or because B3 adopted the same existing RedCap command (_!sk_)
+  * **Differences:**
+    * B3 is much more featured than RedCap and uses a plugin system; RedCap has no plugins: all available features are included in the main package.
+    * B3 can manage different gameserver and different games with one installation; RedCap is aimed to be installed as a part of the gameserver, so it manage one gameserver with one installation
+    * RedCap uses a stand alone and portable SQLite DB file; B3 need a mySQL server DB to work
+    * RedCap is lighter and need less memory resources than B3 (test on my server only!).
+
+**Q. Where could I have a try of this bot?**
+
+**A.** _This bot is always running on Brave Warriors bw|Server 2 (IP **217.199.3.245:27960**)._
+
+**Q. Redcap is running but it has no reaction to chat commands.**
+
+**A.** _First be sure that games.log exists and it is regularly updated from the gameserver. If OK, check if RedCap is pointing to the right logfile. You can find the path in M\_CONF.NomeFileLog. Be careful that if you recently loaded a special server config (i.e. a CW config or similar) maybe g\_log var has been redirected to an other log file_

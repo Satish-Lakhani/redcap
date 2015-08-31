@@ -1,0 +1,63 @@
+[<back to homepage](http://code.google.com/p/redcap/)
+# REDCAP SKILL GUIDE #
+
+# Preface #
+What is the skill in RedCap and how it works?
+
+As the word itself says, the skill is a number that try to evaluate the ability and experience of a Urban Terror player. Of course we not expect that the value found by RedCap was a absolute and infallible measure of everyone skill. It is just a clue, because player skill depends from a lot of different parameters: internet connection quality, played map, player training, team cooperation and so on...
+
+In any case facts demonstrates that RedCap skill system works very well (after some hundred of rounds has been played) and good players (i.e. belonging to a national team) always have the best skill levels, while newcomers are mostly in the negative part of the ranking.
+
+# How it works? #
+Most of old bots used a simply kills/deaths (K/D) ratio to assign player's skill, but this raw procedure has a lots of bugs and workaround:
+  * To play constantly against low level players grants a high K/D ratio
+  * A "camping" behaviour grants higher skills, because usually a good rusher could end a map with, example, 17-6 score that means a K/D = 2,83; A camper could easily end a map with a 6-2, corresponding to K/D=3.
+  * Playing with the stronger or larger team usually grants a better score and ratio.
+
+RedCap skill system try to avoid this weakness using a more elaborate algorithm based on a statistic expectancy ratio depending from opponent skill and opponent team mean skill. Two additional non linear balancing coefficients take in count unbalanced teams and the fact that a player with a few rounds could still have a wrong skill.
+
+
+Let say:
+  * K = Killer's skill
+  * V = Victim's skill
+  * Kt = Killer's team mean skill
+  * Vt = Killer's team mean skill
+  * Rk = Killer's played rounds
+  * Rv = Victim's played rounds
+  * Nr = Number of active players in Red team
+  * Nb = Number of active players in Blue's team
+  * S = Theoric skill range
+  * T = Parameter considering weight of Killer's team mean skill compared  to Killer's skill
+  * Z = How many kills against an equivalent opponent you have to achieve to gain 1 skill point
+
+  * Dsk\_K = Killer's skill variation
+  * Dsk\_V = Victim's skill variation
+
+And let say:
+
+KTbv = (1-math.tanh((K-Vt)/S))/Z and Kbv = (1-math.tanh((V-K)/S))/Z
+
+VTbv = (1-math.tanh((V-Kt)/S))/Z and Vbv = (1-math.tanh((K-V)/S))/Z
+
+we obtain:
+
+**Dsk\_K = (Nr/Nb)<sup>0,75</sup>(T KTbv+(1-T) Kbv)(1 + (1000/(Rk<sup>1.2</sup> + 60)))**    Killer' skill variation
+
+**Dsk\_V = -(Nr/Nb)<sup>0,75</sup>(T VTbv+(1-T) Vbv)(1 + (1000/(Rv<sup>1.2</sup> + 60)))**    Victim's skill variation
+
+**Skill variation depending by players skill difference**:
+![http://www.bravewarriors.eu/EXT_IMG/sk_var.png](http://www.bravewarriors.eu/EXT_IMG/sk_var.png)
+
+# Newcomers coefficient #
+When a new, unregistered player arrive on server, RedCap has no idea about his skill level, so initial skill level is 0; this could lead to wrong skill evaluation for him and for other players.
+
+Suppose that this _New\_urt\_player_ is a pro gamer that just reinstall UrT: a kill from him will result in a skill lost greater than necessary. Viceversa if _New\_urt\_player_ is really a noob, killing him you will gain more skill than necessary.
+
+RedCap skill system minimize this problem applying an _aging coefficient_ to skill variation:
+
+**SK\_aging = 1 + 1000/(rounds^1.2 + 60)**
+
+This coefficient allows a _rapid_ skill variation in the first rounds, slowing down after some round, when _New\_urt\_player_'s skill is going to be defined.
+
+**Skill aging coefficient to avoid newcomers effect**:
+![http://www.bravewarriors.eu/EXT_IMG/sk_cor.png](http://www.bravewarriors.eu/EXT_IMG/sk_cor.png)

@@ -1,0 +1,185 @@
+[<back to homepage](http://code.google.com/p/redcap/)
+# REDCAP CONFIGURATION GUIDE #
+
+# Preface #
+The file **M\_CONF.py** includes all the parameters you need to config for a correct running of RedCap.
+
+M\_CONF.py is a python text file and it can be edited with whatever text editor. In order to have a good visualization I strongly suggest to use code editors like [Geany](http://www.geany.org) or Notepad++ and not text processors as Word or Notepad. Use the editor to modify variables values.
+
+
+**_Do not_** modify variable names, quotes or something else or RedCap could hung up.
+
+**_Do not_** change variable format: if value is like 1.0 change to 2.0 or 0.5 or 4.3 etc, but **_not_** change to 1 or 2 or 7. If format is like 1 chance to 2, 6, 10 but do **_not_** change to 1.0 or 2.5. If format is _"pippo"_ do **not** change to _pippo_ or vice versa.
+
+**_Do not_** forgot to save M\_CONF.py with _**.py**_ extension. A different extension like .txt or .doc will prevent RedCap to start.
+
+# Localization #
+All the messages used by RedCap can be set in Italian or English language and they are stored in two files called **M\_ITA.py** and **M\_ENG.py**.
+At the moment I have no time to translate it in other languages. If you wish to do it you are welcome (and please send me a copy :-)).
+
+  * Make a copy of M\_ITA.py and save it as M\_XXX.py, where XXX represent the new language (i.e. FRA, GER, NET, etc..)
+  * All message are in the following format:
+`"notimetocmd": "^3Devi aspettare ancora ^7%s minuti ^3per chiamare questo comando",`
+  * You must translate _**only**_ the message between double quotes on the right side, after colon mark (i.e the above message could translated as follow):
+`"notimetocmd": "^2You must still wait for ^7%s minutes ^3to use this command",`
+  * **_Do not_** cancel _%s_ it represents a RedCap internal variable.
+  * **_Do not_** cancel the comma **,** at the end of each line or RedCap will hung up
+  * You can change message colors changing the `^X`, where X has this meaning: 1=red; 2=green; 3=yellow; 4=blue; 5=light blue; 6=fuxia; 7=white; 8=black. In the above mentioned example _You must still wait for_ has been changed from yellow to green.
+  * To enable the new language, change RC\_lang value in config file, from "ITA" to the new language ("ENG" or whatever else).
+
+# Config vars #
+RedCap uses a lot of configuration vars and you can set them in order to obtain the desired behaviour. Normally you do not need to modify all these values, but just some of them, and some other **_should not_** be changed.
+
+For quick configuration allowing to RedCap to run, you have to modify just the SECTION 1. To enable webranking features you must modify the SECTION 2. The SECTION 3 modifies RedCap standard behaviours and it is facultative. The SECTION 4 concerns some engine parameters and you are strongly discouraged to modify it.
+
+**SECTION 1: THESE PARAMETERS MUST BE CONFIGURED OR REDCAP WILL NOT RUN PROPERLY!!!**
+|VARIABLE|EXAMPLE VALUE|DESCRIPTION|
+|:-------|:------------|:----------|
+|`NomeFileLog`| "../xxxxx.log"|_Relative path of gameserver log_|
+|`AdminGuids`|["XXXXXXXXXXXXXXXXXXXXXXXX"]|_Guid in this field is automatically enabled to the highest admin level (level 100)_|
+|`SV_Baseconf`|"xxxxxx.cfg" | _Name of gameserver base config file_|
+|`SV_UrtPath`|"../../../q3ut4"|_Relative path of Urban Terror  q3ut4 folder_|
+|`SV_MapCycle`|"xxxxxx.txt" |_Name of cyclemap config file_|
+|`Sck_ServerRcon`|"XXXXXXXX"   |_Gameserver rcon password_|
+|`Sck_ServerIP`|"xxx.yyy.zzz.kkk"|_Gameserver IP address_|
+|`Sck_ServerPort`|27960        |_Gameserver IP port_|
+
+**SECTION 2: THESE PARAMETERS MUST BE CONFIGURED IF  _`Website_ON = True`_ OR REDCAP WILL NOT RUN PROPERLY!!!**
+|VARIABLE|EXAMPLE VALUE|DESCRIPTION|
+|:-------|:------------|:----------|
+|`Website_ON`|False        | _(True or False) True if you want to use RedCap web features (rank and chatlog  FTP transfer to auxiliary website)_|
+|`w_url` | 'www.yoursite.com'| _FTP url of auxiliary website_|
+|`w_login`|'xxxxxxxx'   |_FTP login of auxiliary website_|
+|`w_password`|'xxxxxxx'    |_FTP password of auxiliary website_|
+|`w_ftp_directory`|'/httpdocs/serverstats'|_#Remote relative path of folder used by RedCap for FTP transfer_|
+|`w_directory`|'/serverstats'|_Remote relative url of folder used by RedCap for FTP transfer_|
+|`w_script_url`|'http://www.mywebsite.eu/myscripts/'|_path (if any) where trusted js scripts are stored_|
+|`w_webranktime`|'3'          |_time (h) between webrank updating._|
+
+**SECTION 3: THESE PARAMETERS SHOULD BE CONFIGURED IN ORDER TO CUSTOMIZE YOUR REDCAP**
+|VARIABLE|EXAMPLE VALUE|DESCRIPTION|
+|:-------|:------------|:----------|
+|`KickForSpace`| True        |_(True or False) If True RedCap kicks a spect when gameserver is full. Admins cannot be kicked._|
+|`maxAbsence`| 60          |_Player not visiting the game server will be canceled from DB after 'maxAbsence' days._|
+|`maxAlias `| 15          |_Max n. of alias to be stored. If more then maxAlias, the older one will be canceled._|
+|`maxSlap`|10           |_Max. slap number to be used with !s`[num]` command. If num > 10 then num = 10._|
+|`Ttempban`|96           |_Max duration of a temporary ban (hours)_|
+|`MinPlayers`|4            |_Min. number of active players for registering a record_|
+|`MinNotoriety`|0            |_Min. notoriety level required to a player for registering a record_|
+|`EndmapSpam `| True        |_Shows stats at map end_|
+|`RecordSpam`|True         |_(True or False) If True, !Redcap periodically spams records in chat_|
+|`CustomSpam`|True         |_(True or False) If True, !Redcap periodically spams sentences stored in spam.txt._|
+|`Spamtime`|140          |_Time between two consecutive spams._|
+|`botname`|"^8RC: "     |_prefix of !Redcap outputs (#TODO not used yet)._|
+|`clanbalanceTag`|"xXx"        |_tag of your clan_|
+|`RC_lang `|"ITA"        |_Language localization for RedCap. ITA, ENG only (#TODO FRA and others. See M\_ITA.py for translation procedure)._|
+|`gameserver_autorestart`| 2           |_#Automatically restart the Gameserver: 0: no restart 1: daily restart 2: restart when empty._|
+|`SV_AliasDuration`|90           |_How long (days) a player alias is hold on by RedCap before it is removed because unused_|
+|`SV_AntiReconInterval`|0            |_Anti reconnect delay in sec. If `SV_AntiReconInterval` = X a player cannot reconnect to the game server before X seconds from the first connect._|
+|`SV_BalanceMode`|2            |_Team balance mode 0: disabled, 1: manually enabled (to be called by !tm command),  2: automatic balance when a team has 2 players more than the other one._|
+|`SV_FloodControl`|True         |_(True or False) If True, !Redcap will kick players that spams more than `SV_MaxFlood` chat lines in less then15 sec._|
+|`SV_MaxFlood`|6            |_Max number of chat lines in 15 sec. Active only when `SV_FloodControl = True`_|
+|`SV_MaxNickChanges`|3            |_Max nick changes in 15 sec._|
+|`SV_AntiFake `| True        |_If True RedCap assign a reliability penalty when player uses a new fake_|
+|`SV_goodNick`|`r"[a-zA-Z]"`|_Regex that player nick must satisfy to be allowed to play in the game server._|
+|`SV_minNick`|3            |_Min length allowed for a player nick._|
+|`SV_ShowHeadshots`| True        |_(True or False) If True headshot are displayed in upper gameserver chat._|
+|`SV_silentmode`| False       |_If true RedCap runs in silentmode, displaying a very few messages._|
+|_STATUS LEGEND_|_Sum of values_  |_1: Welcome %nick 2: Skill 4: Map skill 8: Highest streak 16: Played rounds 32: Reliability 64: Player slot number 128: Official nick 256: IP 512: Player level 1024: Received warnings 2048: Players last visit 4096: Players alias 8192: IP Geolocalization_|
+|`saluti`|10241        |_Information shown at player connection (i.e. 1 + 2048 + 8192 shows nick, last visit and geolocalization)_|
+|`status`|3233         |_Information about player given to everybody (i.e. 1 + 32 + 128 + 1024 + 2048)_|
+|`status_adm`|4089         |_Information about player given to  the admins (i.e. 1 + 8 + 16 + 32 + 64 + 128 + 256 + 512 + 2048 + 1024 + 8192)_|
+|`Sk_penalty`|4            |_Teamkill penalty: it represents the number of additional kill you should gain in order to nullify the penalty._|
+|`Sk_Ks_not`|0            |_Kill streaks made by players with lower notoriety than this are not spammed._|
+|`Sk_Ks_show`|5            |_Kill streaks shorter than this are not spammed by RedCap._|
+|`Sk_Ks_showbig`|9            |_Kill streaks longer than this are spammed by RedCap in bigtext._|
+|`voteTime`|30           |_How long (seconds) vote mode is enabled._|
+|`voteType`|536870986    |_Temporary vote mode (see http://www.urbanterror.info/docs/texts/123/#2.2 for value meaning)._|
+|`unvoteType`|0            |_Standard vote mode. 0 means no vote allowed (see http://www.urbanterror.info/docs/texts/123/#2.2 for value meaning)._|
+|`timeBetweenVote`|3            |_Time to elapse (minutes) before temporary mode could be enabled again._|
+|`Tcyclemap`|12           |_Time to elapse (minutes) between two cyclemap_|
+|`W_max_warns`|5.0          |_Warning level to be kicked. (warning can be assigned by RedCap or Admins)._|
+|`W_adm_warn`| 1.0         |_Value of a warning assigned by a Admin (TODO: Not used yet)._|
+|`W_tk_warn`|1.0          |_Value of a warning caused by a teamkill._|
+|`W_hit_warn`|0.3          |_Value of a warning caused by a teamhit._|
+|`commandlogMinLevel`|2            |_All the commands with level equal or above this value are recorded in command log._|
+|`Control_Daily`|6            |_Hour (0-24) when daily maintenance activities will start._|
+|`Nt_MinNot_toplay`|0.55         |_Min. notoriety  to play in the gameserver. New player's notoriety is 0._|
+|`w_minRounds`|60           |_Rounds to play before a player is shown in webrank._|
+|_COMMANDS LEVEL_|_(Max lev = 100)_|_Player can execute all the commands having a level lower or equal to their own level. !Redcap automatically assign level 0 to each new player, unless a different level has been assigned by some admin. NOTE: assign value = -1 disable a command (not parsed)_|
+|`lev_alias`|1            |_Shows player's alias_|
+|`lev_admin`|1            |_All the players having this level or higher are considered gameserver admins. Admins receives more detailed information about other players. Presence of an admin could enable or disable some !Redcap features._|
+|`lev_balancemode`|2            |_Switches team autobalance ON/MANUAL/OFF_|
+|`lev_balance`|0            |_Ask to RedCap for a teambalance at round end_|
+|`lev_ban`|3            |_Permanently bans a player_|
+|`lev_callvote`|1            |_Enables vote mode "voteType" for "voteTime" seconds._|
+|`lev_cycle`|2            |_Cycles immediately to the next map_|
+|`lev_dbfind`|2            |_Look in DB for a player and shows infos_|
+|`lev_dbnick`|3            |_#Set the actual player's nick as his main nick. Main nick is the one displayed in records and webrank_|
+|`lev_esegui`|4            |_Executes an rcon command_|
+|`lev_force`|2            |_Moves a player to Red, Blue or Spect_|
+|`lev_forgive `|0            |_forgive one or all players for thit or tkill to you_|
+|`lev_forgiveall `|3            |_fully forgive a player for all his thit or tkills_|
+|`lev_info`|0            |_Shows some info about game server and RedCap itself_|
+|`lev_kick`|1            |_Kicks a player_|
+|`lev_level`|4            |_Assign a level to a player_|
+|`lev_map`|1            |_Loads a new map_|
+|`lev_maplist`|1            |_Shows a list of all the maps availables on the gameserver_|
+|`lev_mute`|1            |_mute a player_|
+|`lev_muteall`|2            |_mute all the players in game_|
+|`lev_notoriety`|2            |_Changes the min. reliability level required to play on the gameserver_|
+|`lev_nuke`|2            |_nukes a player_|
+|`lev_ora`| 0           |_Shows server time_|
+|`lev_password`|1            |_Sets a password on the game server_|
+|`lev_recordreset`|4            |_#Resets a record_|
+|`lev_RCrestart`|4            |_Restart the RedCap_|
+|`lev_skill`|0            |_Shows plasyer's skill_|
+|`lev_silent`|3            |_switch between silent and verbose mode_|
+|`lev_slap`|1            |_Slaps a player n times_|
+|`lev_spam`|2            |_adds / cancels a message from spam list_|
+|`lev_smite`|3            |_Immediately kill a player_|
+|`lev_spamlist`|0            |_Lists all spam messages_|
+|`lev_status`|0            |_Gives several details about player(s). Details depends from applicant level_|
+|`lev_tmpban`|1            |_Temporary ban_|
+|`lev_top`|0            |_Shows top records_|
+|`lev_trust`|3            |_Increases or decreases player's reliability level_|
+|`lev_war`|1            |_Loads a CW config and set the gameserver in war mode_|
+|`lev_unwar`|1            |_Unload war mode setting the game server to its standard configuration_|
+
+**SECTION 4: THESE PARAMETERS MUST NOT BE CHANGED UNLESS YOU EXACTLY KNOW WHAT ARE YOU DOING OR REDCAP WILL NOT RUN PROPERLY!!!**
+|VARIABLE|EXAMPLE VALUE|DESCRIPTION|
+|:-------|:------------|:----------|
+|`activity`|"badguid.log"|_RedCap activity logfile._|
+|`badguid`|"badguid.log"|_Bad guids record file._|
+|`crashlog`|"crash.log"  |_RedCap crashes logfile._|
+|`commandlog`|"command.log"|_RedCap commands record file (commandlogMinLevel value specify which command should be recorded into the file)._|
+|`NomeArchivi`|"Archivi"    |_Gamelogs and database backup folder._|
+|`NomeDB`|"Rc\_DB.sqlite"|_name of DB file._|
+|`socketlog`|"socket.log" |_Not sent command logfile._|
+|`SpamFile`|"spam.txt"   |_Custom spams here._|
+|`SV_Basewar`|"basewar.cfg"|_Basic CW config that RedCap loads if nothing else is specified._|
+|`SV_Logfolder`|"logs"       |_Log folder._|
+|`w_tabella`|"skilltable.htm"|_Ranking table (html format)._|
+|`w_dialoghi`|"dialoghi.htm"|_Chat log table (html format)._|
+|`Nt_badguid`|-20          |_Notoriety penalty for bad formatted guid._|
+|`Nt_dayXpoint`|5            |_Guid age (days) giving 1 notoriety point._|
+|`Nt_floodpenalty`|-0.2         |_Notoriety penalty for flooding._|
+|`Nt_guidchange`|-50          |_Notoriety penalty for guid change in game._|
+|`Nt_MinNot_toplay `|0.0          |_Min. notoriety  to play in the gameserver. New player's notoriety is 0._|
+|`Nt_roundXpoint`|200          |_N. of round to be played giving 1 notoriety point._|
+|`Nt_warnpenalty`|-1           |_Notoriety penalty for a kick from RedCap._|
+|`Sk_team_impact`|0.3          |_Part of skill variation based on opponent team mean skill. (Remaining is based on direct opponent's skill)._|
+|`Sk_Kpp`|5            |_N. of times you should kill an equivalent skilled opponent to gain 1 skill point._|
+|`Sk_range`|800          |_Theoric skill ceil value._|
+|`Sck_ServerTimeout`|1            |_Waiting time for an answer from gameserver (sec)._|
+|`Sck_Tsleep`|0.8          |_Delay between two consecutive rcon commands (sec)._|
+|`Sck_ServerLog`|SV\_Logfolder + "/" + socketlog|_Path to socketlog._|
+|`CRON1` |15           |_Cron1 frequency in seconds (fast timer)._|
+|`CRON2` |3600         |_Cron2 frequency in seconds (slow timer)._|
+|`TempoCiclo`|0.5          |_Gameserver log control frequency in seconds._|
+|`GameServerDown`|20           |_Waiting time before considering gameserver down (not used)._|
+
+# Remote webrank configuration #
+
+If Parameters in SECTION 2 are duty filled, RedCap will FTP transfer (at every restart) a HTML file to your website. You then can integrate this HTML file as you like. A _iframe_ is the better solution.
+In the HTML folder of !Redcap, you can find useful script and css for webrank formatting.

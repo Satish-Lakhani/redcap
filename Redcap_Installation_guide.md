@@ -1,0 +1,40 @@
+[<back to homepage](http://code.google.com/p/redcap/)
+# REDCAP INSTALLATION GUIDE #
+
+# Preface #
+RedCap installation on your gameserver is quite easy, but you must carefully follow this installation guide or RedCap will not run properly.
+Actually RedCap has only been tested on Linux server with ssh access. It can probably run on Windows server but I have no feedback about it.
+
+# Installation steps #
+  1. Check the [minimal requirements](http://code.google.com/p/redcap/wiki/RedCap) to run RedCap. If they are not satisfied you cannot run the RedCap.
+  1. Download last RedCap version from [here](http://code.google.com/p/redcap/downloads/list).
+  1. Unzip it on your local PC: a folder named **`Redcap_versionname`** will be created.
+  1. Suggestion: rename this folder with a easier and shorter name (i.e. RC12).
+  1. Open the file **`M_CONF.py`** and configure it as explained [here](http://code.google.com/p/redcap/wiki/RedCap_config_file). <font color='red'>This is a very important step. If RedCap is not properly configured it will hung up</font>_.
+  1. Once **`M_CONF.py`** is properly configured do not forget to save it.
+  1. FTP transfer the entire RedCap folder to your gameserver. It is strongly suggested to put the complete RedCap folder into the same folder where gameserver log is.
+  1. Assign execution permission (rwx-rw-rw or 755) to the following files:_`S_start.sh, S_prestart.sh, S_full_restart.sh`_1. Check your gameserver configuration file for the following lines (_you can also set g\_loghits "0", but RedCap in that case will not give any info about hits)_. If someone of the below mentioned lines has been modified, restart the gameserver.
+    * `seta g_logsync "1"`
+    * `seta g_logroll "0"`
+    * `seta logfile "2"`
+    * `seta g_loghits "1"`
+  1. If previous points has been correctly done, your RedCap is now ready to run!_
+
+# Running the RedCap #
+There are four different shell files for manage RedCap start and/or automatic restart. All of them are based on a bash linux shell. If you want to run RedCap on a _Windows gameserver_, you must correspondingly modify these files:
+
+  * **`S_start.sh`** _Basic start of RedCap_
+> > Run directly **`S_start.sh`** from a ssh console is mostly for debugging and it is **not** suggested for normal RedCap use, because when you shut down ssh console, RedCap will stop.
+
+  * **`S_prestart.sh`** _Autostart of RedCap_
+> > Run **`S_prestart.sh`** from ssh console is a good solution if you are not interested in an autorestart of the Urban Terror gameserver. It is based on Unix [screen](http://ss64.com/bash/screen.html) command. In ssh console move to the RedCap folder (containing `S_prestart.sh`) and type this command **./S\_prestart.sh**. When ssh console is closed RedCap continues to run as a separate process called  `Redcap_110`.
+
+  * **`start_urt.sh`** _Autostart of RedCap and Urban Terror_
+> > If you plan to use **`start_urt.sh`** you must copy it from README/ folder to the main gameserver directory (where Quake3-UrT-Ded.i386 is), and assign it chmod 775. The use of `start_urt.sh` is the best way to run RedCap and it is intended as a replacement of Urban Terror starting script: it starts and stops toghether with the Urban Terror gameserver. On the other side you must have the rights for _correctly modify_ this file in order to run.
+
+  * **`S_full_restart.sh`** _Autorestart of RedCap and Urban Terror_
+> > The file **`S_full_restart.sh`** is just a hardlink to `start_urt.sh`. It works only if `start_urt.sh` is enabled. This file is used by RedCap itself for a gameserver full restart when required.
+
+**NOTE:** look at [User guide](RedCap_User_guide.md) or [F.A.Q.](FrequentlyAskedQuestions.md)for further questions or troubleshouting.
+
+**GL&HF!**
